@@ -1,6 +1,0 @@
-[submodule "external-charts/immich"]
-	path = external-charts/immich
-	url = https://github.com/kriegalex/immich-charts
-[submodule "external-charts/plex"]
-	path = external-charts/plex
-	url = https://github.com/kriegalex/pms-docker.git
