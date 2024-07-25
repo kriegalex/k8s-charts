@@ -40,6 +40,25 @@ entries:
     urls:
     - https://github.com/kriegalex/k8s-charts/releases/download/immich-0.7.2/immich-0.7.2.tgz
     version: 0.7.2
+  plex-media-server:
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2024-07-25T21:52:15.145984307Z"
+    description: A Helm chart for deploying a PMS server to a kubernetes cluster
+    digest: 4daf18f6a3d2f56305c2f5ef225d46d76ba4769d8edc389c8e861cf777ebfcfa
+    home: https://www.plex.tv
+    icon: https://www.plex.tv/wp-content/themes/plex/assets/img/favicons/plex-152.png
+    keywords:
+    - plex
+    - pms
+    - Personal Media Server
+    name: plex-media-server
+    sources:
+    - https://github.com/plexinc/pms-docker
+    type: application
+    urls:
+    - https://github.com/kriegalex/k8s-charts/releases/download/plex-media-server-0.4.2/plex-media-server-0.4.2.tgz
+    version: 0.4.2
   qbittorrent-gluetun:
   - annotations:
       gluetunVersion: 3.38.0
@@ -75,4 +94,4 @@ entries:
     urls:
     - https://github.com/kriegalex/k8s-charts/releases/download/helm-chart-0.1.0/qbittorrent-gluetun-0.1.0.tgz
     version: 0.1.0
-generated: "2024-07-25T21:47:32.965877094Z"
+generated: "2024-07-25T21:52:15.145997962Z"
