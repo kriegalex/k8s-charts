@@ -1,0 +1,16 @@
+apiVersion: v1
+entries:
+  qbittorrent-gluetun:
+  - annotations:
+      gluetunVersion: 3.38.0
+    apiVersion: v2
+    appVersion: 4.6.5
+    created: "2024-07-25T20:51:36.244232683Z"
+    description: A Helm chart for qBittorrent with Gluetun VPN
+    digest: ba119b4c80fc699d1ffb812b46cfc26f8675b187af370bb8c37203f0baa1fd47
+    name: qbittorrent-gluetun
+    type: application
+    urls:
+    - https://github.com/kriegalex/k8s-charts/releases/download/helm-chart-0.1.0/qbittorrent-gluetun-0.1.0.tgz
+    version: 0.1.0
+generated: "2024-07-25T20:51:36.244240127Z"
