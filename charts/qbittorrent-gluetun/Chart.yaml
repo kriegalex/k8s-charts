@@ -1,8 +1,18 @@
 apiVersion: v2
-name: qbittorrent-gluetun
-description: A Helm chart for qBittorrent with Gluetun VPN
-type: application
-version: 0.1.0
 appVersion: "4.6.5" # this is not updated automatically
+description: A Helm chart for qBittorrent with Gluetun VPN
+name: qbittorrent-gluetun
+version: 0.1.1
+keywords:
+  - qbittorrent
+  - torrrent
+  - vpn
+home: https://github.com/kriegalex/k8s-charts/tree/main/charts/qbittorrent-gluetun
+icon: https://cloud.githubusercontent.com/assets/14862437/23586868/89ef2922-01c4-11e7-869c-52aafcece17f.png
+sources:
+  - https://github.com/qbittorrent/qBittorrent
+  - https://github.com/qdm12/gluetun
+  - https://github.com/kriegalex/k8s-charts
+type: application
 annotations:
   gluetunVersion: "3.38.0" # this is not updated automatically
