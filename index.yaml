@@ -216,6 +216,24 @@ entries:
           url: https://gitlab.com/alexander-chernov/helm/prowlarr
     apiVersion: v2
     appVersion: release-1.20.1.4603
+    created: "2024-08-01T14:47:38.416250686Z"
+    description: Hotio prowlarr helm chart
+    digest: 2cbcdb8ca61442c6bc43531e946f1317d282795c118d76d5c717b1506b035800
+    icon: https://hotio.dev/img/image-logos/prowlarr.svg
+    name: prowlarr
+    type: application
+    urls:
+    - https://github.com/kriegalex/k8s-charts/releases/download/prowlarr-1.8.1/prowlarr-1.8.1.tgz
+    version: 1.8.1
+  - annotations:
+      artifacthub.io/changes: |
+        - kind: changed
+          description: bump to release-1.20.1.4603
+      artifacthub.io/links: |
+        - name: Helm Repo
+          url: https://gitlab.com/alexander-chernov/helm/prowlarr
+    apiVersion: v2
+    appVersion: release-1.20.1.4603
     created: "2024-08-01T14:45:55.669146521Z"
     description: Hotio prowlarr helm chart
     digest: 05b43fbdc07055b7b8c3452507ffa1d8d54bfb3ca04402395ecd5e25a101504c
@@ -340,4 +358,4 @@ entries:
     urls:
     - https://github.com/kriegalex/k8s-charts/releases/download/sonarr-1.5.0/sonarr-1.5.0.tgz
     version: 1.5.0
-generated: "2024-08-01T14:45:55.669172991Z"
+generated: "2024-08-01T14:47:38.416276284Z"
