@@ -206,6 +206,25 @@ entries:
     urls:
     - https://github.com/kriegalex/k8s-charts/releases/download/plex-media-server-0.4.2/plex-media-server-0.4.2.tgz
     version: 0.4.2
+  prowlarr:
+  - annotations:
+      artifacthub.io/changes: |
+        - kind: changed
+          description: bump to release-1.20.1.4603
+      artifacthub.io/links: |
+        - name: Helm Repo
+          url: https://gitlab.com/alexander-chernov/helm/prowlarr
+    apiVersion: v2
+    appVersion: release-1.20.1.4603
+    created: "2024-08-01T14:45:55.669146521Z"
+    description: Hotio prowlarr helm chart
+    digest: 05b43fbdc07055b7b8c3452507ffa1d8d54bfb3ca04402395ecd5e25a101504c
+    icon: https://hotio.dev/img/image-logos/prowlarr.svg
+    name: prowlarr
+    type: application
+    urls:
+    - https://github.com/kriegalex/k8s-charts/releases/download/prowlarr-1.8.0/prowlarr-1.8.0.tgz
+    version: 1.8.0
   qbittorrent-gluetun:
   - annotations:
       gluetunVersion: 3.38.0
@@ -321,4 +340,4 @@ entries:
     urls:
     - https://github.com/kriegalex/k8s-charts/releases/download/sonarr-1.5.0/sonarr-1.5.0.tgz
     version: 1.5.0
-generated: "2024-08-01T14:03:01.445905197Z"
+generated: "2024-08-01T14:45:55.669172991Z"
