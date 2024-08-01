@@ -278,4 +278,26 @@ entries:
     urls:
     - https://github.com/kriegalex/k8s-charts/releases/download/radarr-1.5.0/radarr-1.5.0.tgz
     version: 1.5.0
-generated: "2024-08-01T13:12:46.731270815Z"
+  sonarr:
+  - annotations:
+      artifacthub.io/changes: |
+        - kind: changed
+          description: bumped version to release-4.0.8.1874
+      artifacthub.io/images: |
+        - name: sonarr
+          image: hotio/sonarr
+      artifacthub.io/links: |
+        - name: Helm Repo
+          url: https://gitlab.com/alexander-chernov/helm/sonarr
+    apiVersion: v2
+    appVersion: release-4.0.8.1874
+    created: "2024-08-01T14:00:42.332199306Z"
+    description: A Sonarr Helm chart for Kubernetes
+    digest: f7e49ab81185f24170d9dacc5a8b29baf3d82bf46802d7b122ace3d2a43cafa0
+    icon: https://avatars.githubusercontent.com/u/1082903
+    name: sonarr
+    type: application
+    urls:
+    - https://github.com/kriegalex/k8s-charts/releases/download/sonarr-1.5.0/sonarr-1.5.0.tgz
+    version: 1.5.0
+generated: "2024-08-01T14:00:42.332277812Z"
