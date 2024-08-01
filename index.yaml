@@ -251,6 +251,24 @@ entries:
           url: https://gitlab.com/alexander-chernov/helm/radarr
     apiVersion: v2
     appVersion: release-5.8.3.8933
+    created: "2024-08-01T13:12:46.73124649Z"
+    description: A Radarr Helm chart for Kubernetes
+    digest: 8586bd1ad384274329ac502ae045847b3971bb25d2f047ca5b5fcda136a58571
+    icon: https://avatars.githubusercontent.com/u/25025331
+    name: radarr
+    type: application
+    urls:
+    - https://github.com/kriegalex/k8s-charts/releases/download/radarr-1.5.1/radarr-1.5.1.tgz
+    version: 1.5.1
+  - annotations:
+      artifacthub.io/changes: |
+        - kind: changed
+          description: Bumped radarr version to release-5.8.3.8933
+      artifacthub.io/links: |
+        - name: Helm Repo
+          url: https://gitlab.com/alexander-chernov/helm/radarr
+    apiVersion: v2
+    appVersion: release-5.8.3.8933
     created: "2024-08-01T13:10:44.958195551Z"
     description: A Radarr Helm chart for Kubernetes
     digest: 87b83b283a35e57662dc4baafd355a7fe92f355c703903e3b6646408f45ac1ad
@@ -260,4 +278,4 @@ entries:
     urls:
     - https://github.com/kriegalex/k8s-charts/releases/download/radarr-1.5.0/radarr-1.5.0.tgz
     version: 1.5.0
-generated: "2024-08-01T13:10:44.958210559Z"
+generated: "2024-08-01T13:12:46.731270815Z"
