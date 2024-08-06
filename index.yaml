@@ -248,6 +248,28 @@ entries:
       gluetunVersion: 3.38.0
     apiVersion: v2
     appVersion: 4.6.5
+    created: "2024-08-06T15:11:19.59506145Z"
+    description: A Helm chart for qBittorrent with Gluetun VPN
+    digest: 12510f2bba6a2cd7e4a2a74242775962f90a388a3480a74967184b8adaaec97e
+    home: https://github.com/kriegalex/k8s-charts/tree/main/charts/qbittorrent-gluetun
+    icon: https://cloud.githubusercontent.com/assets/14862437/23586868/89ef2922-01c4-11e7-869c-52aafcece17f.png
+    keywords:
+    - qbittorrent
+    - torrrent
+    - vpn
+    name: qbittorrent-gluetun
+    sources:
+    - https://github.com/qbittorrent/qBittorrent
+    - https://github.com/qdm12/gluetun
+    - https://github.com/kriegalex/k8s-charts
+    type: application
+    urls:
+    - https://github.com/kriegalex/k8s-charts/releases/download/qbittorrent-gluetun-0.3.0/qbittorrent-gluetun-0.3.0.tgz
+    version: 0.3.0
+  - annotations:
+      gluetunVersion: 3.38.0
+    apiVersion: v2
+    appVersion: 4.6.5
     created: "2024-08-01T23:07:08.975435407Z"
     description: A Helm chart for qBittorrent with Gluetun VPN
     digest: 46f70c4e2100289820235520a08d232172e74b49d8936d5e6268652c819ba064
@@ -380,4 +402,4 @@ entries:
     urls:
     - https://github.com/kriegalex/k8s-charts/releases/download/sonarr-1.5.0/sonarr-1.5.0.tgz
     version: 1.5.0
-generated: "2024-08-01T23:07:08.975462139Z"
+generated: "2024-08-06T15:11:19.595090996Z"
