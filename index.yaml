@@ -145,6 +145,26 @@ entries:
     urls:
     - https://github.com/kriegalex/k8s-charts/releases/download/immich-0.7.2/immich-0.7.2.tgz
     version: 0.7.2
+  jellyfin:
+  - apiVersion: v2
+    appVersion: 10.9.9
+    created: "2024-08-07T12:53:33.253491996Z"
+    description: A Helm chart for Jellyfin
+    digest: 6fb6126e1d0ca12a739990a5b7114fc761767c4f972ceb891c0e90b9e03981f8
+    home: https://jellyfin.org/
+    icon: https://github.com/jellyfin/jellyfin-ux/blob/master/branding/SVG/icon-solid-white.svg
+    keywords:
+    - jellyfin
+    - media
+    - Personal Media Server
+    kubeVersion: '>=1.19.0-0'
+    name: jellyfin
+    sources:
+    - https://github.com/jellyfin/jellyfin
+    type: application
+    urls:
+    - https://github.com/kriegalex/k8s-charts/releases/download/jellyfin-0.1.0/jellyfin-0.1.0.tgz
+    version: 0.1.0
   nextcloud:
   - apiVersion: v2
     appVersion: 29.0.4
@@ -424,4 +444,4 @@ entries:
     urls:
     - https://github.com/kriegalex/k8s-charts/releases/download/sonarr-1.5.0/sonarr-1.5.0.tgz
     version: 1.5.0
-generated: "2024-08-06T19:41:26.906431407Z"
+generated: "2024-08-07T12:53:33.253522323Z"
