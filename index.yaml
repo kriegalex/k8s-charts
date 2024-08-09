@@ -207,6 +207,39 @@ entries:
     urls:
     - https://github.com/kriegalex/k8s-charts/releases/download/nextcloud-5.3.2/nextcloud-5.3.2.tgz
     version: 5.3.2
+  paperless-ngx:
+  - apiVersion: v2
+    appVersion: 2.11.2
+    created: "2024-08-09T09:49:04.007010719Z"
+    dependencies:
+    - condition: postgresql.enabled
+      name: postgresql
+      repository: https://charts.bitnami.com/bitnami
+      version: 14.0.5
+    - condition: mariadb.enabled
+      name: mariadb
+      repository: https://charts.bitnami.com/bitnami
+      version: 16.0.2
+    - condition: redis.enabled
+      name: redis
+      repository: https://charts.bitnami.com/bitnami
+      version: 18.6.4
+    description: A Helm chart for Paperless-ngx
+    digest: 894c0088a390634f7431aea9ed1086ffc63cdec201445ba2f962fd602d723dd4
+    home: https://docs.paperless-ngx.com/
+    icon: https://raw.githubusercontent.com/paperless-ngx/paperless-ngx/b948750/src-ui/src/assets/logo-notext.svg
+    keywords:
+    - documents
+    - ocr
+    - paper
+    kubeVersion: '>=1.19.0-0'
+    name: paperless-ngx
+    sources:
+    - https://github.com/paperless-ngx/paperless-ngx
+    type: application
+    urls:
+    - https://github.com/kriegalex/k8s-charts/releases/download/paperless-ngx-0.1.0/paperless-ngx-0.1.0.tgz
+    version: 0.1.0
   plex-media-server:
   - apiVersion: v2
     appVersion: 1.16.0
@@ -444,4 +477,4 @@ entries:
     urls:
     - https://github.com/kriegalex/k8s-charts/releases/download/sonarr-1.5.0/sonarr-1.5.0.tgz
     version: 1.5.0
-generated: "2024-08-07T12:53:33.253522323Z"
+generated: "2024-08-09T09:49:04.007030255Z"
