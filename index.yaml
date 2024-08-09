@@ -210,6 +210,38 @@ entries:
   paperless-ngx:
   - apiVersion: v2
     appVersion: 2.11.2
+    created: "2024-08-09T10:38:00.607099909Z"
+    dependencies:
+    - condition: postgresql.enabled
+      name: postgresql
+      repository: https://charts.bitnami.com/bitnami
+      version: 14.0.5
+    - condition: mariadb.enabled
+      name: mariadb
+      repository: https://charts.bitnami.com/bitnami
+      version: 16.0.2
+    - condition: redis.enabled
+      name: redis
+      repository: https://charts.bitnami.com/bitnami
+      version: 18.6.4
+    description: A Helm chart for Paperless-ngx
+    digest: b6416cb4b2abb186f8f55af3c866636b167d47d77259510086395774766510bb
+    home: https://docs.paperless-ngx.com/
+    icon: https://raw.githubusercontent.com/paperless-ngx/paperless-ngx/b948750/src-ui/src/assets/logo-notext.svg
+    keywords:
+    - documents
+    - ocr
+    - paper
+    kubeVersion: '>=1.19.0-0'
+    name: paperless-ngx
+    sources:
+    - https://github.com/paperless-ngx/paperless-ngx
+    type: application
+    urls:
+    - https://github.com/kriegalex/k8s-charts/releases/download/paperless-ngx-0.1.1/paperless-ngx-0.1.1.tgz
+    version: 0.1.1
+  - apiVersion: v2
+    appVersion: 2.11.2
     created: "2024-08-09T09:49:04.007010719Z"
     dependencies:
     - condition: postgresql.enabled
@@ -477,4 +509,4 @@ entries:
     urls:
     - https://github.com/kriegalex/k8s-charts/releases/download/sonarr-1.5.0/sonarr-1.5.0.tgz
     version: 1.5.0
-generated: "2024-08-09T09:49:04.007030255Z"
+generated: "2024-08-09T10:38:00.607120698Z"
