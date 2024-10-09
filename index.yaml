@@ -3,6 +3,25 @@ entries:
   actual-budget:
   - apiVersion: v2
     appVersion: 24.10.1
+    created: "2024-10-09T12:04:53.054993935Z"
+    description: Helm chart for deploying Actual Budget
+    digest: 185045b4bfda38175b0483d61b68004fa0668d224114d609038aee74f3f3ed74
+    home: https://actualbudget.org
+    icon: https://github.com/actualbudget/actual/blob/master/packages/desktop-client/public/maskable-192x192.png
+    keywords:
+    - budget
+    - self-hosted
+    - finance
+    kubeVersion: '>=1.19.0-0'
+    name: actual-budget
+    sources:
+    - https://github.com/actualbudget/actual
+    type: application
+    urls:
+    - https://github.com/kriegalex/k8s-charts/releases/download/actual-budget-0.1.1/actual-budget-0.1.1.tgz
+    version: 0.1.1
+  - apiVersion: v2
+    appVersion: 24.10.1
     created: "2024-10-09T11:59:13.741887663Z"
     description: Helm chart for deploying Actual Budget
     digest: 2ef9cb7d693c844ac38b6dcdf637584ff8250eb4399cb317de564bc27ab724c2
@@ -594,4 +613,4 @@ entries:
     urls:
     - https://github.com/kriegalex/k8s-charts/releases/download/sonarr-1.5.0/sonarr-1.5.0.tgz
     version: 1.5.0
-generated: "2024-10-09T11:59:13.74192863Z"
+generated: "2024-10-09T12:04:53.055043948Z"
