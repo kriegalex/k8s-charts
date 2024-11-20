@@ -154,6 +154,45 @@ entries:
             - name: Release Notes Breaking Changes
               url: https://github.com/immich-app/immich/releases/tag/v1.95.1
     apiVersion: v2
+    appVersion: v1.119.0
+    created: "2024-11-20T11:51:21.368268415Z"
+    dependencies:
+    - name: common
+      repository: https://bjw-s.github.io/helm-charts
+      version: 1.4.0
+    - condition: postgresql.enabled
+      name: postgresql
+      repository: https://charts.bitnami.com/bitnami
+      version: 16.0.0
+    - condition: redis.enabled
+      name: redis
+      repository: https://charts.bitnami.com/bitnami
+      version: 19.5.3
+    description: A chart to power Immich (immich.app) running on kubernetes
+    digest: 8ec6f7f54eb6ed4d684ac817bfc14484d73100f070a1841006cdb4a3b9674377
+    home: https://immich.app/
+    icon: https://raw.githubusercontent.com/immich-app/immich/main/design/immich-logo.svg
+    maintainers:
+    - email: 5434875+PixelJonas@users.noreply.github.com
+      name: PixelJonas
+    - email: immich@bo0tzz.me
+      name: bo0tzz
+    name: immich
+    sources:
+    - https://github.com/immich-app/immich-charts/tree/main/charts/immich
+    - https://github.com/immich-app/immich
+    urls:
+    - https://github.com/kriegalex/k8s-charts/releases/download/immich-0.8.4/immich-0.8.4.tgz
+    version: 0.8.4
+  - annotations:
+      artifacthub.io/category: storage
+      artifacthub.io/changes: |-
+        - kind: changed
+          description: Bumped pgvecto-rs to pg14-v0.2.0
+          links:
+            - name: Release Notes Breaking Changes
+              url: https://github.com/immich-app/immich/releases/tag/v1.95.1
+    apiVersion: v2
     appVersion: v1.109.2
     created: "2024-07-25T21:47:32.965863087Z"
     dependencies:
@@ -613,4 +652,4 @@ entries:
     urls:
     - https://github.com/kriegalex/k8s-charts/releases/download/sonarr-1.5.0/sonarr-1.5.0.tgz
     version: 1.5.0
-generated: "2024-10-09T12:04:53.055043948Z"
+generated: "2024-11-20T11:51:21.368299213Z"
