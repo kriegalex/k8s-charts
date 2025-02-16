@@ -1,0 +1,94 @@
+## Hotio qbittorrent image version
+## ref: https://hotio.dev/containers/qbittorrent
+##
+image:
+  repository: hotio/qbittorrent
+  tag: legacy # 4.3.9 by default, known to be stable
+  pullPolicy: IfNotPresent
+
+nameOverride: ""
+fullnameOverride: ""
+
+# Number of replicas to be deployed
+replicaCount: 1
+
+# Service Configuration
+service:
+  type: ClusterIP # can't assume that LoadBalancer is available to the final user
+  port: 8080
+
+env:
+  WEBUI_PORTS: "8080/tcp,8080/udp" # Ports for the qBittorrent Web UI. Set to 8080 by default for both TCP and UDP.
+  PUID: 1000 # The user ID (UID) for running the container. Ensures files are created with the correct user ownership.
+  PGID: 1000 # The group ID (GID) for running the container. Ensures files are created with the correct group ownership.
+  UMASK: 002 # The file permission mask. Controls default file and directory permissions. 002 means new files will have 664 (-rw-rw-r--) and directories 775 (drwxrwxr-x).
+  TZ: "Etc/UTC" # Timezone. Defaults to UTC
+
+  VPN_PIA_USER: "" # Private Internet Access (PIA) username. Overrides the VPN section secret if provided.
+  VPN_PIA_PASS: "" # Private Internet Access (PIA) password. Overrides the VPN section secret if provided.
+  VPN_CONF: wg0 # The VPN configuration file to use. Typically set to 'wg0' for WireGuard or 'openvpn' for OpenVPN configurations.
+  VPN_LAN_NETWORK: 192.168.1.0/24 # The LAN network IP range that should bypass the VPN. Useful for allowing local network access while the VPN is active.
+  VPN_LAN_LEAK_ENABLED: false # Determines if LAN traffic should bypass the VPN. Set to 'false' to prevent local network traffic from leaking outside the VPN tunnel.
+  VPN_EXPOSE_PORTS_ON_LAN: "" # Ports to be exposed to the LAN network. Leave empty to disable or specify ports if needed.
+  
+  VPN_AUTO_PORT_FORWARD: true # Enables automatic port forwarding through the VPN. This is often necessary for torrenting to allow incoming connections.
+  VPN_AUTO_PORT_FORWARD_TO_PORTS: "" # Specific ports to forward if VPN_AUTO_PORT_FORWARD is enabled. Leave empty to let the VPN provider choose.
+  VPN_KEEP_LOCAL_DNS: false # Keeps the local DNS settings when the VPN is connected. Set to 'false' to use the DNS provided by the VPN.
+  VPN_FIREWALL_TYPE: auto # Configures the type of firewall to use with the VPN. 'auto' lets the container decide based on the VPN type.
+  VPN_HEALTHCHECK_ENABLED: true # Enables health checks to ensure the VPN connection is active. If the VPN connection drops, the container may restart or stop.
+  
+  VPN_PIA_PREFERRED_REGION: "" # Preferred region for the PIA VPN. Leave empty to let PIA choose the optimal server automatically.
+  VPN_PIA_DIP_TOKEN: no # PIA Dedicated IP token. Set to 'no' if not using a dedicated IP with PIA.
+  VPN_PIA_PORT_FORWARD_PERSIST: false # If true, persists the port forwarding setting across sessions. Useful if consistent port forwarding is required.
+  
+  PRIVOXY_ENABLED: false # Enables Privoxy, a web proxy with advanced filtering capabilities. Set to 'true' to enable, 'false' to disable.
+  UNBOUND_ENABLED: false # Enables Unbound, a validating, recursive, and caching DNS resolver. Set to 'true' to enable, 'false' to disable.
+
+
+##
+## Extra environment variables
+extraEnv: []
+#  - name: NEW_VPN_ENV
+#    value: NEW_VALUE
+#  - name: NEW_VPN_SECRET
+#    valueFrom:
+#      secretKeyRef:
+#        ...
+
+vpn:
+  enabled: false # same as VPN_ENABLED env
+  provider: pia # same as VPN_PROVIDER env
+  # Name of existing secret to use for PIA VPN.
+  existingSecret: ""
+  # Names of keys in existing secret to use for credentials
+  existingKeys:
+    usernameKey: "" # same as VPN_PIA_USER env
+    passwordKey: "" # same as VPN_PIA_PASS env
+
+# Persistence
+persistence:
+  config:
+    enabled: true
+    size: "1Gi"
+    accessMode: "ReadWriteOnce"
+    # storageClass: ""
+    # existingClaim: ""
+
+  data:
+    enabled: true
+    size: "500Gi"
+    accessMode: "ReadWriteOnce"
+    # storageClass: ""
+    # existingClaim: ""
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #  cpu: 100m
+  #  memory: 128Mi
+  # requests:
+  #  cpu: 100m
+  #  memory: 128Mi

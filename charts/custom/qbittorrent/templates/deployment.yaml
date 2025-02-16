@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "qbittorrent.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "qbittorrent.name" . }}
+    helm.sh/chart: {{ include "qbittorrent.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "qbittorrent.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "qbittorrent.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      # make sure you allowed them on your worker nodes ! check "allowed-unsafe-sysctls" kubelet documentation
+      securityContext:
+        sysctls:
+          - name: net.ipv4.conf.all.src_valid_mark
+            value: "1"
+          - name: net.ipv6.conf.all.disable_ipv6
+            value: "1"
+      containers:
+        - name: qbittorrent
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env: # from helpers
+            {{- include "qbittorrent.env" . | nindent 12 }}
+          securityContext:
+            capabilities:
+              add: ["NET_ADMIN"]
+          volumeMounts:
+            # - name: dev-net-tun
+            #   mountPath: /dev/net/tun
+            - name: qbittorrent-config
+              mountPath: /config
+            - name: qbittorrent-data
+              mountPath: /data
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+
+      volumes:
+        # - name: dev-net-tun
+        #   hostPath:
+        #     path: /dev/net/tun
+        - name: qbittorrent-config
+          persistentVolumeClaim:
+            claimName: {{ if .Values.persistence.config.existingClaim }}{{ .Values.persistence.config.existingClaim }}{{- else }}{{ template "qbittorrent.fullname" . }}-config{{- end }}
+        - name: qbittorrent-data
+          persistentVolumeClaim:
+            claimName: {{ if .Values.persistence.data.existingClaim }}{{ .Values.persistence.data.existingClaim }}{{- else }}{{ template "qbittorrent.fullname" . }}-data{{- end }}
+        

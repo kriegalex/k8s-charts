@@ -1,0 +1,32 @@
+{{- if and .Values.persistence.config.enabled (not .Values.persistence.config.existingClaim) }}
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ template "qbittorrent.fullname" . }}-config
+spec:
+  accessModes:
+    - {{ .Values.persistence.config.accessMode | quote }}
+  resources:
+    requests:
+      storage: {{ .Values.persistence.config.size }}
+  storageClassName: {{ .Values.persistence.config.storageClass | default "" | quote }}
+  {{- if .Values.persistence.config.label }}
+  {{- end }}
+{{- end }}
+{{- if and .Values.persistence.data.enabled (not .Values.persistence.data.existingClaim) }}
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ template "qbittorrent.fullname" . }}-data
+spec:
+  accessModes:
+    - {{ .Values.persistence.data.accessMode | quote }}
+  resources:
+    requests:
+      storage: {{ .Values.persistence.data.size }}
+  storageClassName: {{ .Values.persistence.data.storageClass | default "" | quote }}
+{{- end }}
