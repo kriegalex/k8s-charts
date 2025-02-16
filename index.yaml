@@ -584,6 +584,17 @@ entries:
     - https://github.com/kriegalex/k8s-charts/releases/download/helm-chart-0.1.0/qbittorrent-gluetun-0.1.0.tgz
     version: 0.1.0
   radarr:
+  - apiVersion: v2
+    created: "2025-02-16T04:48:46.191096263Z"
+    dependencies:
+    - name: radarr
+      repository: https://charts.alekc.dev
+      version: 1.12.0
+    digest: 50ce199b844580e702bf22e4ef806a11612f2ec4bc9819e7823768ceccbf13d1
+    name: radarr
+    urls:
+    - https://github.com/kriegalex/k8s-charts/releases/download/radarr-1.12.0/radarr-1.12.0.tgz
+    version: 1.12.0
   - annotations:
       artifacthub.io/changes: |
         - kind: changed
@@ -674,4 +685,4 @@ entries:
     urls:
     - https://github.com/kriegalex/k8s-charts/releases/download/sonarr-1.5.0/sonarr-1.5.0.tgz
     version: 1.5.0
-generated: "2025-02-16T04:10:48.958564033Z"
+generated: "2025-02-16T04:48:46.191146607Z"
