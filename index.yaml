@@ -394,6 +394,18 @@ entries:
     urls:
     - https://github.com/kriegalex/k8s-charts/releases/download/paperless-ngx-0.1.0/paperless-ngx-0.1.0.tgz
     version: 0.1.0
+  plex:
+  - apiVersion: v2
+    created: "2025-02-16T05:37:51.944396134Z"
+    dependencies:
+    - name: plex-media-server
+      repository: https://raw.githubusercontent.com/plexinc/pms-docker/gh-pages
+      version: 0.8.0
+    digest: 5d7cac28bf4b8a22741d814838524bfd39be860485fe57c81338aa27575816c7
+    name: plex
+    urls:
+    - https://github.com/kriegalex/k8s-charts/releases/download/plex-0.8.0/plex-0.8.0.tgz
+    version: 0.8.0
   plex-media-server:
   - apiVersion: v2
     appVersion: 1.16.0
@@ -729,4 +741,4 @@ entries:
     urls:
     - https://github.com/kriegalex/k8s-charts/releases/download/sonarr-1.5.0/sonarr-1.5.0.tgz
     version: 1.5.0
-generated: "2025-02-16T05:29:47.693248741Z"
+generated: "2025-02-16T05:37:51.944441058Z"
