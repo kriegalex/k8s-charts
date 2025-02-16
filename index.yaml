@@ -267,6 +267,17 @@ entries:
     version: 0.1.0
   nextcloud:
   - apiVersion: v2
+    created: "2025-02-16T05:24:31.866510834Z"
+    dependencies:
+    - name: nextcloud
+      repository: https://nextcloud.github.io/helm/
+      version: 6.6.3
+    digest: 528ee5ea327f5c4b3ed68c4f19bbdfab43e0d89570af89372a4c6c405295836e
+    name: nextcloud
+    urls:
+    - https://github.com/kriegalex/k8s-charts/releases/download/nextcloud-6.6.3/nextcloud-6.6.3.tgz
+    version: 6.6.3
+  - apiVersion: v2
     appVersion: 29.0.4
     created: "2024-07-26T13:41:54.912537342Z"
     dependencies:
@@ -707,4 +718,4 @@ entries:
     urls:
     - https://github.com/kriegalex/k8s-charts/releases/download/sonarr-1.5.0/sonarr-1.5.0.tgz
     version: 1.5.0
-generated: "2025-02-16T05:15:56.133186515Z"
+generated: "2025-02-16T05:24:31.866539387Z"
