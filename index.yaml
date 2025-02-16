@@ -621,6 +621,17 @@ entries:
     - https://github.com/kriegalex/k8s-charts/releases/download/radarr-1.5.0/radarr-1.5.0.tgz
     version: 1.5.0
   sonarr:
+  - apiVersion: v2
+    created: "2025-02-16T04:10:48.958534919Z"
+    dependencies:
+    - name: sonarr
+      repository: https://charts.alekc.dev
+      version: 1.7.0
+    digest: 1f70c274c156440c619423b305127bf62a73924322f77fda733be1fb686144c6
+    name: sonarr
+    urls:
+    - https://github.com/kriegalex/k8s-charts/releases/download/sonarr-1.7.0/sonarr-1.7.0.tgz
+    version: 1.7.0
   - annotations:
       artifacthub.io/changes: |
         - kind: changed
@@ -663,4 +674,4 @@ entries:
     urls:
     - https://github.com/kriegalex/k8s-charts/releases/download/sonarr-1.5.0/sonarr-1.5.0.tgz
     version: 1.5.0
-generated: "2025-02-16T03:59:53.535816659Z"
+generated: "2025-02-16T04:10:48.958564033Z"
