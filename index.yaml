@@ -370,6 +370,17 @@ entries:
     - https://github.com/kriegalex/k8s-charts/releases/download/plex-media-server-0.4.2/plex-media-server-0.4.2.tgz
     version: 0.4.2
   prowlarr:
+  - apiVersion: v2
+    created: "2025-02-16T03:59:53.535776935Z"
+    dependencies:
+    - name: prowlarr
+      repository: https://charts.alekc.dev
+      version: 1.12.0
+    digest: 6806f57d01d503d698044dfe15e3a6f3c5074389a0f433d76acc292715976d0d
+    name: prowlarr
+    urls:
+    - https://github.com/kriegalex/k8s-charts/releases/download/prowlarr-1.12.0/prowlarr-1.12.0.tgz
+    version: 1.12.0
   - annotations:
       artifacthub.io/changes: |
         - kind: changed
@@ -652,4 +663,4 @@ entries:
     urls:
     - https://github.com/kriegalex/k8s-charts/releases/download/sonarr-1.5.0/sonarr-1.5.0.tgz
     version: 1.5.0
-generated: "2024-11-20T11:51:21.368299213Z"
+generated: "2025-02-16T03:59:53.535816659Z"
