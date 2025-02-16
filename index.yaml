@@ -320,6 +320,17 @@ entries:
     version: 5.3.2
   paperless-ngx:
   - apiVersion: v2
+    created: "2025-02-16T05:29:47.693194711Z"
+    dependencies:
+    - name: paperless-ngx
+      repository: https://charts.gabe565.com
+      version: 0.23.0
+    digest: fe0041bea9fab6ee982bf99d7967279081071f6961ea59732876663b90e398ed
+    name: paperless-ngx
+    urls:
+    - https://github.com/kriegalex/k8s-charts/releases/download/paperless-ngx-0.23.0/paperless-ngx-0.23.0.tgz
+    version: 0.23.0
+  - apiVersion: v2
     appVersion: 2.11.2
     created: "2024-08-09T10:38:00.607099909Z"
     dependencies:
@@ -718,4 +729,4 @@ entries:
     urls:
     - https://github.com/kriegalex/k8s-charts/releases/download/sonarr-1.5.0/sonarr-1.5.0.tgz
     version: 1.5.0
-generated: "2025-02-16T05:24:31.866539387Z"
+generated: "2025-02-16T05:29:47.693248741Z"
