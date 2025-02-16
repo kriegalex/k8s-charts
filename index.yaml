@@ -41,6 +41,17 @@ entries:
     version: 0.1.0
   gitea:
   - apiVersion: v2
+    created: "2025-02-16T04:57:55.849250278Z"
+    dependencies:
+    - name: gitea
+      repository: https://dl.gitea.com/charts/
+      version: 10.6.0
+    digest: 1adc517bfbb1b88b35b144110a671a11a90a85c370573cd1a6694e250f854b80
+    name: gitea
+    urls:
+    - https://github.com/kriegalex/k8s-charts/releases/download/gitea-10.6.0/gitea-10.6.0.tgz
+    version: 10.6.0
+  - apiVersion: v2
     appVersion: 1.22.1
     created: "2024-07-31T21:59:39.126288182Z"
     dependencies:
@@ -685,4 +696,4 @@ entries:
     urls:
     - https://github.com/kriegalex/k8s-charts/releases/download/sonarr-1.5.0/sonarr-1.5.0.tgz
     version: 1.5.0
-generated: "2025-02-16T04:48:46.191146607Z"
+generated: "2025-02-16T04:57:55.849277619Z"
