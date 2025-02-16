@@ -52,9 +52,9 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           filters: |
             charts:
-              - 'charts/*/Chart.yaml'
-              - 'charts/*/values.yaml'
-              - 'charts/*/templates/**'
+              - 'charts/*/*/Chart.yaml'
+              - 'charts/*/*/values.yaml'
+              - 'charts/*/*/templates/**'
 
       - name: Summarize changed files
         run: |
@@ -175,7 +175,7 @@ jobs:
         run: |
           echo "### Helm Dependency Updates" >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
-          for chart in charts/*/; do
+          for chart in charts/*/*/; do
             if [ -f "${chart}Chart.yaml" ]; then
               echo "Updating dependencies for ${chart}"
               helm dependency update "${chart}" 2>&1 | tee -a dep_update.txt
