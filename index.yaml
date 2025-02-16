@@ -156,6 +156,17 @@ entries:
     - https://github.com/kriegalex/k8s-charts/releases/download/gitea-0.0.0/gitea-0.0.0.tgz
     version: 0.0.0
   immich:
+  - apiVersion: v2
+    created: "2025-02-16T05:15:56.133140188Z"
+    dependencies:
+    - name: immich
+      repository: https://immich-app.github.io/immich-charts
+      version: 0.9.0
+    digest: eac35e4e2d02593accf543e2e0eb1823dd8eb2d24d198a5a2614a3b781d1be3c
+    name: immich
+    urls:
+    - https://github.com/kriegalex/k8s-charts/releases/download/immich-0.9.0/immich-0.9.0.tgz
+    version: 0.9.0
   - annotations:
       artifacthub.io/category: storage
       artifacthub.io/changes: |-
@@ -696,4 +707,4 @@ entries:
     urls:
     - https://github.com/kriegalex/k8s-charts/releases/download/sonarr-1.5.0/sonarr-1.5.0.tgz
     version: 1.5.0
-generated: "2025-02-16T04:57:55.849277619Z"
+generated: "2025-02-16T05:15:56.133186515Z"
