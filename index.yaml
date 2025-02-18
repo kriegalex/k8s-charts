@@ -476,6 +476,27 @@ entries:
   qbittorrent:
   - apiVersion: v2
     appVersion: legacy-4.3.9
+    created: "2025-02-18T00:32:22.893756069Z"
+    description: A Helm chart for qBittorrent with integrated VPN
+    digest: be5695bb2fb4629e4b160baa7266ebb5df54fbfa7f424f1cebecdceef86420c7
+    home: https://www.qbittorrent.org/
+    icon: https://cloud.githubusercontent.com/assets/14862437/23586868/89ef2922-01c4-11e7-869c-52aafcece17f.png
+    keywords:
+    - qbittorrent
+    - torrent
+    - vpn
+    kubeVersion: '>=1.19.0-0'
+    name: qbittorrent
+    sources:
+    - https://github.com/qbittorrent/qBittorrent
+    - https://github.com/hotio/qbittorrent
+    - https://github.com/kriegalex/k8s-charts
+    type: application
+    urls:
+    - https://github.com/kriegalex/k8s-charts/releases/download/qbittorrent-1.2.0/qbittorrent-1.2.0.tgz
+    version: 1.2.0
+  - apiVersion: v2
+    appVersion: legacy-4.3.9
     created: "2025-02-17T23:52:30.795216459Z"
     description: A Helm chart for qBittorrent with integrated VPN
     digest: 474f312ed1ed03fc889d3de39098ccfe0b02efbc65e85ecb15aa1215584c57e4
@@ -783,4 +804,4 @@ entries:
     urls:
     - https://github.com/kriegalex/k8s-charts/releases/download/sonarr-1.5.0/sonarr-1.5.0.tgz
     version: 1.5.0
-generated: "2025-02-17T23:52:30.795265259Z"
+generated: "2025-02-18T00:32:22.89382637Z"
