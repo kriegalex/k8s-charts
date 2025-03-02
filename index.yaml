@@ -340,6 +340,29 @@ entries:
     urls:
     - https://github.com/kriegalex/k8s-charts/releases/download/nextcloud-5.3.2/nextcloud-5.3.2.tgz
     version: 5.3.2
+  palworld:
+  - apiVersion: v2
+    appVersion: v1.2.3
+    created: "2025-03-02T23:04:30.709876181Z"
+    description: A Helm chart for Palworld dedicated server
+    digest: 7a01e8f32562a9fcb787f48b89de6c6f4101de9ac6e86626902ee28b3f60d9d9
+    home: https://github.com/thijsvanloef/palworld-server-docker
+    icon: https://raw.githubusercontent.com/thijsvanloef/palworld-server-docker/main/.github/assets/palworld-docker-logo.png
+    keywords:
+    - palworld
+    - game
+    - gameserver
+    - dedicated server
+    maintainers:
+    - email: kriegalex@gmail.com
+      name: kriegalex
+    name: palworld
+    sources:
+    - https://github.com/thijsvanloef/palworld-server-docker
+    type: application
+    urls:
+    - https://github.com/kriegalex/k8s-charts/releases/download/palworld-1.0.0/palworld-1.0.0.tgz
+    version: 1.0.0
   paperless-ngx:
   - apiVersion: v2
     created: "2025-02-16T05:29:47.693194711Z"
@@ -847,4 +870,4 @@ entries:
     urls:
     - https://github.com/kriegalex/k8s-charts/releases/download/sonarr-1.5.0/sonarr-1.5.0.tgz
     version: 1.5.0
-generated: "2025-03-02T22:11:49.198383523Z"
+generated: "2025-03-02T23:04:30.709964014Z"
