@@ -42,6 +42,27 @@ entries:
   enshrouded-server:
   - apiVersion: v2
     appVersion: proton-v2.1.6
+    created: "2025-03-03T00:10:27.730418745Z"
+    description: A Helm chart for Enshrouded Dedicated Game Server
+    digest: c144e8efefe918c49b0feb3c8e7563ea4ecda38856815d8b636350c8214d8f76
+    home: https://github.com/jsknnr/enshrouded-server
+    keywords:
+    - game
+    - enshrouded
+    - server
+    - dedicated
+    maintainers:
+    - email: kriegalex@gmail.com
+      name: kriegalex
+    name: enshrouded-server
+    sources:
+    - https://github.com/jsknnr/enshrouded-server
+    type: application
+    urls:
+    - https://github.com/kriegalex/k8s-charts/releases/download/enshrouded-server-1.0.1/enshrouded-server-1.0.1.tgz
+    version: 1.0.1
+  - apiVersion: v2
+    appVersion: proton-v2.1.6
     created: "2025-03-02T22:11:49.198315395Z"
     description: A Helm chart for Enshrouded Dedicated Game Server
     digest: af34800533afa1b66e69ace2bdf1f36d5194af24030f7bf78587102965f801e4
@@ -363,6 +384,29 @@ entries:
     urls:
     - https://github.com/kriegalex/k8s-charts/releases/download/palworld-1.0.0/palworld-1.0.0.tgz
     version: 1.0.0
+  palworld-server:
+  - apiVersion: v2
+    appVersion: v1.2.3
+    created: "2025-03-03T00:10:27.82191123Z"
+    description: A Helm chart for Palworld dedicated server
+    digest: fd53a269932991761e46b675d43e8c04c49c6da3bf1192d7d3f7ed4ffe50fe6b
+    home: https://github.com/thijsvanloef/palworld-server-docker
+    icon: https://raw.githubusercontent.com/thijsvanloef/palworld-server-docker/main/.github/assets/palworld-docker-logo.png
+    keywords:
+    - palworld
+    - game
+    - gameserver
+    - dedicated server
+    maintainers:
+    - email: kriegalex@gmail.com
+      name: kriegalex
+    name: palworld-server
+    sources:
+    - https://github.com/thijsvanloef/palworld-server-docker
+    type: application
+    urls:
+    - https://github.com/kriegalex/k8s-charts/releases/download/palworld-server-1.0.1/palworld-server-1.0.1.tgz
+    version: 1.0.1
   paperless-ngx:
   - apiVersion: v2
     created: "2025-02-16T05:29:47.693194711Z"
@@ -870,4 +914,4 @@ entries:
     urls:
     - https://github.com/kriegalex/k8s-charts/releases/download/sonarr-1.5.0/sonarr-1.5.0.tgz
     version: 1.5.0
-generated: "2025-03-02T23:04:30.709964014Z"
+generated: "2025-03-03T00:10:27.82197554Z"
