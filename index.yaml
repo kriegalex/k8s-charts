@@ -42,6 +42,27 @@ entries:
   enshrouded-server:
   - apiVersion: v2
     appVersion: proton-v2.1.6
+    created: "2025-03-03T00:29:30.428464825Z"
+    description: A Helm chart for Enshrouded Dedicated Game Server
+    digest: 196b06f6e9abf1bd1fcea069e2e21e545b1c83bb9aa568de9cadaa81c0730a09
+    home: https://github.com/jsknnr/enshrouded-server
+    keywords:
+    - game
+    - enshrouded
+    - server
+    - dedicated
+    maintainers:
+    - email: kriegalex@gmail.com
+      name: kriegalex
+    name: enshrouded-server
+    sources:
+    - https://github.com/jsknnr/enshrouded-server
+    type: application
+    urls:
+    - https://github.com/kriegalex/k8s-charts/releases/download/enshrouded-server-1.0.2/enshrouded-server-1.0.2.tgz
+    version: 1.0.2
+  - apiVersion: v2
+    appVersion: proton-v2.1.6
     created: "2025-03-03T00:10:27.730418745Z"
     description: A Helm chart for Enshrouded Dedicated Game Server
     digest: c144e8efefe918c49b0feb3c8e7563ea4ecda38856815d8b636350c8214d8f76
@@ -385,6 +406,28 @@ entries:
     - https://github.com/kriegalex/k8s-charts/releases/download/palworld-1.0.0/palworld-1.0.0.tgz
     version: 1.0.0
   palworld-server:
+  - apiVersion: v2
+    appVersion: v1.2.3
+    created: "2025-03-03T00:29:30.584904288Z"
+    description: A Helm chart for Palworld dedicated server
+    digest: d64cd18859cdecc3a928d202466132628239026d2b4d8eb77accdb4e740bc6b8
+    home: https://github.com/thijsvanloef/palworld-server-docker
+    icon: https://raw.githubusercontent.com/thijsvanloef/palworld-server-docker/main/.github/assets/palworld-docker-logo.png
+    keywords:
+    - palworld
+    - game
+    - gameserver
+    - dedicated server
+    maintainers:
+    - email: kriegalex@gmail.com
+      name: kriegalex
+    name: palworld-server
+    sources:
+    - https://github.com/thijsvanloef/palworld-server-docker
+    type: application
+    urls:
+    - https://github.com/kriegalex/k8s-charts/releases/download/palworld-server-1.0.2/palworld-server-1.0.2.tgz
+    version: 1.0.2
   - apiVersion: v2
     appVersion: v1.2.3
     created: "2025-03-03T00:10:27.82191123Z"
@@ -914,4 +957,4 @@ entries:
     urls:
     - https://github.com/kriegalex/k8s-charts/releases/download/sonarr-1.5.0/sonarr-1.5.0.tgz
     version: 1.5.0
-generated: "2025-03-03T00:10:27.82197554Z"
+generated: "2025-03-03T00:29:30.584998403Z"
