@@ -2,6 +2,28 @@ apiVersion: v1
 entries:
   actual-budget:
   - apiVersion: v2
+    appVersion: 25.3.1
+    created: "2025-03-05T18:59:48.073924985Z"
+    description: Helm chart for deploying Actual Budget
+    digest: 54f79548b4b023dba683553c5a74fb46d372cd80af333c55a2b106c96f371196
+    home: https://actualbudget.org
+    icon: https://raw.githubusercontent.com/actualbudget/actual/refs/heads/master/packages/desktop-client/public/maskable-192x192.png
+    keywords:
+    - budget
+    - self-hosted
+    - finance
+    kubeVersion: '>=1.19.0-0'
+    maintainers:
+    - email: kriegalex@gmail.com
+      name: kriegalex
+    name: actual-budget
+    sources:
+    - https://github.com/actualbudget/actual
+    type: application
+    urls:
+    - https://github.com/kriegalex/k8s-charts/releases/download/actual-budget-0.2.0/actual-budget-0.2.0.tgz
+    version: 0.2.0
+  - apiVersion: v2
     appVersion: 24.10.1
     created: "2024-10-09T12:04:53.054993935Z"
     description: Helm chart for deploying Actual Budget
@@ -40,6 +62,28 @@ entries:
     - https://github.com/kriegalex/k8s-charts/releases/download/actual-budget-0.1.0/actual-budget-0.1.0.tgz
     version: 0.1.0
   enshrouded-server:
+  - apiVersion: v2
+    appVersion: proton-v2.1.6
+    created: "2025-03-05T18:59:48.161141361Z"
+    description: A Helm chart for Enshrouded Dedicated Game Server
+    digest: 3a42cca855874be4ad96025d874554a3d7b0944d6b9ae73f1a153d36ae7651d3
+    home: https://github.com/jsknnr/enshrouded-server
+    icon: https://styles.redditmedia.com/t5_8chex6/styles/communityIcon_nvnkci2rcsqb1.png
+    keywords:
+    - game
+    - enshrouded
+    - server
+    - dedicated
+    maintainers:
+    - email: kriegalex@gmail.com
+      name: kriegalex
+    name: enshrouded-server
+    sources:
+    - https://github.com/jsknnr/enshrouded-server
+    type: application
+    urls:
+    - https://github.com/kriegalex/k8s-charts/releases/download/enshrouded-server-1.0.3/enshrouded-server-1.0.3.tgz
+    version: 1.0.3
   - apiVersion: v2
     appVersion: proton-v2.1.6
     created: "2025-03-03T00:29:30.428464825Z"
@@ -105,6 +149,28 @@ entries:
     version: 1.0.0
   jellyfin:
   - apiVersion: v2
+    appVersion: 10.10.6
+    created: "2025-03-05T18:59:48.28720354Z"
+    description: A Helm chart for Jellyfin
+    digest: 979ea541c90cb2ba157b95f5223e52513ec760fb0ab139c9db9cfea9aa74c7f2
+    home: https://jellyfin.org/
+    icon: https://raw.githubusercontent.com/jellyfin/jellyfin-ux/refs/heads/master/branding/NSIS/modern-install.png
+    keywords:
+    - jellyfin
+    - media
+    - Personal Media Server
+    kubeVersion: '>=1.19.0-0'
+    maintainers:
+    - email: kriegalex@gmail.com
+      name: kriegalex
+    name: jellyfin
+    sources:
+    - https://github.com/jellyfin/jellyfin
+    type: application
+    urls:
+    - https://github.com/kriegalex/k8s-charts/releases/download/jellyfin-0.2.0/jellyfin-0.2.0.tgz
+    version: 0.2.0
+  - apiVersion: v2
     appVersion: 10.9.9
     created: "2024-08-07T12:53:33.253491996Z"
     description: A Helm chart for Jellyfin
@@ -124,6 +190,28 @@ entries:
     - https://github.com/kriegalex/k8s-charts/releases/download/jellyfin-0.1.0/jellyfin-0.1.0.tgz
     version: 0.1.0
   palworld-server:
+  - apiVersion: v2
+    appVersion: v1.2.3
+    created: "2025-03-05T18:59:48.400256472Z"
+    description: A Helm chart for Palworld dedicated server
+    digest: 8476c836df364ac6456f298148975e65d5a4afe462bc71b139d3d7e4242913b8
+    home: https://github.com/thijsvanloef/palworld-server-docker
+    icon: https://cdn2.steamgriddb.com/icon/82cf0712367108660c5339a4897a728e/32/128x128.png
+    keywords:
+    - palworld
+    - game
+    - gameserver
+    - dedicated server
+    maintainers:
+    - email: kriegalex@gmail.com
+      name: kriegalex
+    name: palworld-server
+    sources:
+    - https://github.com/thijsvanloef/palworld-server-docker
+    type: application
+    urls:
+    - https://github.com/kriegalex/k8s-charts/releases/download/palworld-server-1.0.3/palworld-server-1.0.3.tgz
+    version: 1.0.3
   - apiVersion: v2
     appVersion: v1.2.3
     created: "2025-03-03T00:29:30.584904288Z"
@@ -295,4 +383,4 @@ entries:
     urls:
     - https://github.com/kriegalex/k8s-charts/releases/download/qbittorrent-0.1.0/qbittorrent-0.1.0.tgz
     version: 0.1.0
-generated: "2025-03-03T00:29:30.584998403Z"
+generated: "2025-03-05T18:59:48.400298209Z"
