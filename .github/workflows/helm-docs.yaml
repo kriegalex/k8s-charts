@@ -1,0 +1,68 @@
+name: Generate Helm Documentation
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'charts/**/values.yaml'
+      - 'charts/**/Chart.yaml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'charts/**/values.yaml'
+      - 'charts/**/Chart.yaml'
+
+jobs:
+  helm-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+      
+      - name: Create README templates if they don't exist
+        run: |
+
+          # Copy the templates to each chart directory if needed
+          for chart in charts/*/; do
+            chartName=$(basename "$chart")
+            
+            # Check if template already exists, if not create it pointing to the global one
+            if [ ! -f "$chart/README.md.gotmpl" ]; then
+              echo "Creating README.md.gotmpl for $chartName"
+              cp .helm-docs/README.md.gotmpl "$chart/README.md.gotmpl"
+            fi
+            
+            # Create chart-specific template directory if needed
+            mkdir -p "$chart/.helm-docs"
+            
+            # Link to global templates if needed
+            if [ ! -f "$chart/.helm-docs/_templates.gotmpl" ]; then
+              cp .helm-docs/_templates.gotmpl "$chart/.helm-docs/_templates.gotmpl"
+            fi
+          done
+
+      - name: Run Helm-docs
+        uses: docker://jnorwood/helm-docs:v1.11.0
+        with:
+          entrypoint: /usr/local/bin/helm-docs
+          args: --chart-search-root=charts --template-files=README.md.gotmpl --template-files=.helm-docs/_templates.gotmpl
+
+      - name: Commit changes
+        run: |
+          if [[ -n $(git status -s) ]]; then
+            git add charts/*/README.md
+            git commit -m "Auto-update helm chart documentation [skip ci]"
+            git push
+          else
+            echo "No changes to commit"
+          fi
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'

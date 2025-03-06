@@ -1,0 +1,56 @@
+# {{ template "chart.name" . }} Helm Chart
+
+{{ template "chart.badgesSection" . }}
+
+{{ template "chart.description" . }}
+
+## TL;DR
+
+~~~bash
+helm repo add k8s-charts https://kriegalex.github.io/k8s-charts/
+helm install my-release k8s-charts/{{ template "chart.name" . }}
+~~~
+
+## Introduction
+
+This chart bootstraps a {{ template "chart.name" . }} deployment on a Kubernetes cluster using the Helm package manager.
+
+## Prerequisites
+
+- Kubernetes 1.29.1+
+- Helm 3.14.0+
+- PV provisioner support in the underlying infrastructure (for charts that need persistence)
+
+## Installing the Chart
+
+~~~bash
+# Add the repository
+helm repo add k8s-charts https://kriegalex.github.io/k8s-charts/
+
+# Install the chart
+helm install my-release k8s-charts/{{ template "chart.name" . }}
+~~~
+
+> **Tip**: List all releases using `helm list`
+
+## Uninstalling the Chart
+
+~~~bash
+helm delete my-release
+~~~
+
+{{ template "chart.valuesSection" . }}
+
+{{ if (index .Values "persistence") }}
+## Persistence
+
+This chart creates a PersistentVolumeClaim to store the application data. The volume will not be deleted when you uninstall the chart. If you want to delete the PVC, you need to do it manually.
+
+~~~bash
+kubectl delete pvc -l app.kubernetes.io/instance=my-release
+~~~
+{{ end }}
+
+{{ template "custom.additionalInfo" . }}
+
+{{ template "helm-docs.versionFooter" . }}

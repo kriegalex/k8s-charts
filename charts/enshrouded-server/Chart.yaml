@@ -2,7 +2,7 @@ apiVersion: v2
 name: enshrouded-server
 description: A Helm chart for Enshrouded Dedicated Game Server
 type: application
-version: 1.0.3
+version: 1.0.4
 appVersion: "proton-v2.1.6"
 home: https://github.com/jsknnr/enshrouded-server
 icon: https://styles.redditmedia.com/t5_8chex6/styles/communityIcon_nvnkci2rcsqb1.png

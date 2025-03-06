@@ -1,9 +1,7 @@
-# Default values for enshrouded-server.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
-
 ## Name overrides
+# -- Override the name of the chart
 nameOverride: ""
+# -- Override the full name of the chart
 fullnameOverride: ""
 
 ## Enshrouded Server Configuration
@@ -16,7 +14,8 @@ enshrouded:
   maxPlayers: 16
   # -- Game save interval in seconds
   saveInterval: 300
-  # -- Server IP address to bind to (default: 0.0.0.0)
+  # -- Server IP address to bind to
+  # @default -- 0.0.0.0
   serverIP: "0.0.0.0"
   # -- Game server port (UDP)
   gamePort: 15636
@@ -27,8 +26,10 @@ enshrouded:
 
 ## Enshrouded Extra Server Configuration
 configMap:
+  # -- Enable additional configuration via ConfigMap
   enabled: true
-  # Add additional environment variables here if needed
+  # -- Additional environment variables
+  # @type -- object
   data: {}
 
 ## Image configuration
@@ -40,7 +41,7 @@ image:
   # -- Image pull policy
   pullPolicy: Always
 
-## ImagePullSecrets for private docker registry
+# -- ImagePullSecrets for private docker registry
 imagePullSecrets: []
 
 ## ServiceAccount configuration
@@ -53,24 +54,29 @@ serviceAccount:
   # If not set and create is true, a name is generated using the fullname template
   name: ""
 
-## Pod annotations
+# -- Annotations to add to pods
 podAnnotations: {}
 
 ## Pod security context
 podSecurityContext:
+  # -- Group ID to run the container
   fsGroup: 10000
+  # -- User ID to run the container
   runAsUser: 10000
 
 ## Container security context
 securityContext:
+  # -- Prevent privilege escalation
   allowPrivilegeEscalation: false
   capabilities:
+    # -- Linux capabilities to remove
     drop:
       - ALL
 
 ## Service configuration
 service:
   # -- Service type
+  # @valid -- "ClusterIP" "NodePort" "LoadBalancer" "ExternalName"
   type: LoadBalancer
   # -- Annotations for the service
   annotations: {}
@@ -97,11 +103,11 @@ service:
   # -- Use nodePort to expose the service at a static port on each node
   # nodePort: 30000
 
-## Resource requests and limits
+# -- Resource requests and limits
+# @description -- We usually recommend not to specify default resources and to leave this as a conscious
+# choice for the user. This also increases chances charts run on environments with little
+# resources, such as Minikube.
 resources: {}
-  # -- We usually recommend not to specify default resources and to leave this as a conscious
-  # choice for the user. This also increases chances charts run on environments with little
-  # resources, such as Minikube.
   # limits:
   #   memory: 12Gi
   # requests:
@@ -112,7 +118,8 @@ resources: {}
 persistence:
   # -- Enable persistence using Persistent Volume Claims
   enabled: true
-  # -- If defined, storageClassName: <storageClass>
+  # -- StorageClass for PVC
+  # @description -- If defined, storageClassName: <storageClass>
   # If set to "-", storageClassName: "", which disables dynamic provisioning
   # If undefined or null, no storageClassName spec is set, choosing the default provisioner
   storageClassName: ""
@@ -126,22 +133,28 @@ persistence:
   # -- Existing PVC to use (required if persistence.enabled is true)
   existingClaim: ""
 
-## Node selector
+# -- Node selector for pod assignment
+# @type -- object
 nodeSelector: {}
 
-## Tolerations
+# -- Tolerations for pod assignment
+# @type -- array
 tolerations: []
 
-## Affinity
+# -- Affinity for pod assignment
+# @type -- object
 affinity: {}
 
 ## Update strategy
 updateStrategy:
   # -- Update strategy
+  # @valid -- "RollingUpdate" "Recreate"
   type: RollingUpdate
   # -- Rolling update configuration parameters
   rollingUpdate:
+    # -- Maximum number of pods that can be unavailable during the update
     maxUnavailable: 1
+    # -- Maximum number of new pods that can be created during the update
     maxSurge: 0
 
 ## Pod Disruption Budget
@@ -153,24 +166,42 @@ podDisruptionBudget:
   # -- Maximum unavailable pods
   # maxUnavailable: 1
 
-# Probe configuration
+# -- Probe configuration
 startupProbe:
+  # -- Enable startupProbe
   enabled: true
+  # -- Initial delay before probing
   initialDelaySeconds: 30
+  # -- Period between probes
   periodSeconds: 10
+  # -- Timeout for each probe
   timeoutSeconds: 5
-  failureThreshold: 30  # Allow up to 5 minutes for initial startup
+  # -- Number of failures before giving up
+  # @description -- Allow up to 5 minutes for initial startup
+  failureThreshold: 30
 
 livenessProbe:
+  # -- Enable livenessProbe
   enabled: false
+  # -- Initial delay before probing
   initialDelaySeconds: 60
+  # -- Period between probes
   periodSeconds: 20
+  # -- Timeout for each probe
   timeoutSeconds: 5
-  failureThreshold: 6   # Allow up to 2 minutes for initial startup
+  # -- Number of failures before giving up
+  # @description -- Allow up to 2 minutes for initial startup
+  failureThreshold: 6
 
 readinessProbe:
+  # -- Enable readinessProbe
   enabled: true
+  # -- Initial delay before probing
   initialDelaySeconds: 60
+  # -- Period between probes
   periodSeconds: 15
+  # -- Timeout for each probe
   timeoutSeconds: 5
-  failureThreshold: 20  # Allow up to 5 minutes for readiness
+  # -- Number of failures before giving up
+  # @description -- Allow up to 5 minutes for readiness
+  failureThreshold: 20
