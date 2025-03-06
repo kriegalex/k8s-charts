@@ -51,9 +51,9 @@ jobs:
           done
 
       - name: Run Helm-docs
-        uses: docker://jnorwood/helm-docs:v1.11.0
+        uses: docker://jnorwood/helm-docs:v1.14.2
         with:
-          entrypoint: /usr/local/bin/helm-docs
+          entrypoint: helm-docs
           args: --chart-search-root=charts --template-files=README.md.gotmpl --template-files=.helm-docs/_templates.gotmpl
 
       - name: Commit changes
