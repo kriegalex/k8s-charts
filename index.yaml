@@ -337,6 +337,38 @@ entries:
           url: https://github.com/jellyfin/jellyfin
     apiVersion: v2
     appVersion: 10.10.6
+    created: "2025-03-08T00:37:06.932691251Z"
+    description: A Helm chart for Jellyfin
+    digest: 5ab3110ef43b5f3ea1691f84997bf8818398c2eeab1f4ea1ed03e4900c5b4d69
+    home: https://jellyfin.org/
+    icon: https://raw.githubusercontent.com/jellyfin/jellyfin-ux/refs/heads/master/branding/NSIS/modern-install.png
+    keywords:
+    - jellyfin
+    - media
+    - Personal Media Server
+    kubeVersion: '>=1.19.0-0'
+    maintainers:
+    - email: kriegalex@gmail.com
+      name: kriegalex
+    name: jellyfin
+    sources:
+    - https://github.com/jellyfin/jellyfin
+    - https://github.com/kriegalex/k8s-charts/tree/main/charts/jellyfin
+    type: application
+    urls:
+    - https://github.com/kriegalex/k8s-charts/releases/download/jellyfin-0.2.4/jellyfin-0.2.4.tgz
+    version: 0.2.4
+  - annotations:
+      artifacthub.io/images: |
+        - name: jellyfin
+          image: jellyfin/jellyfin:10.10.6
+      artifacthub.io/links: |
+        - name: Chart source
+          url: https://github.com/kriegalex/k8s-charts/tree/main/charts/jellyfin
+        - name: Docker image source
+          url: https://github.com/jellyfin/jellyfin
+    apiVersion: v2
+    appVersion: 10.10.6
     created: "2025-03-08T00:05:50.829914131Z"
     description: A Helm chart for Jellyfin
     digest: 00eaacf6d2d3b6dae220980ee42f49622f44829ad42b5f69905e66e2be35909f
@@ -621,6 +653,40 @@ entries:
           url: https://github.com/hotio/qbittorrent
     apiVersion: v2
     appVersion: legacy-4.3.9
+    created: "2025-03-08T00:37:07.044918211Z"
+    description: A Helm chart for deploying a QBittorrent client that uses a wireguard
+      VPN tunnel.
+    digest: a80d0c0bdbc8209339d755b5ff15925bd04d15149b0a051e4eae45a4d65fa710
+    home: https://www.qbittorrent.org/
+    icon: https://cloud.githubusercontent.com/assets/14862437/23586868/89ef2922-01c4-11e7-869c-52aafcece17f.png
+    keywords:
+    - qbittorrent
+    - torrent
+    - vpn
+    kubeVersion: '>=1.19.0-0'
+    maintainers:
+    - email: kriegalex@gmail.com
+      name: kriegalex
+    name: qbittorrent
+    sources:
+    - https://github.com/qbittorrent/qBittorrent
+    - https://github.com/hotio/qbittorrent
+    - https://github.com/kriegalex/k8s-charts/tree/main/charts/qbittorrent
+    type: application
+    urls:
+    - https://github.com/kriegalex/k8s-charts/releases/download/qbittorrent-1.3.4/qbittorrent-1.3.4.tgz
+    version: 1.3.4
+  - annotations:
+      artifacthub.io/images: |
+        - name: qbittorrent
+          image: hotio/qbittorrent:legacy-4.3.9
+      artifacthub.io/links: |
+        - name: Chart source
+          url: https://github.com/kriegalex/k8s-charts/tree/main/charts/qbittorrent
+        - name: Docker image source
+          url: https://github.com/hotio/qbittorrent
+    apiVersion: v2
+    appVersion: legacy-4.3.9
     created: "2025-03-08T00:05:51.173717157Z"
     description: A Helm chart for deploying a QBittorrent client that uses a wireguard
       VPN tunnel.
@@ -829,4 +895,4 @@ entries:
     urls:
     - https://github.com/kriegalex/k8s-charts/releases/download/qbittorrent-0.1.0/qbittorrent-0.1.0.tgz
     version: 0.1.0
-generated: "2025-03-08T00:05:51.173817485Z"
+generated: "2025-03-08T00:37:07.045002579Z"
