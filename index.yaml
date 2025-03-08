@@ -12,6 +12,40 @@ entries:
           url: https://github.com/actualbudget/actual
     apiVersion: v2
     appVersion: 25.3.1
+    created: "2025-03-08T00:05:50.500050879Z"
+    description: This is a Helm chart for deploying Actual Budget, a self-hosted budgeting
+      application. This chart provides a convenient and customizable way to deploy
+      Actual Budget on a Kubernetes cluster.
+    digest: 4ec276928af07a65e040c972f4df12ad91a82ceb93905cddcfe2f84ef404028b
+    home: https://actualbudget.org
+    icon: https://raw.githubusercontent.com/actualbudget/actual/refs/heads/master/packages/desktop-client/public/maskable-192x192.png
+    keywords:
+    - budget
+    - self-hosted
+    - finance
+    kubeVersion: '>=1.19.0-0'
+    maintainers:
+    - email: kriegalex@gmail.com
+      name: kriegalex
+    name: actual-budget
+    sources:
+    - https://github.com/actualbudget/actual
+    - https://github.com/kriegalex/k8s-charts/tree/main/charts/actual-budget
+    type: application
+    urls:
+    - https://github.com/kriegalex/k8s-charts/releases/download/actual-budget-0.2.3/actual-budget-0.2.3.tgz
+    version: 0.2.3
+  - annotations:
+      artifacthub.io/images: |
+        - name: actual-server
+          image: actualbudget/actual-server:25.3.1
+      artifacthub.io/links: |
+        - name: Chart source
+          url: https://github.com/kriegalex/k8s-charts/tree/main/charts/actual-budget
+        - name: Docker image source
+          url: https://github.com/actualbudget/actual
+    apiVersion: v2
+    appVersion: 25.3.1
     created: "2025-03-07T16:49:40.528724579Z"
     description: This is a Helm chart for deploying Actual Budget, a self-hosted budgeting
       application. This chart provides a convenient and customizable way to deploy
@@ -120,6 +154,38 @@ entries:
     - https://github.com/kriegalex/k8s-charts/releases/download/actual-budget-0.1.0/actual-budget-0.1.0.tgz
     version: 0.1.0
   enshrouded-server:
+  - annotations:
+      artifacthub.io/images: |
+        - name: enshrouded-dedicated-server
+          image: sknnr/enshrouded-dedicated-server:proton-v2.1.6
+      artifacthub.io/links: |
+        - name: Chart source
+          url: https://github.com/kriegalex/k8s-charts/tree/main/charts/enshrouded-server
+        - name: Docker image source
+          url: https://github.com/jsknnr/enshrouded-server
+    apiVersion: v2
+    appVersion: proton-v2.1.6
+    created: "2025-03-08T00:05:50.669944203Z"
+    description: A Helm chart for Enshrouded Dedicated Game Server
+    digest: dc810b49ec5fea71a6974fdb99a21263ca9ff3538323593d4570901db4c1ab39
+    home: https://enshrouded.com/
+    icon: https://styles.redditmedia.com/t5_8chex6/styles/communityIcon_nvnkci2rcsqb1.png
+    keywords:
+    - game
+    - enshrouded
+    - server
+    - dedicated
+    maintainers:
+    - email: kriegalex@gmail.com
+      name: kriegalex
+    name: enshrouded-server
+    sources:
+    - https://github.com/jsknnr/enshrouded-server
+    - https://github.com/kriegalex/k8s-charts/tree/main/charts/enshrouded-server
+    type: application
+    urls:
+    - https://github.com/kriegalex/k8s-charts/releases/download/enshrouded-server-1.0.6/enshrouded-server-1.0.6.tgz
+    version: 1.0.6
   - annotations:
       artifacthub.io/images: |
         - name: enshrouded-dedicated-server
@@ -271,6 +337,38 @@ entries:
           url: https://github.com/jellyfin/jellyfin
     apiVersion: v2
     appVersion: 10.10.6
+    created: "2025-03-08T00:05:50.829914131Z"
+    description: A Helm chart for Jellyfin
+    digest: 00eaacf6d2d3b6dae220980ee42f49622f44829ad42b5f69905e66e2be35909f
+    home: https://jellyfin.org/
+    icon: https://raw.githubusercontent.com/jellyfin/jellyfin-ux/refs/heads/master/branding/NSIS/modern-install.png
+    keywords:
+    - jellyfin
+    - media
+    - Personal Media Server
+    kubeVersion: '>=1.19.0-0'
+    maintainers:
+    - email: kriegalex@gmail.com
+      name: kriegalex
+    name: jellyfin
+    sources:
+    - https://github.com/jellyfin/jellyfin
+    - https://github.com/kriegalex/k8s-charts/tree/main/charts/jellyfin
+    type: application
+    urls:
+    - https://github.com/kriegalex/k8s-charts/releases/download/jellyfin-0.2.3/jellyfin-0.2.3.tgz
+    version: 0.2.3
+  - annotations:
+      artifacthub.io/images: |
+        - name: jellyfin
+          image: jellyfin/jellyfin:10.10.6
+      artifacthub.io/links: |
+        - name: Chart source
+          url: https://github.com/kriegalex/k8s-charts/tree/main/charts/jellyfin
+        - name: Docker image source
+          url: https://github.com/jellyfin/jellyfin
+    apiVersion: v2
+    appVersion: 10.10.6
     created: "2025-03-07T16:49:40.753643778Z"
     description: A Helm chart for Jellyfin
     digest: 28183403cd8bb6e9979ac04c7a8f88794793b54c970279daf734316a08e61af6
@@ -356,6 +454,39 @@ entries:
     - https://github.com/kriegalex/k8s-charts/releases/download/jellyfin-0.1.0/jellyfin-0.1.0.tgz
     version: 0.1.0
   palworld-server:
+  - annotations:
+      artifacthub.io/images: |
+        - name: palworld-server-docker
+          image: thijsvanloef/palworld-server-docker:v1.2.3
+      artifacthub.io/links: |
+        - name: Chart source
+          url: https://github.com/kriegalex/k8s-charts/tree/main/charts/palworld-server
+        - name: Docker image source
+          url: https://github.com/thijsvanloef/palworld-server-docker
+    apiVersion: v2
+    appVersion: v1.2.3
+    created: "2025-03-08T00:05:51.004614425Z"
+    description: This Helm chart deploys a Palworld dedicated game server on a Kubernetes
+      cluster.
+    digest: d18db80c0b1e44c53310799f9119c5f6635c74bff21897a3f3bdba1f175031f2
+    home: https://www.pocketpair.jp/palworld
+    icon: https://cdn2.steamgriddb.com/icon/82cf0712367108660c5339a4897a728e/32/128x128.png
+    keywords:
+    - palworld
+    - game
+    - gameserver
+    - dedicated server
+    maintainers:
+    - email: kriegalex@gmail.com
+      name: kriegalex
+    name: palworld-server
+    sources:
+    - https://github.com/thijsvanloef/palworld-server-docker
+    - https://github.com/kriegalex/k8s-charts/tree/main/charts/palworld-server
+    type: application
+    urls:
+    - https://github.com/kriegalex/k8s-charts/releases/download/palworld-server-1.0.6/palworld-server-1.0.6.tgz
+    version: 1.0.6
   - annotations:
       artifacthub.io/images: |
         - name: palworld-server-docker
@@ -479,6 +610,40 @@ entries:
     - https://github.com/kriegalex/k8s-charts/releases/download/palworld-server-1.0.1/palworld-server-1.0.1.tgz
     version: 1.0.1
   qbittorrent:
+  - annotations:
+      artifacthub.io/images: |
+        - name: qbittorrent
+          image: hotio/qbittorrent:legacy-4.3.9
+      artifacthub.io/links: |
+        - name: Chart source
+          url: https://github.com/kriegalex/k8s-charts/tree/main/charts/qbittorrent
+        - name: Docker image source
+          url: https://github.com/hotio/qbittorrent
+    apiVersion: v2
+    appVersion: legacy-4.3.9
+    created: "2025-03-08T00:05:51.173717157Z"
+    description: A Helm chart for deploying a QBittorrent client that uses a wireguard
+      VPN tunnel.
+    digest: 53b87de3138ab6727de4b453fbabb2a02fecc7218c576e473cde0b059a92bdcc
+    home: https://www.qbittorrent.org/
+    icon: https://cloud.githubusercontent.com/assets/14862437/23586868/89ef2922-01c4-11e7-869c-52aafcece17f.png
+    keywords:
+    - qbittorrent
+    - torrent
+    - vpn
+    kubeVersion: '>=1.19.0-0'
+    maintainers:
+    - email: kriegalex@gmail.com
+      name: kriegalex
+    name: qbittorrent
+    sources:
+    - https://github.com/qbittorrent/qBittorrent
+    - https://github.com/hotio/qbittorrent
+    - https://github.com/kriegalex/k8s-charts/tree/main/charts/qbittorrent
+    type: application
+    urls:
+    - https://github.com/kriegalex/k8s-charts/releases/download/qbittorrent-1.3.3/qbittorrent-1.3.3.tgz
+    version: 1.3.3
   - annotations:
       artifacthub.io/images: |
         - name: qbittorrent
@@ -664,4 +829,4 @@ entries:
     urls:
     - https://github.com/kriegalex/k8s-charts/releases/download/qbittorrent-0.1.0/qbittorrent-0.1.0.tgz
     version: 0.1.0
-generated: "2025-03-07T16:49:41.0023037Z"
+generated: "2025-03-08T00:05:51.173817485Z"
