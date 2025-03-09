@@ -497,6 +497,39 @@ entries:
           url: https://github.com/thijsvanloef/palworld-server-docker
     apiVersion: v2
     appVersion: v1.2.3
+    created: "2025-03-09T12:19:44.59610569Z"
+    description: This Helm chart deploys a Palworld dedicated game server on a Kubernetes
+      cluster.
+    digest: 9d4d93296b131a3ea639eac32b287014540894340d7341f4f845f1d455588845
+    home: https://www.pocketpair.jp/palworld
+    icon: https://cdn2.steamgriddb.com/icon/82cf0712367108660c5339a4897a728e/32/128x128.png
+    keywords:
+    - palworld
+    - game
+    - gameserver
+    - dedicated server
+    maintainers:
+    - email: kriegalex@gmail.com
+      name: kriegalex
+    name: palworld-server
+    sources:
+    - https://github.com/thijsvanloef/palworld-server-docker
+    - https://github.com/kriegalex/k8s-charts/tree/main/charts/palworld-server
+    type: application
+    urls:
+    - https://github.com/kriegalex/k8s-charts/releases/download/palworld-server-1.0.7/palworld-server-1.0.7.tgz
+    version: 1.0.7
+  - annotations:
+      artifacthub.io/images: |
+        - name: palworld-server-docker
+          image: thijsvanloef/palworld-server-docker:v1.2.3
+      artifacthub.io/links: |
+        - name: Chart source
+          url: https://github.com/kriegalex/k8s-charts/tree/main/charts/palworld-server
+        - name: Docker image source
+          url: https://github.com/thijsvanloef/palworld-server-docker
+    apiVersion: v2
+    appVersion: v1.2.3
     created: "2025-03-08T00:05:51.004614425Z"
     description: This Helm chart deploys a Palworld dedicated game server on a Kubernetes
       cluster.
@@ -642,6 +675,40 @@ entries:
     - https://github.com/kriegalex/k8s-charts/releases/download/palworld-server-1.0.1/palworld-server-1.0.1.tgz
     version: 1.0.1
   qbittorrent:
+  - annotations:
+      artifacthub.io/images: |
+        - name: qbittorrent
+          image: hotio/qbittorrent:legacy-4.3.9
+      artifacthub.io/links: |
+        - name: Chart source
+          url: https://github.com/kriegalex/k8s-charts/tree/main/charts/qbittorrent
+        - name: Docker image source
+          url: https://github.com/hotio/qbittorrent
+    apiVersion: v2
+    appVersion: legacy-4.3.9
+    created: "2025-03-09T12:19:44.697028953Z"
+    description: A Helm chart for deploying a QBittorrent client that uses a wireguard
+      VPN tunnel.
+    digest: ec6696484b82dde9292aaf29f803409a0147f9b751a2156f82953aabb7fb2c56
+    home: https://www.qbittorrent.org/
+    icon: https://cloud.githubusercontent.com/assets/14862437/23586868/89ef2922-01c4-11e7-869c-52aafcece17f.png
+    keywords:
+    - qbittorrent
+    - torrent
+    - vpn
+    kubeVersion: '>=1.19.0-0'
+    maintainers:
+    - email: kriegalex@gmail.com
+      name: kriegalex
+    name: qbittorrent
+    sources:
+    - https://github.com/qbittorrent/qBittorrent
+    - https://github.com/hotio/qbittorrent
+    - https://github.com/kriegalex/k8s-charts/tree/main/charts/qbittorrent
+    type: application
+    urls:
+    - https://github.com/kriegalex/k8s-charts/releases/download/qbittorrent-1.3.5/qbittorrent-1.3.5.tgz
+    version: 1.3.5
   - annotations:
       artifacthub.io/images: |
         - name: qbittorrent
@@ -895,4 +962,37 @@ entries:
     urls:
     - https://github.com/kriegalex/k8s-charts/releases/download/qbittorrent-0.1.0/qbittorrent-0.1.0.tgz
     version: 0.1.0
-generated: "2025-03-08T00:37:07.045002579Z"
+  valheim-server:
+  - annotations:
+      artifacthub.io/images: |
+        - name: valheim
+          image: mbround18/valheim:3.1.0
+      artifacthub.io/links: |
+        - name: Chart source
+          url: https://github.com/kriegalex/k8s-charts/tree/main/charts/valheim-server
+        - name: Docker image source
+          url: https://github.com/mbround18/valheim-docker
+    apiVersion: v2
+    appVersion: 3.1.0
+    created: "2025-03-09T12:19:44.81856927Z"
+    description: A Helm chart for deploying a Valheim dedicated server on Kubernetes
+    digest: 5cc44d3c5b71e8467bf925abf8212a61c504430782b3544a05afdd0d63b83eee
+    home: https://www.valheimgame.com/
+    icon: https://cdn2.steamgriddb.com/icon/d17892563a6984845a0e23df7841f903/32/256x256.png
+    keywords:
+    - game
+    - valheim
+    - gameserver
+    - dedicated-server
+    maintainers:
+    - email: kriegalex@gmail.com
+      name: kriegalex
+    name: valheim-server
+    sources:
+    - https://github.com/mbround18/valheim-docker
+    - https://github.com/kriegalex/k8s-charts/tree/main/charts/valheim-server
+    type: application
+    urls:
+    - https://github.com/kriegalex/k8s-charts/releases/download/valheim-server-1.0.0/valheim-server-1.0.0.tgz
+    version: 1.0.0
+generated: "2025-03-09T12:19:44.818643799Z"
