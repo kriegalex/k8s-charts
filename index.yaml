@@ -529,6 +529,37 @@ entries:
           url: https://github.com/scsibug/nostr-rs-relay
     apiVersion: v2
     appVersion: 0.9.0
+    created: "2025-03-17T02:53:15.82139469Z"
+    description: A Helm chart for deploying a Nostr RS Relay
+    digest: 0fc61cafc25d3da1d50983a2650697275cf451acc9fa48c248e5fa96d210d5fd
+    home: https://nostr.com/
+    icon: https://user-images.githubusercontent.com/99301796/219900773-d6d02038-e2a0-4334-9f28-c14d40ab6fe7.png
+    keywords:
+    - nostr
+    - relay
+    maintainers:
+    - email: kriegalex@gmail.com
+      name: kriegalex
+    name: nostr-relay
+    sources:
+    - https://github.com/scsibug/nostr-rs-relay
+    - https://hub.docker.com/r/scsibug/nostr-rs-relay
+    - https://github.com/kriegalex/k8s-charts/tree/main/charts/nostr-relay
+    type: application
+    urls:
+    - https://github.com/kriegalex/k8s-charts/releases/download/nostr-relay-1.0.1/nostr-relay-1.0.1.tgz
+    version: 1.0.1
+  - annotations:
+      artifacthub.io/images: |
+        - name: nostr-rs-relay
+          image: scsibug/nostr-rs-relay:0.9.0
+      artifacthub.io/links: |
+        - name: Chart source
+          url: https://github.com/kriegalex/k8s-charts/tree/main/charts/nostr-relay
+        - name: Docker image source
+          url: https://github.com/scsibug/nostr-rs-relay
+    apiVersion: v2
+    appVersion: 0.9.0
     created: "2025-03-17T02:32:11.947652128Z"
     description: A Helm chart for deploying a Nostr RS Relay
     digest: 6d843ab687963edf5dc1d7328a0806e8fcfdd7b91f8546f869725dd92265e4d1
@@ -1092,4 +1123,4 @@ entries:
     urls:
     - https://github.com/kriegalex/k8s-charts/releases/download/valheim-server-1.0.0/valheim-server-1.0.0.tgz
     version: 1.0.0
-generated: "2025-03-17T02:32:11.947737678Z"
+generated: "2025-03-17T02:53:15.821472475Z"
