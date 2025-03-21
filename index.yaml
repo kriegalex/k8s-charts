@@ -153,6 +153,43 @@ entries:
     urls:
     - https://github.com/kriegalex/k8s-charts/releases/download/actual-budget-0.1.0/actual-budget-0.1.0.tgz
     version: 0.1.0
+  bitcoin-stack:
+  - annotations:
+      artifacthub.io/images: |
+        - name: bitcoind
+          image: blockstream/bitcoind:27.2
+      artifacthub.io/links: |
+        - name: Chart source
+          url: https://github.com/kriegalex/k8s-charts/tree/main/charts/bitcoin-core
+        - name: Docker image source
+          url: https://github.com/Blockstream/bitcoin-images/tree/master/bitcoind
+    apiVersion: v2
+    appVersion: "27.2"
+    created: "2025-03-21T18:36:48.231117098Z"
+    description: 'A Helm chart for deploying a full Bitcoin stack: bitcoind, and more
+      to come.'
+    digest: 29640878fd112d3fa968c898aaf59f5d776b931cce6f8234c53ae253d086960f
+    home: https://bitcoincore.org/
+    icon: https://bitcoin.org/img/icons/logotop.svg
+    keywords:
+    - bitcoin
+    - cryptocurrency
+    - blockchain
+    - bitcoin-core
+    - node
+    maintainers:
+    - email: kriegalex@gmail.com
+      name: kriegalex
+    name: bitcoin-stack
+    sources:
+    - https://github.com/Blockstream/bitcoin-images/tree/master/bitcoind
+    - https://github.com/jamesob/docker-bitcoind
+    - https://github.com/bitcoin/bitcoin
+    - https://github.com/kriegalex/k8s-charts/tree/main/charts/bitcoin-core
+    type: application
+    urls:
+    - https://github.com/kriegalex/k8s-charts/releases/download/bitcoin-stack-1.0.0/bitcoin-stack-1.0.0.tgz
+    version: 1.0.0
   enshrouded-server:
   - annotations:
       artifacthub.io/images: |
@@ -1124,4 +1161,4 @@ entries:
     urls:
     - https://github.com/kriegalex/k8s-charts/releases/download/valheim-server-1.0.0/valheim-server-1.0.0.tgz
     version: 1.0.0
-generated: "2025-03-18T18:00:21.862508339Z"
+generated: "2025-03-21T18:36:48.231196927Z"
