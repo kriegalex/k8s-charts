@@ -598,6 +598,37 @@ entries:
           url: https://github.com/dockur/strfry
     apiVersion: v2
     appVersion: 1.0.4
+    created: "2025-03-24T18:58:44.531553694Z"
+    description: A Helm chart for deploying a Nostr strfry relay
+    digest: 89b3ac2d0283a2010a83b0fb8158cebee70a175135609e984504972f0f5bc9e8
+    home: https://nostr.com/
+    icon: https://user-images.githubusercontent.com/99301796/219900773-d6d02038-e2a0-4334-9f28-c14d40ab6fe7.png
+    keywords:
+    - nostr
+    - relay
+    maintainers:
+    - email: kriegalex@gmail.com
+      name: kriegalex
+    name: nostr-strfry
+    sources:
+    - https://github.com/hoytech/strfry
+    - https://github.com/dockur/strfry
+    - https://github.com/kriegalex/k8s-charts/tree/main/charts/nostr-strfry
+    type: application
+    urls:
+    - https://github.com/kriegalex/k8s-charts/releases/download/nostr-strfry-1.1.1/nostr-strfry-1.1.1.tgz
+    version: 1.1.1
+  - annotations:
+      artifacthub.io/images: |
+        - name: strfry
+          image: dockurr/strfry:1.0.4
+      artifacthub.io/links: |
+        - name: Chart source
+          url: https://github.com/kriegalex/k8s-charts/tree/main/charts/nostr-strfry
+        - name: Docker image source
+          url: https://github.com/dockur/strfry
+    apiVersion: v2
+    appVersion: 1.0.4
     created: "2025-03-24T18:41:02.24115275Z"
     description: A Helm chart for deploying a Nostr strfry relay
     digest: b815ee6872d32672586a6d193fd700fa1cf7ade96dcf4d09f0f9be497496f268
@@ -1192,4 +1223,4 @@ entries:
     urls:
     - https://github.com/kriegalex/k8s-charts/releases/download/valheim-server-1.0.0/valheim-server-1.0.0.tgz
     version: 1.0.0
-generated: "2025-03-24T18:41:02.241234032Z"
+generated: "2025-03-24T18:58:44.531649092Z"
