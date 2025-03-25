@@ -167,7 +167,7 @@ electrs:
     limits:
       cpu: 2000m
       memory: 4Gi
-  # -- Electrs configuration options
+  # Electrs configuration options
   config:
     # -- Option to enable JSON-RPC API
     jsonrpcEnabled: false
@@ -178,7 +178,7 @@ electrs:
     # -- REST API port
     httpPort: 3000
     # -- Monitoring server port
-    monitoringPort: 4225
+    monitoringPort: 4224
     # -- Enable address search index
     addressSearch: true
     # -- Whether to prepend log lines with timestamps
@@ -188,9 +188,12 @@ electrs:
     # -- Additional command line arguments for electrs
     extraArgs: []
     #  - "--lightmode"
-  # -- Persistence for electrs database
+  # Persistence for electrs database
   persistence:
     enabled: false
+    # -- Use an existing PVC for electrs data
+    # @default -- ""
+    existingClaim: ""
     size: 100Gi
     storageClass: ""
     accessModes:
