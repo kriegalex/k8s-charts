@@ -63,13 +63,7 @@ You may need to customize additional settings or even modify the templates for c
 To access the Bitcoin Core RPC from within the cluster:
 
 ```bash
-kubectl exec -it sts/bitcoin-stack-0 -- bitcoin-cli -rpcuser=YOUR_RPC_USER -rpcpassword=YOUR_RPC_PASSWORD getblockchaininfo
-```
-
-To retrieve the auto-generated RPC password (if not manually set):
-
-```bash
-kubectl get secret bitcoin-stack-auth -o jsonpath="{.data.RPC_PASSWORD}" | base64 --decode
+kubectl exec -it sts/bitcoin-stack-0 -- bitcoin-cli -rpccookiefile=/root/.bitcoin/.cookie getblockchaininfo
 ```
 
 ### Port Forwarding
@@ -168,16 +162,30 @@ bitcoind:
 | affinity | object | {} | Affinity for pod assignment |
 | bitcoind.config | string | "" | bitcoin.conf file content @description -- If provided, this will be mounted as a configuration file. The user and password come from the secret and are passed directly to the command. |
 | bitcoind.configFile | string | `"/root/.bitcoin/bitcoin.conf"` | Path where bitcoin.conf should be mounted when using custom config Replaces conf in the configuration file |
+| bitcoind.cookieFile | string | `"/root/.bitcoin/.cookie"` | Path where the RPC cookie file should be mounted |
 | bitcoind.dataDir | string | `"/root/.bitcoin"` | Directory where Bitcoin Core stores blockchain data Replaces datadir in the configuration file |
 | bitcoind.regtest | int | `0` | Enable regtest mode (local testing) |
-| bitcoind.rpc.password | string | "" | Password for RPC authentication @description -- If not provided, a random password will be generated |
 | bitcoind.rpc.port | int | `8333` | Port for P2P connections |
 | bitcoind.rpc.rpcPort | int | `8332` | Port for RPC interface |
-| bitcoind.rpc.user | string | `"btc"` | Username for RPC authentication |
 | bitcoind.testnet | int | `0` | Enable testnet instead of mainnet |
 | diagnosticMode.args[0] | string | `"infinity"` |  |
 | diagnosticMode.command[0] | string | `"sleep"` |  |
 | diagnosticMode.enabled | bool | `false` |  |
+| electrs.config | object | `{"addressSearch":true,"corsEnabled":true,"electrumPort":50001,"electrumSslPort":50002,"extraArgs":[],"httpPort":3000,"jsonrpcEnabled":false,"monitoringPort":4225,"timestamp":false}` | Electrs configuration options |
+| electrs.config.addressSearch | bool | `true` | Enable address search index |
+| electrs.config.corsEnabled | bool | `true` | CORS configuration for HTTP API |
+| electrs.config.electrumPort | int | `50001` | Electrum TCP port |
+| electrs.config.electrumSslPort | int | `50002` | Electrum SSL port |
+| electrs.config.extraArgs | list | `[]` | Additional command line arguments for electrs |
+| electrs.config.httpPort | int | `3000` | REST API port |
+| electrs.config.jsonrpcEnabled | bool | `false` | Option to enable JSON-RPC API |
+| electrs.config.monitoringPort | int | `4225` | Monitoring server port |
+| electrs.config.timestamp | bool | `false` | Whether to prepend log lines with timestamps |
+| electrs.enabled | bool | `false` | Enable electrs component |
+| electrs.image | object | `{"pullPolicy":"IfNotPresent","repository":"mempool/electrs","tag":"latest"}` | Electrs image configuration |
+| electrs.persistence | object | `{"accessModes":["ReadWriteOnce"],"enabled":false,"size":"100Gi","storageClass":""}` | Persistence for electrs database |
+| electrs.resources | object | `{"limits":{"cpu":"2000m","memory":"4Gi"},"requests":{"cpu":"500m","memory":"1Gi"}}` | Resource requirements for electrs |
+| electrs.service | object | `{"httpPort":3000,"rpcPort":50001,"type":"ClusterIP"}` | Service configuration for electrs |
 | fullnameOverride | string | `""` | String to fully override bitcoin-core.fullname template |
 | image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
 | image.repository | string | `"blockstream/bitcoind"` | Docker repository for Bitcoin Core image |
@@ -188,13 +196,21 @@ bitcoind:
 | ingress.enabled | bool | `false` | Enable ingress for Bitcoin Core RPC |
 | ingress.hosts | list | [{ host: bitcoin-rpc.local }] | Ingress hosts configuration |
 | ingress.tls | list | [] | Ingress TLS configuration |
-| metrics.enabled | bool | `false` | Enable Prometheus metrics exporter sidecar |
-| metrics.image | string | `"prometheuscommunity/bitcoin-exporter:latest"` | Container image for metrics |
-| metrics.port | int | `9332` | Metrics container port |
-| metrics.pullPolicy | string | `"IfNotPresent"` | Metrics image pull policy |
-| metrics.resources | object | `{"limits":{"cpu":"200m","memory":"256Mi"},"requests":{"cpu":"100m","memory":"128Mi"}}` | Resources for metrics container |
-| metrics.serviceAnnotations | object | `{"prometheus.io/port":"9332","prometheus.io/scrape":"true"}` | Metrics service annotations |
-| metrics.servicePort | int | `9332` | Metrics service port |
+| mempool.backend.config | object | `{"backend":"esplora","network":"mainnet"}` | Configuration for mempool backend |
+| mempool.backend.config.backend | string | `"esplora"` | Backend type (electrum or esplora) |
+| mempool.backend.config.network | string | `"mainnet"` | Network (mainnet, testnet, etc.) |
+| mempool.backend.image | object | `{"pullPolicy":"IfNotPresent","repository":"mempool/backend","tag":"v2.5.1"}` | Mempool backend image configuration |
+| mempool.backend.resources | object | `{"limits":{"cpu":"1000m","memory":"1Gi"},"requests":{"cpu":"200m","memory":"256Mi"}}` | Resource requirements for mempool backend |
+| mempool.db | object | `{"auth":{"database":"mempool","password":"mempool","rootPassword":"mempool","username":"mempool"},"image":{"pullPolicy":"IfNotPresent","repository":"mariadb","tag":"10.5.21"},"persistence":{"accessModes":["ReadWriteOnce"],"enabled":false,"size":"10Gi","storageClass":""},"resources":{"limits":{"cpu":"1000m","memory":"1Gi"},"requests":{"cpu":"200m","memory":"256Mi"}}}` | Mempool database configuration |
+| mempool.db.auth | object | `{"database":"mempool","password":"mempool","rootPassword":"mempool","username":"mempool"}` | Database credentials |
+| mempool.db.image | object | `{"pullPolicy":"IfNotPresent","repository":"mariadb","tag":"10.5.21"}` | MariaDB image configuration |
+| mempool.db.persistence | object | `{"accessModes":["ReadWriteOnce"],"enabled":false,"size":"10Gi","storageClass":""}` | Persistence for database |
+| mempool.db.resources | object | `{"limits":{"cpu":"1000m","memory":"1Gi"},"requests":{"cpu":"200m","memory":"256Mi"}}` | Resource requirements for database |
+| mempool.enabled | bool | `false` | Enable mempool component |
+| mempool.frontend.image | object | `{"pullPolicy":"IfNotPresent","repository":"mempool/frontend","tag":"v2.5.1"}` | Mempool frontend image configuration |
+| mempool.frontend.resources | object | `{"limits":{"cpu":"500m","memory":"512Mi"},"requests":{"cpu":"100m","memory":"128Mi"}}` | Resource requirements for mempool frontend |
+| mempool.ingress | object | `{"annotations":{},"className":"","enabled":false,"hosts":[{"host":"mempool.local","paths":[{"path":"/","pathType":"ImplementationSpecific"}]}],"tls":[]}` | Ingress configuration for mempool frontend |
+| mempool.service | object | `{"port":80,"type":"ClusterIP"}` | Service configuration for mempool frontend |
 | nameOverride | string | `""` | String to partially override bitcoin-core.fullname template |
 | networkPolicy.allowIngressController | bool | `false` | Allow Ingress controller to connect to Bitcoin RPC when using Ingress |
 | networkPolicy.enabled | bool | `false` | Enable network policy for Bitcoin Core |

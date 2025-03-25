@@ -2,13 +2,13 @@
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: {{ include "bitcoind.fullname" . }}
+  name: {{ include "bitcoin-stack.fullname" . }}
   labels:
-    {{- include "bitcoind.labels" . | nindent 4 }}
+    {{- include "bitcoin-stack.labels" . | nindent 4 }}
 spec:
   podSelector:
     matchLabels:
-      {{- include "bitcoind.selectorLabels" . | nindent 6 }}
+      {{- include "bitcoin-stack.selectorLabels" . | nindent 6 }}
   policyTypes:
     - Ingress
   ingress:

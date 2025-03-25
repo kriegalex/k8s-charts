@@ -1,0 +1,48 @@
+{{- if .Values.mempool.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "bitcoin-stack.fullname" . }}-mempool-frontend
+  labels:
+    {{- include "bitcoin-stack.labels" . | nindent 4 }}
+    app.kubernetes.io/component: mempool-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "bitcoin-stack.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: mempool-frontend
+  template:
+    metadata:
+      labels:
+        {{- include "bitcoin-stack.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: mempool-frontend
+    spec:
+      containers:
+        - name: mempool-frontend
+          image: "{{ .Values.mempool.frontend.image.repository }}:{{ .Values.mempool.frontend.image.tag }}"
+          imagePullPolicy: {{ .Values.mempool.frontend.image.pullPolicy }}
+          env:
+            - name: FRONTEND_HTTP_PORT
+              value: "8080"
+            - name: BACKEND_MAINNET_HTTP_HOST
+              value: {{ include "bitcoin-stack.fullname" . }}-mempool-backend
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.mempool.frontend.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}

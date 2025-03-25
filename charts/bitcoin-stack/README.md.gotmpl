@@ -63,13 +63,7 @@ You may need to customize additional settings or even modify the templates for c
 To access the Bitcoin Core RPC from within the cluster:
 
 ```bash
-kubectl exec -it sts/bitcoin-stack-0 -- bitcoin-cli -rpcuser=YOUR_RPC_USER -rpcpassword=YOUR_RPC_PASSWORD getblockchaininfo
-```
-
-To retrieve the auto-generated RPC password (if not manually set):
-
-```bash
-kubectl get secret bitcoin-stack-auth -o jsonpath="{.data.RPC_PASSWORD}" | base64 --decode
+kubectl exec -it sts/bitcoin-stack-0 -- bitcoin-cli -rpccookiefile=/root/.bitcoin/.cookie getblockchaininfo
 ```
 
 ### Port Forwarding

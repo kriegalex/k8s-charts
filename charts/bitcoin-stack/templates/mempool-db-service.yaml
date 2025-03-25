@@ -1,0 +1,19 @@
+{{- if .Values.mempool.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "bitcoin-stack.fullname" . }}-mempool-db
+  labels:
+    {{- include "bitcoin-stack.labels" . | nindent 4 }}
+    app.kubernetes.io/component: mempool-db
+spec:
+  type: ClusterIP
+  ports:
+    - name: mysql
+      port: 3306
+      targetPort: mysql
+      protocol: TCP
+  selector:
+    {{- include "bitcoin-stack.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: mempool-db
+{{- end }}

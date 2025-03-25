@@ -1,5 +1,5 @@
 {{- if .Values.ingress.enabled }}
-{{- $fullName := include "bitcoind.fullname" . }}
+{{- $fullName := include "bitcoin-stack.fullname" . }}
 {{- $svcPort := .Values.bitcoind.rpc.rpcPort }}
 {{- if and .Values.ingress.className (not (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion)) }}
   {{- if not (hasKey .Values.ingress.annotations "kubernetes.io/ingress.class") }}
@@ -11,7 +11,7 @@ kind: Ingress
 metadata:
   name: {{ $fullName }}
   labels:
-    {{- include "bitcoind.labels" . | nindent 4 }}
+    {{- include "bitcoin-stack.labels" . | nindent 4 }}
   {{- with .Values.ingress.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}

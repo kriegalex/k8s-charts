@@ -1,0 +1,19 @@
+{{- if .Values.mempool.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "bitcoin-stack.fullname" . }}-mempool-backend
+  labels:
+    {{- include "bitcoin-stack.labels" . | nindent 4 }}
+    app.kubernetes.io/component: mempool-backend
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 8999
+      targetPort: http
+      protocol: TCP
+  selector:
+    {{- include "bitcoin-stack.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: mempool-backend
+{{- end }}
