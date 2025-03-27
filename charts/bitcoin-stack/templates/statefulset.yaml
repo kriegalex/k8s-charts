@@ -133,37 +133,23 @@ spec:
           image: "{{ .Values.electrs.image.repository }}:{{ .Values.electrs.image.tag }}"
           imagePullPolicy: {{ .Values.electrs.image.pullPolicy }}
           command:
-            - /scripts/wait-for-bitcoin.sh
-          args:
             - /bin/electrs
-            - --daemon-rpc-addr=127.0.0.1:{{ .Values.bitcoind.rpc.rpcPort }}
-            - --daemon-dir={{ .Values.bitcoind.dataDir }}
-            - --db-dir=/electrs
-            - --electrum-rpc-addr={{ .Values.electrs.config.electrumRpcAddr }}:{{ .Values.electrs.service.rpcPort }}
-            - --http-addr={{ .Values.electrs.config.httpAddr }}:{{ .Values.electrs.service.httpPort }}
-            {{- if .Values.electrs.config.jsonrpcEnabled }}
-            - --jsonrpc-import
-            {{- end }}
-            {{- if .Values.electrs.config.corsEnabled }}
-            - --cors='*'
-            {{- end }}
-            {{- if .Values.electrs.config.addressSearch }}
-            - --address-search
-            {{- end }}
-            - --monitoring-addr={{ .Values.electrs.config.monitoringAddr }}:{{ .Values.electrs.service.monitoringPort }}
-            {{- if .Values.electrs.config.timestamp }}
+          args:
             - --timestamp
-            {{- end }}
+            - -v
+            - --daemon-dir={{ .Values.bitcoind.dataDir }}
+            - --db-dir={{ .Values.electrs.config.dbDir }}
+            - --cors='*'
             {{- with .Values.electrs.config.extraArgs }}
             {{- range . }}
             - {{ . }}
             {{- end }}
             {{- end }}
-          env:
-            - name: RUST_BACKTRACE
-              value: "1"
-            - name: COOKIE_FILE
-              value: "{{ .Values.bitcoind.cookieFile }}"
+          # Add lifecycle hook to ensure clean shutdown
+          lifecycle:
+            preStop:
+              exec:
+                command: ["sh", "-c", "kill -TERM 1"]
           ports:
             - name: electrum-rpc
               containerPort: {{ .Values.electrs.service.rpcPort }}
@@ -180,21 +166,38 @@ spec:
               readOnly: true
             # Mount a separate directory for electrs database
             - name: electrs-db
-              mountPath: /electrs
-            # Mount scripts
-            - name: electrs-scripts
-              mountPath: /scripts
+              mountPath: {{ .Values.electrs.config.dbDir }}
+        {{- end }}
+        {{- if .Values.electrs.logTailer.enabled }}
+        - name: log-tailer
+          image: "{{ .Values.electrs.logTailer.image.repository }}:{{ .Values.electrs.logTailer.image.tag }}"
+          command:
+            - /bin/sh
+            - -c
+            - |
+              until [ -f {{ .Values.electrs.config.dbDir }}/mainnet/newindex/txstore/LOG ]; do
+                echo "Waiting for log file to be created..."
+                sleep {{ .Values.electrs.logTailer.pollInterval }}
+              done
+              # The -n option tells tail to output only the specified number of lines initially
+              # preventing large memory usage if the log file is already large
+              exec tail -n {{ .Values.electrs.logTailer.initialLines }} -F {{ .Values.electrs.config.dbDir }}/mainnet/newindex/txstore/LOG
+          resources:
+            {{- toYaml .Values.electrs.logTailer.resources | nindent 12 }}
+          # Add lifecycle hook to ensure clean shutdown
+          lifecycle:
+            preStop:
+              exec:
+                command: ["sh", "-c", "kill -TERM 1"]
+          volumeMounts:
+            - name: electrs-db
+              mountPath: {{ .Values.electrs.config.dbDir }}
+              readOnly: true
         {{- end }}
       volumes:
         - name: config
           configMap:
             name: {{ include "bitcoin-stack.fullname" . }}-config
-        {{- if .Values.electrs.enabled }}
-        - name: electrs-scripts
-          configMap:
-            name: {{ include "bitcoin-stack.fullname" . }}-electrs-scripts
-            defaultMode: 0755
-        {{- end }}
         {{- if not .Values.persistence.enabled }}
         - name: data
           emptyDir: {}
