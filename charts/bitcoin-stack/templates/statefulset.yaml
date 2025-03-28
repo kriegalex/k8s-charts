@@ -1,15 +1,18 @@
+# First StatefulSet for bitcoind
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: {{ include "bitcoin-stack.fullname" . }}
+  name: {{ include "bitcoin-stack.fullname" . }}-bitcoind
   labels:
     {{- include "bitcoin-stack.labels" . | nindent 4 }}
+    app.kubernetes.io/component: bitcoind
 spec:
   replicas: 1
-  serviceName: {{ include "bitcoin-stack.fullname" . }}
+  serviceName: {{ include "bitcoin-stack.fullname" . }}-bitcoind
   selector:
     matchLabels:
       {{- include "bitcoin-stack.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: bitcoind
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -18,6 +21,7 @@ spec:
       {{- end }}
       labels:
         {{- include "bitcoin-stack.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: bitcoind
     spec:
       # Set termination grace period to 5 minutes to allow graceful shutdown
       terminationGracePeriodSeconds: 300
@@ -51,7 +55,7 @@ spec:
           {{- end }}
       {{- end }}
       containers:
-        - name: {{ .Chart.Name }}
+        - name: bitcoind
           {{- if .Values.securityContext.enabled }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
@@ -128,72 +132,6 @@ spec:
             - name: config
               mountPath: {{ .Values.bitcoind.configFile }}
               subPath: bitcoin.conf
-        {{- if .Values.electrs.enabled }}
-        - name: electrs
-          image: "{{ .Values.electrs.image.repository }}:{{ .Values.electrs.image.tag }}"
-          imagePullPolicy: {{ .Values.electrs.image.pullPolicy }}
-          command:
-            - /bin/electrs
-          args:
-            - --timestamp
-            - -v
-            - --daemon-dir={{ .Values.bitcoind.dataDir }}
-            - --db-dir={{ .Values.electrs.config.dbDir }}
-            - --cors='*'
-            {{- with .Values.electrs.config.extraArgs }}
-            {{- range . }}
-            - {{ . }}
-            {{- end }}
-            {{- end }}
-          # Add lifecycle hook to ensure clean shutdown
-          lifecycle:
-            preStop:
-              exec:
-                command: ["sh", "-c", "kill -TERM 1"]
-          ports:
-            - name: electrum-rpc
-              containerPort: {{ .Values.electrs.service.rpcPort }}
-            - name: http
-              containerPort: {{ .Values.electrs.service.httpPort }}
-            - name: monitoring
-              containerPort: {{ .Values.electrs.service.monitoringPort }}
-          resources:
-            {{- toYaml .Values.electrs.resources | nindent 12 }}
-          volumeMounts:
-            # Mount the bitcoin data directory to access blockchain data
-            - name: data
-              mountPath: {{ .Values.bitcoind.dataDir }}
-              readOnly: true
-            # Mount a separate directory for electrs database
-            - name: electrs-db
-              mountPath: {{ .Values.electrs.config.dbDir }}
-        {{- end }}
-        {{- if .Values.electrs.logTailer.enabled }}
-        - name: log-tailer
-          image: "{{ .Values.electrs.logTailer.image.repository }}:{{ .Values.electrs.logTailer.image.tag }}"
-          command:
-            - /bin/sh
-            - -c
-            - |
-              until [ -f {{ .Values.electrs.config.dbDir }}/mainnet/newindex/txstore/LOG ]; do
-                echo "Waiting for log file to be created..."
-                sleep {{ .Values.electrs.logTailer.pollInterval }}
-              done
-              # The -n option tells tail to output only the specified number of lines initially
-              # preventing large memory usage if the log file is already large
-              exec tail -n {{ .Values.electrs.logTailer.initialLines }} -F {{ .Values.electrs.config.dbDir }}/mainnet/newindex/txstore/LOG
-          resources:
-            {{- toYaml .Values.electrs.logTailer.resources | nindent 12 }}
-          # Add lifecycle hook to ensure clean shutdown
-          lifecycle:
-            preStop:
-              exec:
-                command: ["sh", "-c", "kill -TERM 1"]
-          volumeMounts:
-            - name: electrs-db
-              mountPath: {{ .Values.electrs.config.dbDir }}
-              readOnly: true
-        {{- end }}
       volumes:
         - name: config
           configMap:
@@ -205,14 +143,6 @@ spec:
         - name: data
           persistentVolumeClaim:
             claimName: {{ .Values.persistence.existingClaim }}
-        {{- end }}
-        {{- if and .Values.electrs.enabled (not .Values.electrs.persistence.enabled) }}
-        - name: electrs-db
-          emptyDir: {}
-        {{- else if and .Values.electrs.enabled .Values.electrs.persistence.enabled .Values.electrs.persistence.existingClaim }}
-        - name: electrs-db
-          persistentVolumeClaim:
-            claimName: {{ .Values.electrs.persistence.existingClaim }}
         {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
@@ -248,7 +178,143 @@ spec:
           requests:
             storage: {{ .Values.persistence.size | quote }}
     {{- end }}
-    {{- if and .Values.electrs.enabled .Values.electrs.persistence.enabled (not .Values.electrs.persistence.existingClaim) }}
+
+---
+# Second StatefulSet for electrs and log-tailer
+{{- if .Values.electrs.enabled }}
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "bitcoin-stack.fullname" . }}-electrs
+  labels:
+    {{- include "bitcoin-stack.labels" . | nindent 4 }}
+    app.kubernetes.io/component: electrs
+spec:
+  replicas: 1
+  serviceName: {{ include "bitcoin-stack.fullname" . }}-electrs
+  selector:
+    matchLabels:
+      {{- include "bitcoin-stack.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: electrs
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "bitcoin-stack.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: electrs
+    spec:
+      # Set termination grace period to allow graceful shutdown
+      terminationGracePeriodSeconds: 300
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "bitcoin-stack.serviceAccountName" . }}
+      {{- if .Values.podSecurityContext.enabled }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      {{- end }}
+
+      {{- if .Values.topologySpreadConstraints }}
+      topologySpreadConstraints:
+        {{- toYaml .Values.topologySpreadConstraints | nindent 8 }}
+      {{- end }}
+      
+      containers:
+        - name: electrs
+          image: "{{ .Values.electrs.image.repository }}:{{ .Values.electrs.image.tag }}"
+          imagePullPolicy: {{ .Values.electrs.image.pullPolicy }}
+          command:
+            - /bin/electrs
+          args:
+            - --timestamp
+            - -v
+            - --daemon-dir={{ .Values.bitcoind.dataDir }}
+            - --db-dir={{ .Values.electrs.config.dbDir }}
+            - --cors='*'
+            {{- with .Values.electrs.config.extraArgs }}
+            {{- range . }}
+            - {{ . }}
+            {{- end }}
+            {{- end }}
+          # Add lifecycle hook to ensure clean shutdown
+          lifecycle:
+            preStop:
+              exec:
+                command: ["sh", "-c", "kill -TERM 1"]
+          ports:
+            - name: electrum-rpc
+              containerPort: {{ .Values.electrs.service.rpcPort }}
+            - name: http
+              containerPort: {{ .Values.electrs.service.httpPort }}
+            - name: monitoring
+              containerPort: {{ .Values.electrs.service.monitoringPort }}
+          resources:
+            {{- toYaml .Values.electrs.resources | nindent 12 }}
+          volumeMounts:
+            # Mount the bitcoin data directory to access blockchain data
+            - name: bitcoind-data
+              mountPath: {{ .Values.bitcoind.dataDir }}
+              readOnly: true
+            # Mount a separate directory for electrs database
+            - name: electrs-db
+              mountPath: {{ .Values.electrs.config.dbDir }}
+        {{- if .Values.electrs.logTailer.enabled }}
+        - name: log-tailer
+          image: "{{ .Values.electrs.logTailer.image.repository }}:{{ .Values.electrs.logTailer.image.tag }}"
+          command:
+            - /bin/sh
+            - -c
+            - |
+              until [ -f {{ .Values.electrs.config.dbDir }}/mainnet/newindex/txstore/LOG ]; do
+                echo "Waiting for log file to be created..."
+                sleep {{ .Values.electrs.logTailer.pollInterval }}
+              done
+              # The -n option tells tail to output only the specified number of lines initially
+              # preventing large memory usage if the log file is already large
+              exec tail -n {{ .Values.electrs.logTailer.initialLines }} -F {{ .Values.electrs.config.dbDir }}/mainnet/newindex/txstore/LOG
+          resources:
+            {{- toYaml .Values.electrs.logTailer.resources | nindent 12 }}
+          # Add lifecycle hook to ensure clean shutdown
+          lifecycle:
+            preStop:
+              exec:
+                command: ["sh", "-c", "kill -TERM 1"]
+          volumeMounts:
+            - name: electrs-db
+              mountPath: {{ .Values.electrs.config.dbDir }}
+              readOnly: true
+        {{- end }}
+      volumes:
+        # Reference the bitcoind data as a PVC
+        - name: bitcoind-data
+          persistentVolumeClaim:
+            claimName: data-{{ include "bitcoin-stack.fullname" . }}-bitcoind-0
+        {{- if not .Values.electrs.persistence.enabled }}
+        - name: electrs-db
+          emptyDir: {}
+        {{- else if .Values.electrs.persistence.existingClaim }}
+        - name: electrs-db
+          persistentVolumeClaim:
+            claimName: {{ .Values.electrs.persistence.existingClaim }}
+        {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+  volumeClaimTemplates:
+    {{- if and .Values.electrs.persistence.enabled (not .Values.electrs.persistence.existingClaim) }}
     # Add PVC for electrs database
     - metadata:
         name: electrs-db
@@ -268,3 +334,4 @@ spec:
           requests:
             storage: {{ .Values.electrs.persistence.size }}
     {{- end }}
+{{- end }}
