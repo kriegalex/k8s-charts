@@ -40,7 +40,7 @@ spec:
         {{- toYaml .Values.topologySpreadConstraints | nindent 8 }}
       {{- end }}
       
-      {{- if and .Values.persistence.enabled .Values.volumePermissions.enabled }}
+      {{- if and .Values.bitcoind.persistence.enabled .Values.volumePermissions.enabled }}
       initContainers:
         - name: volume-permissions
           image: {{ .Values.volumePermissions.image | default "busybox" }}
@@ -136,13 +136,13 @@ spec:
         - name: config
           configMap:
             name: {{ include "bitcoin-stack.fullname" . }}-config
-        {{- if not .Values.persistence.enabled }}
+        {{- if not .Values.bitcoind.persistence.enabled }}
         - name: data
           emptyDir: {}
-        {{- else if .Values.persistence.existingClaim }}
+        {{- else if .Values.bitcoind.persistence.existingClaim }}
         - name: data
           persistentVolumeClaim:
-            claimName: {{ .Values.persistence.existingClaim }}
+            claimName: {{ .Values.bitcoind.persistence.existingClaim }}
         {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
@@ -157,26 +157,26 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
   volumeClaimTemplates:
-    {{- if and .Values.persistence.enabled (not .Values.persistence.existingClaim) }}
+    {{- if and .Values.bitcoind.persistence.enabled (not .Values.bitcoind.persistence.existingClaim) }}
     - metadata:
         name: data
-        {{- if .Values.persistence.annotations }}
+        {{- if .Values.bitcoind.persistence.annotations }}
         annotations:
-          {{- toYaml .Values.persistence.annotations | nindent 10 }}
+          {{- toYaml .Values.bitcoind.persistence.annotations | nindent 10 }}
         {{- end }}
       spec:
         accessModes:
-          {{- toYaml .Values.persistence.accessModes | nindent 10 }}
-        {{- if .Values.persistence.storageClass }}
-        {{- if eq "-" .Values.persistence.storageClass }}
+          {{- toYaml .Values.bitcoind.persistence.accessModes | nindent 10 }}
+        {{- if .Values.bitcoind.persistence.storageClass }}
+        {{- if eq "-" .Values.bitcoind.persistence.storageClass }}
         storageClassName: ""
         {{- else }}
-        storageClassName: {{ .Values.persistence.storageClass | quote }}
+        storageClassName: {{ .Values.bitcoind.persistence.storageClass | quote }}
         {{- end }}
         {{- end }}
         resources:
           requests:
-            storage: {{ .Values.persistence.size | quote }}
+            storage: {{ .Values.bitcoind.persistence.size | quote }}
     {{- end }}
 
 ---
@@ -231,8 +231,12 @@ spec:
             - /bin/electrs
           args:
             - --timestamp
-            - -v
+            - -vv
             - --daemon-dir={{ .Values.bitcoind.dataDir }}
+            - --daemon-rpc-addr={{ .Values.electrs.config.bitcoinRpcAddr }}
+            - --electrum-rpc-addr={{ .Values.electrs.config.electrumRpcAddr }}
+            - --http-addr={{ .Values.electrs.config.httpAddr }}
+            - --monitoring-addr={{ .Values.electrs.config.monitoringAddr }}
             - --db-dir={{ .Values.electrs.config.dbDir }}
             - --cors='*'
             {{- with .Values.electrs.config.extraArgs }}
@@ -292,7 +296,7 @@ spec:
         # Reference the bitcoind data as a PVC
         - name: bitcoind-data
           persistentVolumeClaim:
-            claimName: data-{{ include "bitcoin-stack.fullname" . }}-bitcoind-0
+            claimName: {{ .Values.electrs.bitcoindDataClaimName }}
         {{- if not .Values.electrs.persistence.enabled }}
         - name: electrs-db
           emptyDir: {}
