@@ -16,6 +16,132 @@ nameOverride: ""
 # -- String to fully override bitcoin-core.fullname template
 fullnameOverride: ""
 
+# Bitcoin Core configuration
+bitcoind:
+  # -- Directory where Bitcoin Core stores blockchain data
+  # Replaces datadir in the configuration file
+  dataDir: "/root/.bitcoin"
+  # -- Path where bitcoin.conf should be mounted when using custom config
+  # Replaces conf in the configuration file
+  configFile: "/root/.bitcoin/bitcoin.conf"
+
+  # -- Enable testnet instead of mainnet
+  testnet: 0
+  # -- Enable regtest mode (local testing)
+  regtest: 0
+
+  # -- bitcoin.conf file content
+  # @description -- If provided, this will be mounted as a configuration file.
+  # The user and password come from the secret and are passed directly to the command.
+  # @default -- ""
+  config: |
+    server=1
+    txindex=1
+
+    chain=main
+    # chain=test
+    # chain=regtest
+    # chain=signet
+
+    rpcserialversion=0
+
+    rpcallowip=10.0.0.0/8
+    whitelist=10.0.0.0/8
+    rpcbind=0.0.0.0
+
+    dbcache=450
+    maxorphantx=100
+    maxmempool=300
+    nodebuglogfile=1
+
+  # RPC settings
+  rpc:
+    # -- Username for RPC authentication
+    user: "btc"
+    # -- Password for RPC authentication
+    # @description -- If not provided, a random password will be generated
+    # @default -- ""
+    password: "changeme"
+    # -- Port for RPC interface
+    rpcPort: 8332
+    # -- Port for P2P connections
+    port: 8333
+
+# Ingress configuration
+ingress:
+  # -- Enable ingress for Bitcoin Core RPC
+  enabled: false
+  # -- Ingress class name
+  # @default -- ""
+  className: ""
+  # -- Ingress annotations
+  # @default -- {}
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  # -- Ingress hosts configuration
+  # @default -- [{ host: bitcoin-rpc.local }]
+  hosts:
+    - host: bitcoin-rpc.local
+      paths:
+        - path: /
+          pathType: Prefix
+  # -- Ingress TLS configuration
+  # @default -- []
+  tls: []
+  #  - secretName: bitcoin-tls-secret
+  #    hosts:
+  #      - bitcoin-rpc.local
+
+# Persistent storage configuration for blockchain data
+persistence:
+  # -- Enable persistent storage for blockchain data
+  enabled: true
+  # -- Use an existing PVC
+  # @default -- ""
+  existingClaim: ""
+  # -- Storage class for the blockchain PVC
+  # @description -- If defined, storageClass: <storageClass>
+  # If set to "-", storageClass: "", which disables dynamic provisioning
+  # If undefined (the default) or set to null, no storageClassName spec is
+  # set, choosing the default provisioner
+  # @default -- ""
+  storageClass: ""
+  # -- Access modes for the PVC
+  accessModes:
+    - ReadWriteOnce
+  # -- Size of the PVC for blockchain data
+  size: 700Gi
+  # -- Annotations for the PVC
+  # @default -- {}
+  annotations: {}
+
+# Service configuration
+service:
+  # -- Service type
+  type: ClusterIP
+
+# -- Resource requests and limits
+resources: {}
+  # requests:
+  #   cpu: 1
+  #   memory: 2Gi
+  # limits:
+  #   cpu: 4
+  #   memory: 8Gi
+
+# -- Node selector for pod assignment
+# @default -- {}
+nodeSelector: {}
+
+# -- Tolerations for pod assignment
+# @default -- []
+tolerations: []
+
+# -- Affinity for pod assignment
+# @default -- {}
+affinity: {}
+
 ## Enable diagnostic mode in the deployment
 ##
 diagnosticMode:
@@ -74,132 +200,6 @@ volumePermissions:
   securityContext:
     enabled: true
     runAsUser: 0
-
-# Bitcoin Core configuration
-bitcoind:
-  # -- Directory where Bitcoin Core stores blockchain data
-  # Replaces datadir in the configuration file
-  dataDir: "/root/.bitcoin"
-  # -- Path where bitcoin.conf should be mounted when using custom config
-  # Replaces conf in the configuration file
-  configFile: "/root/.bitcoin/bitcoin.conf"
-
-  # -- Enable testnet instead of mainnet
-  testnet: 0
-  # -- Enable regtest mode (local testing)
-  regtest: 0
-
-  # -- bitcoin.conf file content
-  # @description -- If provided, this will be mounted as a configuration file.
-  # The user and password come from the secret and are passed directly to the command.
-  # @default -- ""
-  config: |
-    server=1
-    txindex=1
-
-    chain=main
-    # chain=test
-    # chain=regtest
-    # chain=signet
-
-    rpcserialversion=0
-
-    rpcallowip=10.0.0.0/8
-    whitelist=10.0.0.0/8
-    rpcbind=0.0.0.0
-
-    dbcache=450
-    maxorphantx=100
-    maxmempool=300
-    nodebuglogfile=1
-
-  # RPC settings
-  rpc:
-    # -- Username for RPC authentication
-    user: "btc"
-    # -- Password for RPC authentication
-    # @description -- If not provided, a random password will be generated
-    # @default -- ""
-    password: "changeme"
-    # -- Port for RPC interface
-    rpcPort: 8332
-    # -- Port for P2P connections
-    port: 8333
-
-# Persistent storage configuration for blockchain data
-persistence:
-  # -- Enable persistent storage for blockchain data
-  enabled: true
-  # -- Use an existing PVC
-  # @default -- ""
-  existingClaim: ""
-  # -- Storage class for the blockchain PVC
-  # @description -- If defined, storageClass: <storageClass>
-  # If set to "-", storageClass: "", which disables dynamic provisioning
-  # If undefined (the default) or set to null, no storageClassName spec is
-  # set, choosing the default provisioner
-  # @default -- ""
-  storageClass: ""
-  # -- Access modes for the PVC
-  accessModes:
-    - ReadWriteOnce
-  # -- Size of the PVC for blockchain data
-  size: 700Gi
-  # -- Annotations for the PVC
-  # @default -- {}
-  annotations: {}
-
-# Service configuration
-service:
-  # -- Service type
-  type: ClusterIP
-
-# -- Resource requests and limits
-resources: {}
-  # requests:
-  #   cpu: 1
-  #   memory: 2Gi
-  # limits:
-  #   cpu: 4
-  #   memory: 8Gi
-
-# -- Node selector for pod assignment
-# @default -- {}
-nodeSelector: {}
-
-# -- Tolerations for pod assignment
-# @default -- []
-tolerations: []
-
-# -- Affinity for pod assignment
-# @default -- {}
-affinity: {}
-
-# Ingress configuration
-ingress:
-  # -- Enable ingress for Bitcoin Core RPC
-  enabled: false
-  # -- Ingress class name
-  # @default -- ""
-  className: ""
-  # -- Ingress annotations
-  # @default -- {}
-  annotations: {}
-    # kubernetes.io/ingress.class: nginx
-    # kubernetes.io/tls-acme: "true"
-  # -- Ingress hosts configuration
-  # @default -- [{ host: bitcoin-rpc.local }]
-  hosts:
-    - host: bitcoin-rpc.local
-      paths:
-        - path: /
-          pathType: Prefix
-  # -- Ingress TLS configuration
-  # @default -- []
-  tls: []
-  #  - secretName: bitcoin-tls-secret
-  #    hosts:
-  #      - bitcoin-rpc.local
 
 # Pod probe configuration
 probes:
