@@ -171,14 +171,12 @@ electrs:
   config:
     # -- Option to enable JSON-RPC API
     jsonrpcEnabled: false
-    # -- Electrum TCP port
-    electrumPort: 50001
-    # -- Electrum SSL port
-    electrumSslPort: 50002
-    # -- REST API port
-    httpPort: 3000
-    # -- Monitoring server port
-    monitoringPort: 4224
+    # -- Electrum RPC address (host only)
+    electrumRpcAddr: "0.0.0.0"
+    # -- HTTP REST API address (host only)
+    httpAddr: "0.0.0.0"
+    # -- Monitoring server address (host only)
+    monitoringAddr: "0.0.0.0"
     # -- Enable address search index
     addressSearch: true
     # -- Whether to prepend log lines with timestamps
@@ -201,8 +199,12 @@ electrs:
   # -- Service configuration for electrs
   service:
     type: ClusterIP
+    # -- RPC port for Electrum server clients
     rpcPort: 50001
+    # -- HTTP port for REST API
     httpPort: 3000
+    # -- Monitoring port for metrics
+    monitoringPort: 4224
 
 # Ingress configuration
 ingress:

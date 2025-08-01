@@ -18,8 +18,13 @@ To forward the RPC port to your local machine:
 {{- if .Values.electrs.enabled }}
 
 Electrs services:
-  Electrum RPC: {{ include "bitcoin-stack.fullname" . }}:{{ .Values.electrs.service.rpcPort }}
-  HTTP API: {{ include "bitcoin-stack.fullname" . }}:{{ .Values.electrs.service.httpPort }}
+  Electrum RPC: {{ include "bitcoin-stack.fullname" . }}-electrs:{{ .Values.electrs.service.rpcPort }}
+  HTTP API: {{ include "bitcoin-stack.fullname" . }}-electrs:{{ .Values.electrs.service.httpPort }}
+  Monitoring: {{ include "bitcoin-stack.fullname" . }}-electrs:{{ .Values.electrs.service.monitoringPort }}
+
+Note: Electrs will wait for Bitcoin Core to generate a fresh authentication cookie file before starting.
+This ensures Bitcoin Core is properly initialized before Electrs attempts to connect, even on restarts
+where an old cookie file might already exist.
 
 To check Electrs status:
   kubectl logs -f sts/{{ include "bitcoin-stack.fullname" . }}-0 -c electrs

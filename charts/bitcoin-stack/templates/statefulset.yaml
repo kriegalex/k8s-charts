@@ -36,6 +36,20 @@ spec:
         {{- toYaml .Values.topologySpreadConstraints | nindent 8 }}
       {{- end }}
       
+      {{- if and .Values.persistence.enabled .Values.volumePermissions.enabled }}
+      initContainers:
+        - name: volume-permissions
+          image: {{ .Values.volumePermissions.image | default "busybox" }}
+          imagePullPolicy: {{ .Values.volumePermissions.pullPolicy | default "IfNotPresent" }}
+          command: ["sh", "-c", "chmod -R 777 {{ .Values.bitcoind.dataDir }}"]
+          volumeMounts:
+            - name: data
+              mountPath: {{ .Values.bitcoind.dataDir }}
+          {{- if .Values.volumePermissions.securityContext.enabled }}
+          securityContext:
+            {{- toYaml .Values.volumePermissions.securityContext | nindent 12 }}
+          {{- end }}
+      {{- end }}
       containers:
         - name: {{ .Chart.Name }}
           {{- if .Values.securityContext.enabled }}
@@ -119,13 +133,14 @@ spec:
           image: "{{ .Values.electrs.image.repository }}:{{ .Values.electrs.image.tag }}"
           imagePullPolicy: {{ .Values.electrs.image.pullPolicy }}
           command:
-            - /bin/electrs
+            - /scripts/wait-for-bitcoin.sh
           args:
+            - /bin/electrs
             - --daemon-rpc-addr=127.0.0.1:{{ .Values.bitcoind.rpc.rpcPort }}
             - --daemon-dir={{ .Values.bitcoind.dataDir }}
             - --db-dir=/electrs
-            - --electrum-rpc-addr=0.0.0.0:{{ .Values.electrs.service.rpcPort }}
-            - --http-addr=0.0.0.0:{{ .Values.electrs.service.httpPort }}
+            - --electrum-rpc-addr={{ .Values.electrs.config.electrumRpcAddr }}:{{ .Values.electrs.service.rpcPort }}
+            - --http-addr={{ .Values.electrs.config.httpAddr }}:{{ .Values.electrs.service.httpPort }}
             {{- if .Values.electrs.config.jsonrpcEnabled }}
             - --jsonrpc-import
             {{- end }}
@@ -135,7 +150,7 @@ spec:
             {{- if .Values.electrs.config.addressSearch }}
             - --address-search
             {{- end }}
-            - --monitoring-addr=0.0.0.0:{{ .Values.electrs.config.monitoringPort }}
+            - --monitoring-addr={{ .Values.electrs.config.monitoringAddr }}:{{ .Values.electrs.service.monitoringPort }}
             {{- if .Values.electrs.config.timestamp }}
             - --timestamp
             {{- end }}
@@ -147,13 +162,15 @@ spec:
           env:
             - name: RUST_BACKTRACE
               value: "1"
+            - name: COOKIE_FILE
+              value: "{{ .Values.bitcoind.cookieFile }}"
           ports:
             - name: electrum-rpc
               containerPort: {{ .Values.electrs.service.rpcPort }}
             - name: http
               containerPort: {{ .Values.electrs.service.httpPort }}
             - name: monitoring
-              containerPort: 4225
+              containerPort: {{ .Values.electrs.service.monitoringPort }}
           resources:
             {{- toYaml .Values.electrs.resources | nindent 12 }}
           volumeMounts:
@@ -164,11 +181,20 @@ spec:
             # Mount a separate directory for electrs database
             - name: electrs-db
               mountPath: /electrs
+            # Mount scripts
+            - name: electrs-scripts
+              mountPath: /scripts
         {{- end }}
       volumes:
         - name: config
           configMap:
             name: {{ include "bitcoin-stack.fullname" . }}-config
+        {{- if .Values.electrs.enabled }}
+        - name: electrs-scripts
+          configMap:
+            name: {{ include "bitcoin-stack.fullname" . }}-electrs-scripts
+            defaultMode: 0755
+        {{- end }}
         {{- if not .Values.persistence.enabled }}
         - name: data
           emptyDir: {}
@@ -196,20 +222,6 @@ spec:
       {{- with .Values.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- if and .Values.persistence.enabled .Values.volumePermissions.enabled }}
-      initContainers:
-        - name: volume-permissions
-          image: {{ .Values.volumePermissions.image | default "busybox" }}
-          imagePullPolicy: {{ .Values.volumePermissions.pullPolicy | default "IfNotPresent" }}
-          command: ["sh", "-c", "chmod -R 777 {{ .Values.bitcoind.dataDir }}"]
-          volumeMounts:
-            - name: data
-              mountPath: {{ .Values.bitcoind.dataDir }}
-          {{- if .Values.volumePermissions.enabled }}
-          securityContext:
-            {{- toYaml .Values.volumePermissions.securityContext | nindent 12 }}
-          {{- end }}
       {{- end }}
   volumeClaimTemplates:
     {{- if and .Values.persistence.enabled (not .Values.persistence.existingClaim) }}

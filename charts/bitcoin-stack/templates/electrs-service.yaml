@@ -17,6 +17,10 @@ spec:
       port: {{ .Values.electrs.service.httpPort }}
       targetPort: http
       protocol: TCP
+    - name: monitoring
+      port: {{ .Values.electrs.service.monitoringPort }}
+      targetPort: monitoring
+      protocol: TCP
   selector:
     {{- include "bitcoin-stack.selectorLabels" . | nindent 4 }}
 {{- end }}

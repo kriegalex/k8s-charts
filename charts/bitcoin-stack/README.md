@@ -173,12 +173,11 @@ bitcoind:
 | diagnosticMode.enabled | bool | `false` |  |
 | electrs.config.addressSearch | bool | `true` | Enable address search index |
 | electrs.config.corsEnabled | bool | `true` | CORS configuration for HTTP API |
-| electrs.config.electrumPort | int | `50001` | Electrum TCP port |
-| electrs.config.electrumSslPort | int | `50002` | Electrum SSL port |
+| electrs.config.electrumRpcAddr | string | `"0.0.0.0"` | Electrum RPC address (host only) |
 | electrs.config.extraArgs | list | `[]` | Additional command line arguments for electrs |
-| electrs.config.httpPort | int | `3000` | REST API port |
+| electrs.config.httpAddr | string | `"0.0.0.0"` | HTTP REST API address (host only) |
 | electrs.config.jsonrpcEnabled | bool | `false` | Option to enable JSON-RPC API |
-| electrs.config.monitoringPort | int | `4224` | Monitoring server port |
+| electrs.config.monitoringAddr | string | `"0.0.0.0"` | Monitoring server address (host only) |
 | electrs.config.timestamp | bool | `false` | Whether to prepend log lines with timestamps |
 | electrs.enabled | bool | `false` | Enable electrs component |
 | electrs.image | object | `{"pullPolicy":"IfNotPresent","repository":"mempool/electrs","tag":"latest"}` | Electrs image configuration |
@@ -188,7 +187,10 @@ bitcoind:
 | electrs.persistence.size | string | `"100Gi"` |  |
 | electrs.persistence.storageClass | string | `""` |  |
 | electrs.resources | object | `{"limits":{"cpu":"2000m","memory":"4Gi"},"requests":{"cpu":"500m","memory":"1Gi"}}` | Resource requirements for electrs |
-| electrs.service | object | `{"httpPort":3000,"rpcPort":50001,"type":"ClusterIP"}` | Service configuration for electrs |
+| electrs.service | object | `{"httpPort":3000,"monitoringPort":4224,"rpcPort":50001,"type":"ClusterIP"}` | Service configuration for electrs |
+| electrs.service.httpPort | int | `3000` | HTTP port for REST API |
+| electrs.service.monitoringPort | int | `4224` | Monitoring port for metrics |
+| electrs.service.rpcPort | int | `50001` | RPC port for Electrum server clients |
 | fullnameOverride | string | `""` | String to fully override bitcoin-core.fullname template |
 | image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
 | image.repository | string | `"blockstream/bitcoind"` | Docker repository for Bitcoin Core image |
