@@ -267,11 +267,11 @@ service:
 # -- Resource requests and limits
 resources: {}
   # requests:
-  #   cpu: 1
-  #   memory: 2Gi
-  # limits:
-  #   cpu: 4
+  #   cpu: 250m
   #   memory: 8Gi
+  # limits:
+  #   cpu: 1
+  #   memory: 16Gi
 
 # -- Node selector for pod assignment
 # @default -- {}
