@@ -1,0 +1,44 @@
+{{- if .Values.electrs.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "bitcoin-stack.fullname" . }}-electrs-scripts
+  labels:
+    {{- include "bitcoin-stack.labels" . | nindent 4 }}
+data:
+  wait-for-bitcoin.sh: |
+    #!/bin/sh
+    set -e
+
+    # Check if COOKIE_FILE is set
+    if [ -z "$COOKIE_FILE" ]; then
+      echo "Warning: COOKIE_FILE environment variable is not set. Skipping cookie file check."
+    else
+      echo "Waiting for Bitcoin to start and generate a fresh cookie file at $COOKIE_FILE..."
+      # First, wait until bitcoind has had some time to start (15 seconds should be enough)
+      sleep 15
+      
+      # Now check if cookie file exists and wait for changes in the cookie file
+      while true; do
+        if [ -f $COOKIE_FILE ]; then
+          # Use stat to check the file modification time in a portable way
+          CURRENT_TIME=$(date +%s)
+          FILE_TIME=$(stat -c %Y $COOKIE_FILE 2>/dev/null || stat -f %m $COOKIE_FILE)
+          
+          # If file was modified in the last 30 seconds, it's likely fresh
+          if [ $((CURRENT_TIME - FILE_TIME)) -lt 30 ]; then
+            echo "Fresh cookie file detected, proceeding with electrs startup."
+            break
+          else
+            echo "Found cookie file but it might be from a previous run. Waiting for file updates..."
+          fi
+        else
+          echo "Still waiting for cookie file to be created..."
+        fi
+        sleep 5
+      done
+    fi
+
+    # Execute the command passed to this script
+    exec "$@"
+{{- end }}
