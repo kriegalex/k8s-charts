@@ -2,7 +2,7 @@ apiVersion: v2
 name: bitcoin-stack
 description: "A Helm chart for deploying a full Bitcoin stack: bitcoind, and more to come."
 type: application
-version: 1.0.0
+version: 1.0.1
 appVersion: "27.2"
 home: https://bitcoincore.org/
 icon: https://bitcoin.org/img/icons/logotop.svg
