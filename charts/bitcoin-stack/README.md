@@ -171,7 +171,6 @@ bitcoind:
 | diagnosticMode.args[0] | string | `"infinity"` |  |
 | diagnosticMode.command[0] | string | `"sleep"` |  |
 | diagnosticMode.enabled | bool | `false` |  |
-| electrs.config | object | `{"addressSearch":true,"corsEnabled":true,"electrumPort":50001,"electrumSslPort":50002,"extraArgs":[],"httpPort":3000,"jsonrpcEnabled":false,"monitoringPort":4225,"timestamp":false}` | Electrs configuration options |
 | electrs.config.addressSearch | bool | `true` | Enable address search index |
 | electrs.config.corsEnabled | bool | `true` | CORS configuration for HTTP API |
 | electrs.config.electrumPort | int | `50001` | Electrum TCP port |
@@ -179,11 +178,15 @@ bitcoind:
 | electrs.config.extraArgs | list | `[]` | Additional command line arguments for electrs |
 | electrs.config.httpPort | int | `3000` | REST API port |
 | electrs.config.jsonrpcEnabled | bool | `false` | Option to enable JSON-RPC API |
-| electrs.config.monitoringPort | int | `4225` | Monitoring server port |
+| electrs.config.monitoringPort | int | `4224` | Monitoring server port |
 | electrs.config.timestamp | bool | `false` | Whether to prepend log lines with timestamps |
 | electrs.enabled | bool | `false` | Enable electrs component |
 | electrs.image | object | `{"pullPolicy":"IfNotPresent","repository":"mempool/electrs","tag":"latest"}` | Electrs image configuration |
-| electrs.persistence | object | `{"accessModes":["ReadWriteOnce"],"enabled":false,"size":"100Gi","storageClass":""}` | Persistence for electrs database |
+| electrs.persistence.accessModes[0] | string | `"ReadWriteOnce"` |  |
+| electrs.persistence.enabled | bool | `false` |  |
+| electrs.persistence.existingClaim | string | "" | Use an existing PVC for electrs data |
+| electrs.persistence.size | string | `"100Gi"` |  |
+| electrs.persistence.storageClass | string | `""` |  |
 | electrs.resources | object | `{"limits":{"cpu":"2000m","memory":"4Gi"},"requests":{"cpu":"500m","memory":"1Gi"}}` | Resource requirements for electrs |
 | electrs.service | object | `{"httpPort":3000,"rpcPort":50001,"type":"ClusterIP"}` | Service configuration for electrs |
 | fullnameOverride | string | `""` | String to fully override bitcoin-core.fullname template |

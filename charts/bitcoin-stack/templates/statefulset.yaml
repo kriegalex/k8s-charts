@@ -180,6 +180,10 @@ spec:
         {{- if and .Values.electrs.enabled (not .Values.electrs.persistence.enabled) }}
         - name: electrs-db
           emptyDir: {}
+        {{- else if and .Values.electrs.enabled .Values.electrs.persistence.enabled .Values.electrs.persistence.existingClaim }}
+        - name: electrs-db
+          persistentVolumeClaim:
+            claimName: {{ .Values.electrs.persistence.existingClaim }}
         {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
@@ -229,7 +233,7 @@ spec:
           requests:
             storage: {{ .Values.persistence.size | quote }}
     {{- end }}
-    {{- if and .Values.electrs.enabled .Values.electrs.persistence.enabled }}
+    {{- if and .Values.electrs.enabled .Values.electrs.persistence.enabled (not .Values.electrs.persistence.existingClaim) }}
     # Add PVC for electrs database
     - metadata:
         name: electrs-db
