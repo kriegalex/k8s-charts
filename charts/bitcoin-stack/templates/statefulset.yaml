@@ -207,8 +207,8 @@ spec:
             {{- toYaml .Values.volumePermissions.securityContext | nindent 12 }}
           {{- end }}
       {{- end }}
-  {{- if and .Values.persistence.enabled (not .Values.persistence.existingClaim) }}
   volumeClaimTemplates:
+    {{- if and .Values.persistence.enabled (not .Values.persistence.existingClaim) }}
     - metadata:
         name: data
         {{- if .Values.persistence.annotations }}
@@ -228,6 +228,7 @@ spec:
         resources:
           requests:
             storage: {{ .Values.persistence.size | quote }}
+    {{- end }}
     {{- if and .Values.electrs.enabled .Values.electrs.persistence.enabled }}
     # Add PVC for electrs database
     - metadata:
@@ -237,9 +238,14 @@ spec:
         {{- range .Values.electrs.persistence.accessModes }}
           - {{ . | quote }}
         {{- end }}
-        storageClassName: {{ .Values.electrs.persistence.storageClass }}
+        {{- if .Values.electrs.persistence.storageClass }}
+        {{- if eq "-" .Values.electrs.persistence.storageClass }}
+        storageClassName: ""
+        {{- else }}
+        storageClassName: {{ .Values.electrs.persistence.storageClass | quote }}
+        {{- end }}
+        {{- end }}
         resources:
           requests:
             storage: {{ .Values.electrs.persistence.size }}
     {{- end }}
-  {{- end }}
