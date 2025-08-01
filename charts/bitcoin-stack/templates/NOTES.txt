@@ -3,17 +3,17 @@ Thank you for installing {{ .Chart.Name }}.
 Your Bitcoin Core node has been deployed with the following configuration:
 
 Node Type: {{- if .Values.bitcoind.testnet }} Testnet {{- else }} Mainnet {{- end }}
-RPC Endpoint: {{ include "bitcoin-stack.fullname" . }}:{{ .Values.bitcoind.rpc.rpcPort }}
-P2P Endpoint: {{ include "bitcoin-stack.fullname" . }}:{{ .Values.bitcoind.rpc.port }}
+RPC Endpoint: {{ include "bitcoin-stack.fullname" . }}-bitcoind:{{ .Values.bitcoind.rpc.rpcPort }}
+P2P Endpoint: {{ include "bitcoin-stack.fullname" . }}-bitcoind:{{ .Values.bitcoind.rpc.port }}
 
 RPC Authentication: Cookie-based authentication is enabled
 Cookie file location: {{ .Values.bitcoind.cookieFile }}
 
 To connect to your node from within the cluster, use:
-  kubectl exec -it sts/{{ include "bitcoin-stack.fullname" . }}-0 -- bitcoin-cli -rpccookiefile={{ .Values.bitcoind.cookieFile }} getblockchaininfo
+  kubectl exec -it sts/{{ include "bitcoin-stack.fullname" . }}-bitcoind-0 -- bitcoin-cli -rpccookiefile={{ .Values.bitcoind.cookieFile }} getblockchaininfo
 
 To forward the RPC port to your local machine:
-  kubectl port-forward --namespace {{ .Release.Namespace }} sts/{{ include "bitcoin-stack.fullname" . }}-0 {{ .Values.bitcoind.rpc.rpcPort }}:{{ .Values.bitcoind.rpc.rpcPort }}
+  kubectl port-forward --namespace {{ .Release.Namespace }} sts/{{ include "bitcoin-stack.fullname" . }}-bitcoind-0 {{ .Values.bitcoind.rpc.rpcPort }}:{{ .Values.bitcoind.rpc.rpcPort }}
 
 {{- if .Values.electrs.enabled }}
 
@@ -22,16 +22,12 @@ Electrs services:
   HTTP API: {{ include "bitcoin-stack.fullname" . }}-electrs:{{ .Values.electrs.service.httpPort }}
   Monitoring: {{ include "bitcoin-stack.fullname" . }}-electrs:{{ .Values.electrs.service.monitoringPort }}
 
-Note: Electrs will wait for Bitcoin Core to generate a fresh authentication cookie file before starting.
-This ensures Bitcoin Core is properly initialized before Electrs attempts to connect, even on restarts
-where an old cookie file might already exist.
-
 To check Electrs status:
-  kubectl logs -f sts/{{ include "bitcoin-stack.fullname" . }}-0 -c electrs
+  kubectl logs -f sts/{{ include "bitcoin-stack.fullname" . }}-electrs-0 -c electrs
 {{- end }}
 
 NOTE: The Bitcoin blockchain requires significant storage space. Make sure your PVC has enough capacity.
-Current PVC size: {{ .Values.persistence.size }}
+Current PVC size: {{ .Values.bitcoind.persistence.size }}
 
 To check the node synchronization status:
-  kubectl exec -it sts/{{ include "bitcoin-stack.fullname" . }}-0 -- bitcoin-cli -rpccookiefile={{ .Values.bitcoind.cookieFile }} getblockchaininfo
+  kubectl exec -it sts/{{ include "bitcoin-stack.fullname" . }}-bitcoind-0 -- bitcoin-cli -rpccookiefile={{ .Values.bitcoind.cookieFile }} getblockchaininfo

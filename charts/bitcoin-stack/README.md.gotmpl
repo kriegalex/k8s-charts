@@ -63,7 +63,7 @@ You may need to customize additional settings or even modify the templates for c
 To access the Bitcoin Core RPC from within the cluster:
 
 ```bash
-kubectl exec -it sts/bitcoin-stack-0 -- bitcoin-cli -rpccookiefile=/root/.bitcoin/.cookie getblockchaininfo
+kubectl exec -it sts/bitcoin-stack-bitcoind-0 -- bitcoin-cli -rpccookiefile=/root/.bitcoin/.cookie getblockchaininfo
 ```
 
 ### Port Forwarding
@@ -72,23 +72,24 @@ For local access to Bitcoin Core:
 
 ```bash
 # For RPC access (HTTP)
-kubectl port-forward sts/bitcoin-stack-0 8332:8332
+kubectl port-forward sts/bitcoin-stack-bitcoind-0 8332:8332
 
 # For P2P network access (TCP)
-kubectl port-forward sts/bitcoin-stack-0 8333:8333
+kubectl port-forward sts/bitcoin-stack-bitcoind-0 8333:8333
 ```
 
 ## Storage Considerations
 
 Bitcoin Core requires significant storage for the full blockchain:
-- Bitcoin Mainnet: 700+ GB (and growing)
+- Bitcoin Mainnet: 820+ GB (and growing)
 - Bitcoin Testnet: 50+ GB (and growing)
 
 Ensure your persistent volume has adequate capacity. The StatefulSet uses volumeClaimTemplates to provision storage:
 
 ```yaml
-persistence:
-  size: 700Gi  # Adjust according to your needs
+bitcoind:
+  persistence:
+    size: 850Gi  # Adjust according to your needs
 ```
 
 ## Advanced Configuration

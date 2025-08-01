@@ -63,6 +63,30 @@ bitcoind:
     # -- Port for P2P connections
     port: 8333
 
+  # Persistent storage configuration for blockchain data
+  persistence:
+    # -- Enable persistent storage for blockchain data
+    enabled: true
+    # -- Use an existing PVC
+    # @default -- ""
+    existingClaim: ""
+    # -- Storage class for the blockchain PVC
+    # @description -- If defined, storageClass: <storageClass>
+    # If set to "-", storageClass: "", which disables dynamic provisioning
+    # If undefined (the default) or set to null, no storageClassName spec is
+    # set, choosing the default provisioner
+    # @default -- ""
+    storageClass: ""
+    # -- Access modes for the PVC
+    accessModes:
+      - ReadWriteOnce
+    # -- Size of the PVC for blockchain data
+    # @description -- As of 03.2025, requires 810Gi for full mainnet node
+    size: 850Gi
+    # -- Annotations for the PVC
+    # @default -- {}
+    annotations: {}
+
 # Mempool configuration
 mempool:
   # -- Enable mempool component
@@ -171,16 +195,28 @@ electrs:
   config:
     # -- Electrs data directory
     dbDir: "/electrs"
+    # -- Electrs bitcoind RPC address
+    bitcoinRpcAddr: "bitcoin-stack-bitcoind:8332"
+    # -- Electrs RPC address
+    electrumRpcAddr: "0.0.0.0:50001"
+    # -- Electrs HTTP address
+    httpAddr: "0.0.0.0:3000"
+    # -- Electrs monitoring address
+    monitoringAddr: "0.0.0.0:4224"
     # -- Additional command line arguments for electrs
     extraArgs: []
     #  - "--lightmode"
+  # -- Name of the claim used for bitcoind data when used by other components like electrs
+  bitcoindDataClaimName: ""
   # Persistence for electrs database
   persistence:
     enabled: false
     # -- Use an existing PVC for electrs data
     # @default -- ""
     existingClaim: ""
-    size: 100Gi
+    # -- Size of the PVC for electrs data
+    # @description -- Plan 2TB minimum if not using --lightmode
+    size: 2Ti
     storageClass: ""
     accessModes:
       - ReadWriteOnce
@@ -194,7 +230,7 @@ electrs:
     # -- Monitoring port for metrics
     monitoringPort: 4224
   logTailer:
-    enabled: true
+    enabled: false
     pollInterval: 5
     # Only show last 1000 lines when the tailer first starts
     # This avoids memory issues if the log file is already massive
@@ -235,29 +271,6 @@ ingress:
   #  - secretName: bitcoin-tls-secret
   #    hosts:
   #      - bitcoin-rpc.local
-
-# Persistent storage configuration for blockchain data
-persistence:
-  # -- Enable persistent storage for blockchain data
-  enabled: true
-  # -- Use an existing PVC
-  # @default -- ""
-  existingClaim: ""
-  # -- Storage class for the blockchain PVC
-  # @description -- If defined, storageClass: <storageClass>
-  # If set to "-", storageClass: "", which disables dynamic provisioning
-  # If undefined (the default) or set to null, no storageClassName spec is
-  # set, choosing the default provisioner
-  # @default -- ""
-  storageClass: ""
-  # -- Access modes for the PVC
-  accessModes:
-    - ReadWriteOnce
-  # -- Size of the PVC for blockchain data
-  size: 700Gi
-  # -- Annotations for the PVC
-  # @default -- {}
-  annotations: {}
 
 # Service configuration
 service:

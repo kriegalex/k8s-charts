@@ -63,7 +63,7 @@ You may need to customize additional settings or even modify the templates for c
 To access the Bitcoin Core RPC from within the cluster:
 
 ```bash
-kubectl exec -it sts/bitcoin-stack-0 -- bitcoin-cli -rpccookiefile=/root/.bitcoin/.cookie getblockchaininfo
+kubectl exec -it sts/bitcoin-stack-bitcoind-0 -- bitcoin-cli -rpccookiefile=/root/.bitcoin/.cookie getblockchaininfo
 ```
 
 ### Port Forwarding
@@ -72,23 +72,24 @@ For local access to Bitcoin Core:
 
 ```bash
 # For RPC access (HTTP)
-kubectl port-forward sts/bitcoin-stack-0 8332:8332
+kubectl port-forward sts/bitcoin-stack-bitcoind-0 8332:8332
 
 # For P2P network access (TCP)
-kubectl port-forward sts/bitcoin-stack-0 8333:8333
+kubectl port-forward sts/bitcoin-stack-bitcoind-0 8333:8333
 ```
 
 ## Storage Considerations
 
 Bitcoin Core requires significant storage for the full blockchain:
-- Bitcoin Mainnet: 700+ GB (and growing)
+- Bitcoin Mainnet: 820+ GB (and growing)
 - Bitcoin Testnet: 50+ GB (and growing)
 
 Ensure your persistent volume has adequate capacity. The StatefulSet uses volumeClaimTemplates to provision storage:
 
 ```yaml
-persistence:
-  size: 700Gi  # Adjust according to your needs
+bitcoind:
+  persistence:
+    size: 850Gi  # Adjust according to your needs
 ```
 
 ## Advanced Configuration
@@ -164,6 +165,12 @@ bitcoind:
 | bitcoind.configFile | string | `"/root/.bitcoin/bitcoin.conf"` | Path where bitcoin.conf should be mounted when using custom config Replaces conf in the configuration file |
 | bitcoind.cookieFile | string | `"/root/.bitcoin/.cookie"` | Path where the RPC cookie file should be mounted |
 | bitcoind.dataDir | string | `"/root/.bitcoin"` | Directory where Bitcoin Core stores blockchain data Replaces datadir in the configuration file |
+| bitcoind.persistence.accessModes | list | `["ReadWriteOnce"]` | Access modes for the PVC |
+| bitcoind.persistence.annotations | object | {} | Annotations for the PVC |
+| bitcoind.persistence.enabled | bool | `true` | Enable persistent storage for blockchain data |
+| bitcoind.persistence.existingClaim | string | "" | Use an existing PVC |
+| bitcoind.persistence.size | string | `"850Gi"` | Size of the PVC for blockchain data @description -- As of 03.2025, requires 810Gi for full mainnet node |
+| bitcoind.persistence.storageClass | string | "" | Storage class for the blockchain PVC @description -- If defined, storageClass: <storageClass> If set to "-", storageClass: "", which disables dynamic provisioning If undefined (the default) or set to null, no storageClassName spec is set, choosing the default provisioner |
 | bitcoind.regtest | int | `0` | Enable regtest mode (local testing) |
 | bitcoind.rpc.port | int | `8333` | Port for P2P connections |
 | bitcoind.rpc.rpcPort | int | `8332` | Port for RPC interface |
@@ -171,11 +178,16 @@ bitcoind:
 | diagnosticMode.args[0] | string | `"infinity"` |  |
 | diagnosticMode.command[0] | string | `"sleep"` |  |
 | diagnosticMode.enabled | bool | `false` |  |
+| electrs.bitcoindDataClaimName | string | `""` | Name of the claim used for bitcoind data when used by other components like electrs |
+| electrs.config.bitcoinRpcAddr | string | `"bitcoin-stack-bitcoind:8332"` | Electrs bitcoind RPC address |
 | electrs.config.dbDir | string | `"/electrs"` | Electrs data directory |
+| electrs.config.electrumRpcAddr | string | `"0.0.0.0:50001"` | Electrs RPC address |
 | electrs.config.extraArgs | list | `[]` | Additional command line arguments for electrs |
+| electrs.config.httpAddr | string | `"0.0.0.0:3000"` | Electrs HTTP address |
+| electrs.config.monitoringAddr | string | `"0.0.0.0:4224"` | Electrs monitoring address |
 | electrs.enabled | bool | `false` | Enable electrs component |
 | electrs.image | object | `{"pullPolicy":"IfNotPresent","repository":"mempool/electrs","tag":"latest"}` | Electrs image configuration |
-| electrs.logTailer.enabled | bool | `true` |  |
+| electrs.logTailer.enabled | bool | `false` |  |
 | electrs.logTailer.image.repository | string | `"busybox"` |  |
 | electrs.logTailer.image.tag | string | `"latest"` |  |
 | electrs.logTailer.initialLines | int | `1000` |  |
@@ -187,7 +199,7 @@ bitcoind:
 | electrs.persistence.accessModes[0] | string | `"ReadWriteOnce"` |  |
 | electrs.persistence.enabled | bool | `false` |  |
 | electrs.persistence.existingClaim | string | "" | Use an existing PVC for electrs data |
-| electrs.persistence.size | string | `"100Gi"` |  |
+| electrs.persistence.size | string | `"2Ti"` | Size of the PVC for electrs data @description -- Plan 2TB minimum if not using --lightmode |
 | electrs.persistence.storageClass | string | `""` |  |
 | electrs.resources | object | `{"limits":{"cpu":"2000m","memory":"16Gi"},"requests":{"cpu":"500m","memory":"8Gi"}}` | Resource requirements for electrs |
 | electrs.service | object | `{"httpPort":3000,"monitoringPort":4224,"rpcPort":50001,"type":"ClusterIP"}` | Service configuration for electrs |
@@ -227,12 +239,6 @@ bitcoind:
 | networkPolicy.p2pAllowFrom | list | [] | Define which pods can access the Bitcoin P2P interface Leave empty to allow all pods to connect to P2P network |
 | networkPolicy.rpcAllowFrom | list | [] | Define which pods can access the Bitcoin RPC interface |
 | nodeSelector | object | {} | Node selector for pod assignment |
-| persistence.accessModes | list | `["ReadWriteOnce"]` | Access modes for the PVC |
-| persistence.annotations | object | {} | Annotations for the PVC |
-| persistence.enabled | bool | `true` | Enable persistent storage for blockchain data |
-| persistence.existingClaim | string | "" | Use an existing PVC |
-| persistence.size | string | `"700Gi"` | Size of the PVC for blockchain data |
-| persistence.storageClass | string | "" | Storage class for the blockchain PVC @description -- If defined, storageClass: <storageClass> If set to "-", storageClass: "", which disables dynamic provisioning If undefined (the default) or set to null, no storageClassName spec is set, choosing the default provisioner |
 | podAnnotations | object | `{}` | Annotations to add to pods |
 | podDisruptionBudget.enabled | bool | `false` | Enable PDB |
 | podDisruptionBudget.maxUnavailable | string | `nil` | Maximum unavailable pods |
