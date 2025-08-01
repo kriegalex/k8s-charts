@@ -163,26 +163,14 @@ electrs:
   resources:
     requests:
       cpu: 500m
-      memory: 1Gi
+      memory: 8Gi
     limits:
       cpu: 2000m
-      memory: 4Gi
+      memory: 16Gi
   # Electrs configuration options
   config:
-    # -- Option to enable JSON-RPC API
-    jsonrpcEnabled: false
-    # -- Electrum RPC address (host only)
-    electrumRpcAddr: "0.0.0.0"
-    # -- HTTP REST API address (host only)
-    httpAddr: "0.0.0.0"
-    # -- Monitoring server address (host only)
-    monitoringAddr: "0.0.0.0"
-    # -- Enable address search index
-    addressSearch: true
-    # -- Whether to prepend log lines with timestamps
-    timestamp: false
-    # -- CORS configuration for HTTP API
-    corsEnabled: true
+    # -- Electrs data directory
+    dbDir: "/electrs"
     # -- Additional command line arguments for electrs
     extraArgs: []
     #  - "--lightmode"
@@ -205,6 +193,22 @@ electrs:
     httpPort: 3000
     # -- Monitoring port for metrics
     monitoringPort: 4224
+  logTailer:
+    enabled: true
+    pollInterval: 5
+    # Only show last 1000 lines when the tailer first starts
+    # This avoids memory issues if the log file is already massive
+    initialLines: 1000
+    image:
+      repository: busybox
+      tag: "latest"
+    resources:
+      limits:
+        cpu: 100m
+        memory: 64Mi
+      requests:
+        cpu: 10m
+        memory: 32Mi
 
 # Ingress configuration
 ingress:
