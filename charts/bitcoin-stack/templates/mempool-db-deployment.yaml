@@ -1,0 +1,63 @@
+{{- if .Values.mempool.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "bitcoin-stack.fullname" . }}-mempool-db
+  labels:
+    {{- include "bitcoin-stack.labels" . | nindent 4 }}
+    app.kubernetes.io/component: mempool-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "bitcoin-stack.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: mempool-db
+  template:
+    metadata:
+      labels:
+        {{- include "bitcoin-stack.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: mempool-db
+    spec:
+      containers:
+        - name: mariadb
+          image: "{{ .Values.mempool.db.image.repository }}:{{ .Values.mempool.db.image.tag }}"
+          imagePullPolicy: {{ .Values.mempool.db.image.pullPolicy }}
+          env:
+            - name: MYSQL_DATABASE
+              value: "{{ .Values.mempool.db.auth.database }}"
+            - name: MYSQL_USER
+              value: "{{ .Values.mempool.db.auth.username }}"
+            - name: MYSQL_PASSWORD
+              value: "{{ .Values.mempool.db.auth.password }}"
+            - name: MYSQL_ROOT_PASSWORD
+              value: "{{ .Values.mempool.db.auth.rootPassword }}"
+          ports:
+            - name: mysql
+              containerPort: 3306
+          resources:
+            {{- toYaml .Values.mempool.db.resources | nindent 12 }}
+          volumeMounts:
+            - name: db-data
+              mountPath: /var/lib/mysql
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      volumes:
+        {{- if not .Values.mempool.db.persistence.enabled }}
+        - name: db-data
+          emptyDir: {}
+        {{- else }}
+        - name: db-data
+          persistentVolumeClaim:
+            claimName: {{ include "bitcoin-stack.fullname" . }}-mempool-db
+        {{- end }}
+{{- end }}

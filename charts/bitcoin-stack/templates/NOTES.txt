@@ -3,24 +3,30 @@ Thank you for installing {{ .Chart.Name }}.
 Your Bitcoin Core node has been deployed with the following configuration:
 
 Node Type: {{- if .Values.bitcoind.testnet }} Testnet {{- else }} Mainnet {{- end }}
-RPC Endpoint: {{ include "bitcoind.fullname" . }}:{{ .Values.bitcoind.rpc.rpcPort }}
-P2P Endpoint: {{ include "bitcoind.fullname" . }}:{{ .Values.bitcoind.rpc.port }}
+RPC Endpoint: {{ include "bitcoin-stack.fullname" . }}:{{ .Values.bitcoind.rpc.rpcPort }}
+P2P Endpoint: {{ include "bitcoin-stack.fullname" . }}:{{ .Values.bitcoind.rpc.port }}
 
-RPC Credentials:
-  Username: {{ .Values.bitcoind.rpc.user }}
-  Password: {{ if .Values.bitcoind.rpc.password }}[provided value]{{ else }}[auto-generated]{{ end }}
-
-To get the RPC password (if auto-generated):
-  kubectl get secret --namespace {{ .Release.Namespace }} {{ include "bitcoind.fullname" . }}-auth -o jsonpath="{.data.rpcpassword}" | base64 --decode; echo
+RPC Authentication: Cookie-based authentication is enabled
+Cookie file location: {{ .Values.bitcoind.cookieFile }}
 
 To connect to your node from within the cluster, use:
-  kubectl exec -it sts/{{ include "bitcoind.fullname" . }}-0 -- bitcoin-cli -rpcconnect=localhost -rpcport={{ .Values.bitcoind.rpc.rpcPort }} -rpcuser={{ .Values.bitcoind.rpc.user }} -rpcpassword=$(kubectl get secret --namespace {{ .Release.Namespace }} {{ include "bitcoind.fullname" . }}-auth -o jsonpath="{.data.rpcpassword}" | base64 --decode) getblockchaininfo
+  kubectl exec -it sts/{{ include "bitcoin-stack.fullname" . }}-0 -- bitcoin-cli -rpccookiefile={{ .Values.bitcoind.cookieFile }} getblockchaininfo
 
 To forward the RPC port to your local machine:
-  kubectl port-forward --namespace {{ .Release.Namespace }} sts/{{ include "bitcoind.fullname" . }}-0 {{ .Values.bitcoind.rpc.rpcPort }}:{{ .Values.bitcoind.rpc.rpcPort }}
+  kubectl port-forward --namespace {{ .Release.Namespace }} sts/{{ include "bitcoin-stack.fullname" . }}-0 {{ .Values.bitcoind.rpc.rpcPort }}:{{ .Values.bitcoind.rpc.rpcPort }}
+
+{{- if .Values.electrs.enabled }}
+
+Electrs services:
+  Electrum RPC: {{ include "bitcoin-stack.fullname" . }}:{{ .Values.electrs.service.rpcPort }}
+  HTTP API: {{ include "bitcoin-stack.fullname" . }}:{{ .Values.electrs.service.httpPort }}
+
+To check Electrs status:
+  kubectl logs -f sts/{{ include "bitcoin-stack.fullname" . }}-0 -c electrs
+{{- end }}
 
 NOTE: The Bitcoin blockchain requires significant storage space. Make sure your PVC has enough capacity.
 Current PVC size: {{ .Values.persistence.size }}
 
 To check the node synchronization status:
-  kubectl exec -it sts/{{ include "bitcoind.fullname" . }}-0 -- bitcoin-cli -rpcuser={{ .Values.bitcoind.rpc.user }} -rpcpassword=$(kubectl get secret --namespace {{ .Release.Namespace }} {{ include "bitcoind.fullname" . }}-auth -o jsonpath="{.data.rpcpassword}" | base64 --decode) getblockchaininfo
+  kubectl exec -it sts/{{ include "bitcoin-stack.fullname" . }}-0 -- bitcoin-cli -rpccookiefile={{ .Values.bitcoind.cookieFile }} getblockchaininfo

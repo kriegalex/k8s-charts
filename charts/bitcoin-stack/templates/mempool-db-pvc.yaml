@@ -1,0 +1,21 @@
+{{- if and .Values.mempool.enabled .Values.mempool.db.persistence.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "bitcoin-stack.fullname" . }}-mempool-db
+  labels:
+    {{- include "bitcoin-stack.labels" . | nindent 4 }}
+spec:
+  accessModes:
+    {{- toYaml .Values.mempool.db.persistence.accessModes | nindent 4 }}
+  {{- if .Values.mempool.db.persistence.storageClass }}
+  {{- if eq "-" .Values.mempool.db.persistence.storageClass }}
+  storageClassName: ""
+  {{- else }}
+  storageClassName: {{ .Values.mempool.db.persistence.storageClass }}
+  {{- end }}
+  {{- end }}
+  resources:
+    requests:
+      storage: {{ .Values.mempool.db.persistence.size }}
+{{- end }}

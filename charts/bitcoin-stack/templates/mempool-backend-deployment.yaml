@@ -1,0 +1,95 @@
+{{- if .Values.mempool.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "bitcoin-stack.fullname" . }}-mempool-backend
+  labels:
+    {{- include "bitcoin-stack.labels" . | nindent 4 }}
+    app.kubernetes.io/component: mempool-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "bitcoin-stack.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: mempool-backend
+  template:
+    metadata:
+      labels:
+        {{- include "bitcoin-stack.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: mempool-backend
+    spec:
+      containers:
+        - name: mempool-backend
+          image: "{{ .Values.mempool.backend.image.repository }}:{{ .Values.mempool.backend.image.tag }}"
+          imagePullPolicy: {{ .Values.mempool.backend.image.pullPolicy }}
+          env:
+            - name: MEMPOOL_BACKEND
+              value: "{{ .Values.mempool.backend.config.backend }}"
+            - name: MEMPOOL_NETWORK
+              value: "{{ .Values.mempool.backend.config.network }}"
+            - name: CORE_RPC_HOST
+              value: {{ include "bitcoin-stack.fullname" . }}-bitcoind
+            - name: CORE_RPC_PORT
+              value: "{{ .Values.bitcoind.rpc.rpcPort }}"
+            - name: CORE_RPC_USERNAME
+              value: "{{ .Values.bitcoind.rpc.user }}"
+            - name: CORE_RPC_PASSWORD
+              value: "{{ .Values.bitcoind.rpc.password }}"
+            - name: ELECTRUM_HOST
+              value: {{ include "bitcoin-stack.fullname" . }}-electrs
+            - name: ELECTRUM_PORT
+              value: "{{ .Values.electrs.service.rpcPort }}"
+            - name: ELECTRUM_TLS_ENABLED
+              value: "false"
+            - name: DATABASE_ENABLED
+              value: "true"
+            - name: DATABASE_HOST
+              value: {{ include "bitcoin-stack.fullname" . }}-mempool-db
+            - name: DATABASE_DATABASE
+              value: "{{ .Values.mempool.db.auth.database }}"
+            - name: DATABASE_USERNAME
+              value: "{{ .Values.mempool.db.auth.username }}"
+            - name: DATABASE_PASSWORD
+              value: "{{ .Values.mempool.db.auth.password }}"
+            - name: STATISTICS_ENABLED
+              value: "true"
+            # Add mempool cache directory env variable
+            - name: MEMPOOL_CACHE_DIR
+              value: "/backend/cache"
+            # Add block weight env variable
+            - name: MEMPOOL_BLOCK_WEIGHT_UNITS
+              value: "4000000"
+            # Add recommended fee percentile
+            - name: MEMPOOL_RECOMMENDED_FEE_PERCENTILE
+              value: "50"
+            # Add initial blocks amount
+            - name: MEMPOOL_INITIAL_BLOCKS_AMOUNT
+              value: "8"
+            # Add mempool blocks amount
+            - name: MEMPOOL_MEMPOOL_BLOCKS_AMOUNT
+              value: "8"
+          ports:
+            - name: http
+              containerPort: 8999
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.mempool.backend.resources | nindent 12 }}
+          volumeMounts:
+            - name: cache-data
+              mountPath: /backend/cache
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      volumes:
+        - name: cache-data
+          emptyDir: {}
+{{- end }}

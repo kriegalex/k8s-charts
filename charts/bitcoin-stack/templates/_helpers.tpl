@@ -1,7 +1,7 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "bitcoind.name" -}}
+{{- define "bitcoin-stack.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
@@ -10,7 +10,7 @@ Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 If release name contains chart name it will be used as a full name.
 */}}
-{{- define "bitcoind.fullname" -}}
+{{- define "bitcoin-stack.fullname" -}}
 {{- if .Values.fullnameOverride }}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
@@ -26,16 +26,16 @@ If release name contains chart name it will be used as a full name.
 {{/*
 Create chart name and version as used by the chart label.
 */}}
-{{- define "bitcoind.chart" -}}
+{{- define "bitcoin-stack.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
 Common labels
 */}}
-{{- define "bitcoind.labels" -}}
-helm.sh/chart: {{ include "bitcoind.chart" . }}
-{{ include "bitcoind.selectorLabels" . }}
+{{- define "bitcoin-stack.labels" -}}
+helm.sh/chart: {{ include "bitcoin-stack.chart" . }}
+{{ include "bitcoin-stack.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
@@ -45,17 +45,17 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{/*
 Selector labels
 */}}
-{{- define "bitcoind.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "bitcoind.name" . }}
+{{- define "bitcoin-stack.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "bitcoin-stack.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
 Create the name of the service account to use
 */}}
-{{- define "bitcoind.serviceAccountName" -}}
+{{- define "bitcoin-stack.serviceAccountName" -}}
 {{- if .Values.serviceAccount.create }}
-{{- default (include "bitcoind.fullname" .) .Values.serviceAccount.name }}
+{{- default (include "bitcoin-stack.fullname" .) .Values.serviceAccount.name }}
 {{- else }}
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
@@ -64,7 +64,7 @@ Create the name of the service account to use
 {{/*
 Generate bitcoin password if not specified
 */}}
-{{- define "bitcoind.rpcPassword" -}}
+{{- define "bitcoin-stack.rpcPassword" -}}
 {{- if .Values.bitcoind.rpc.password -}}
 {{- .Values.bitcoind.rpc.password -}}
 {{- else -}}
