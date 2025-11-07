@@ -1,7 +1,7 @@
 # BentoPDF Chart
 ===========
 
-![Version: 1.0.0](https://img.shields.io/badge/Version-1.0.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1.1.5](https://img.shields.io/badge/AppVersion-1.1.5-informational?style=flat-square)
+![Version: 1.0.1](https://img.shields.io/badge/Version-1.0.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1.1.5](https://img.shields.io/badge/AppVersion-1.1.5-informational?style=flat-square)
 
 A Helm chart for BentoPDF - PDF manipulation service using BentoML
 
@@ -72,6 +72,8 @@ The following table lists the configurable parameters of the BentoPDF chart and 
 | ingress.annotations | object | `{}` | Additional ingress annotations @example annotations:   cert-manager.io/cluster-issuer: letsencrypt-prod |
 | ingress.className | string | `""` | Ingress class name |
 | ingress.enabled | bool | `false` | Enable ingress resource |
+| ingress.tls.enabled | bool | `false` | Enable TLS for ingress |
+| ingress.tls.secretName | string | "<release-name>-bentopdf-ingress-lets-encrypt" | Secret name for TLS certificate |
 | ingress.url | string | `""` | The URL for the ingress endpoint to point to the BentoPDF instance |
 | livenessProbe.enabled | bool | `true` | Enable liveness probe |
 | livenessProbe.failureThreshold | int | `3` |  |
