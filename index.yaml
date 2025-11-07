@@ -153,6 +153,40 @@ entries:
     urls:
     - https://github.com/kriegalex/k8s-charts/releases/download/actual-budget-0.1.0/actual-budget-0.1.0.tgz
     version: 0.1.0
+  bentopdf:
+  - annotations:
+      artifacthub.io/images: |
+        - name: bentopdf
+          image: bentopdf/bentopdf-simple:latest
+      artifacthub.io/links: |
+        - name: Chart source
+          url: https://github.com/kriegalex/k8s-charts/tree/main/charts/bentopdf
+        - name: Docker image source
+          url: https://github.com/alam00000/bentopdf
+    apiVersion: v2
+    appVersion: 1.1.5
+    created: "2025-11-07T05:03:27.543505571Z"
+    description: A Helm chart for BentoPDF - PDF manipulation service using BentoML
+    digest: a73d1a58a25bf9b029844ab84429f310e294074e8fb86ac5a960d391c87b6b54
+    home: https://github.com/alam00000/bentopdf
+    icon: https://raw.githubusercontent.com/bentoml/BentoML/main/docs/source/_static/img/bentoml-icon.png
+    keywords:
+    - pdf
+    - bentoml
+    - converter
+    - gotenberg
+    kubeVersion: '>=1.19.0-0'
+    maintainers:
+    - email: kriegalex@gmail.com
+      name: kriegalex
+    name: bentopdf
+    sources:
+    - https://github.com/alam00000/bentopdf
+    - https://github.com/kriegalex/k8s-charts/tree/main/charts/bentopdf
+    type: application
+    urls:
+    - https://github.com/kriegalex/k8s-charts/releases/download/bentopdf-1.0.0/bentopdf-1.0.0.tgz
+    version: 1.0.0
   bitcoin-stack:
   - annotations:
       artifacthub.io/images: |
@@ -1324,4 +1358,4 @@ entries:
     urls:
     - https://github.com/kriegalex/k8s-charts/releases/download/valheim-server-1.0.0/valheim-server-1.0.0.tgz
     version: 1.0.0
-generated: "2025-08-01T09:35:19.035047778Z"
+generated: "2025-11-07T05:03:27.543610347Z"
