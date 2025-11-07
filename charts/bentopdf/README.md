@@ -88,10 +88,10 @@ The following table lists the configurable parameters of the BentoPDF chart and 
 | persistence.size | string | `"10Gi"` | Size of the persistent volume |
 | persistence.storageClass | string | "" | Storage class for the PVC |
 | podAnnotations | object | `{}` | Annotations to add to pods |
-| podSecurityContext.fsGroup | int | `2000` | Group ID for filesystem access |
-| podSecurityContext.runAsGroup | int | `2000` | Group ID to run the pod |
+| podSecurityContext.fsGroup | int | `101` | Group ID for filesystem access |
+| podSecurityContext.runAsGroup | int | `101` | Group ID to run the pod |
 | podSecurityContext.runAsNonRoot | bool | `true` | Run container as non-root user |
-| podSecurityContext.runAsUser | int | `2000` | User ID to run the pod (2000 as per official BentoPDF security docs) |
+| podSecurityContext.runAsUser | int | `101` | User ID to run the pod |
 | readinessProbe.enabled | bool | `true` | Enable readiness probe |
 | readinessProbe.failureThreshold | int | `3` |  |
 | readinessProbe.httpGet.path | string | `"/readyz"` |  |

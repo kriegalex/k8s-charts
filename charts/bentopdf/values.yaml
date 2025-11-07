@@ -41,12 +41,12 @@ podAnnotations: {}
 podSecurityContext:
   # -- Run container as non-root user
   runAsNonRoot: true
-  # -- User ID to run the pod (2000 as per official BentoPDF security docs)
-  runAsUser: 2000
+  # -- User ID to run the pod
+  runAsUser: 101
   # -- Group ID to run the pod
-  runAsGroup: 2000
+  runAsGroup: 101
   # -- Group ID for filesystem access
-  fsGroup: 2000
+  fsGroup: 101
 
 # Security context for the container
 securityContext:
