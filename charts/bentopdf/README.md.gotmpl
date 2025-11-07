@@ -1,0 +1,65 @@
+# BentoPDF Chart
+===========
+
+{{ template "chart.badgesSection" . }}
+
+{{ template "chart.description" . }}
+
+## Overview
+
+BentoPDF is a PDF manipulation service built with BentoML. This Helm chart deploys BentoPDF along with a Gotenberg sidecar container for PDF conversion capabilities.
+
+## Installation
+
+### Installation via Helm
+
+1. Add the Helm chart repo
+
+```bash
+helm repo add k8s-charts https://kriegalex.github.io/k8s-charts/
+```
+
+2. Inspect & modify the default values (optional)
+
+```bash
+helm show values k8s-charts/bentopdf > custom-values.yaml
+```
+
+3. Install the chart
+
+```bash
+helm upgrade --install bentopdf k8s-charts/bentopdf -f custom-values.yaml
+```
+
+## Features
+
+- **BentoPDF Service**: PDF manipulation and processing
+- **Gotenberg Sidecar**: Optional Gotenberg container for PDF conversion
+- **Ingress Support**: Optional ingress with automatic TLS configuration
+- **Horizontal Pod Autoscaling**: Optional HPA configuration
+- **Persistent Storage**: Optional persistent storage for temporary files
+- **Security Hardened**: Runs as non-root user (UID/GID 2000) following BentoPDF security best practices
+
+## Security
+
+This chart follows the official BentoPDF security recommendations:
+
+- **Non-Root Execution**: Container runs as user ID 2000 (non-root)
+- **Port 8080**: Uses high port number to avoid requiring root privileges
+- **nginx-unprivileged**: Based on nginx-unprivileged image for enhanced security
+- **Principle of Least Privilege**: Minimal container privileges with dropped capabilities
+- **No Privilege Escalation**: `allowPrivilegeEscalation` is set to false
+
+For more information about BentoPDF security features, see the [official security documentation](https://github.com/alam00000/bentopdf/blob/main/SECURITY.md).
+
+## License
+
+[MIT](../../LICENSE)
+
+## Values
+
+The following table lists the configurable parameters of the BentoPDF chart and their default values.
+
+{{ template "chart.valuesTable" . }}
+
+{{ template "helm-docs.versionFooter" . }}
