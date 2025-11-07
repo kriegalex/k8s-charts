@@ -80,6 +80,13 @@ ingress:
   # annotations:
   #   cert-manager.io/cluster-issuer: letsencrypt-prod
   annotations: {}
+  # TLS configuration
+  tls:
+    # -- Enable TLS for ingress
+    enabled: false
+    # -- Secret name for TLS certificate
+    # @default -- "<release-name>-bentopdf-ingress-lets-encrypt"
+    secretName: ""
 
 # BentoPDF application configuration
 config:

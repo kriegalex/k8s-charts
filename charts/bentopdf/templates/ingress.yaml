@@ -15,7 +15,7 @@ spec:
   ingressClassName: {{ .Values.ingress.className }}
 {{- end }}
   rules:
-  - host: {{ trimPrefix "https://" .Values.ingress.url }}
+  - host: {{ trimPrefix "http://" (trimPrefix "https://" .Values.ingress.url) }}
     http:
       paths:
       - path: '/'
@@ -25,8 +25,10 @@ spec:
             name: {{ include "bentopdf.fullname" . }}
             port:
               number: {{ .Values.service.port }}
+{{- if .Values.ingress.tls.enabled }}
   tls:
   - hosts:
-    - {{ trimPrefix "https://" .Values.ingress.url }}
-    secretName: {{ include "bentopdf.fullname" . }}-ingress-lets-encrypt
+    - {{ trimPrefix "http://" (trimPrefix "https://" .Values.ingress.url) }}
+    secretName: {{ .Values.ingress.tls.secretName | default (printf "%s-ingress-lets-encrypt" (include "bentopdf.fullname" .)) }}
+{{- end }}
 {{- end }}
