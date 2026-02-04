@@ -31,7 +31,10 @@ spec:
           envFrom:
             - configMapRef:
                 name: {{ include "palworld-server.fullname" . }}
-            {{- if or .Values.server.password .Values.server.adminPassword }}
+            {{- if .Values.secret.existingSecret }}
+            - secretRef:
+                name: {{ .Values.secret.existingSecret }}
+            {{- else if or .Values.server.password .Values.server.adminPassword }}
             - secretRef:
                 name: {{ include "palworld-server.fullname" . }}
             {{- end }}

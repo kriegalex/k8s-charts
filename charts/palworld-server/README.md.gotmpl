@@ -14,13 +14,52 @@
 
 It is recommended to set some minimal resources for your server:
 
-```
+```yaml
 resources:
   limits:
     memory: 32Gi
   requests:
     cpu: 4000m
     memory: 8Gi
+```
+
+## Security and Secrets Management
+
+The chart supports multiple approaches for managing server and admin passwords:
+
+### Option 1: External Secret (Recommended for Production)
+
+Use an existing Kubernetes secret managed by external tools like [Sealed Secrets](https://github.com/bitnami-labs/sealed-secrets) or [External Secrets Operator](https://external-secrets.io/):
+
+```bash
+# Create a secret manually
+kubectl create secret generic palworld-passwords \
+  --from-literal=SERVER_PASSWORD='your-secure-password' \
+  --from-literal=ADMIN_PASSWORD='your-admin-password'
+
+# Reference it in values.yaml
+helm install palworld-server kriegalex/palworld-server \
+  --set secret.existingSecret=palworld-passwords
+```
+
+### Option 2: Values File (Development/Testing Only)
+
+For development or testing environments, you can specify passwords directly in values.yaml:
+
+```yaml
+server:
+  password: "my-server-password"
+  adminPassword: "my-admin-password"
+```
+
+**WARNING:** Do not commit passwords to version control. Use separate values files or CI/CD variables for sensitive data.
+
+### Option 3: Command Line Override
+
+```bash
+helm install palworld-server kriegalex/palworld-server \
+  --set server.password='your-password' \
+  --set server.adminPassword='your-admin-password'
 ```
 
 ## Values

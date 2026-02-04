@@ -1,6 +1,6 @@
 # Palworld Server Helm Chart
 
-![Version: 1.0.8](https://img.shields.io/badge/Version-1.0.8-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.2.3](https://img.shields.io/badge/AppVersion-v1.2.3-informational?style=flat-square)
+![Version: 1.1.0](https://img.shields.io/badge/Version-1.1.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.2.3](https://img.shields.io/badge/AppVersion-v1.2.3-informational?style=flat-square)
 
 This Helm chart deploys a Palworld dedicated game server on a Kubernetes cluster.
 
@@ -14,13 +14,52 @@ This Helm chart deploys a Palworld dedicated game server on a Kubernetes cluster
 
 It is recommended to set some minimal resources for your server:
 
-```
+```yaml
 resources:
   limits:
     memory: 32Gi
   requests:
     cpu: 4000m
     memory: 8Gi
+```
+
+## Security and Secrets Management
+
+The chart supports multiple approaches for managing server and admin passwords:
+
+### Option 1: External Secret (Recommended for Production)
+
+Use an existing Kubernetes secret managed by external tools like [Sealed Secrets](https://github.com/bitnami-labs/sealed-secrets) or [External Secrets Operator](https://external-secrets.io/):
+
+```bash
+# Create a secret manually
+kubectl create secret generic palworld-passwords \
+  --from-literal=SERVER_PASSWORD='your-secure-password' \
+  --from-literal=ADMIN_PASSWORD='your-admin-password'
+
+# Reference it in values.yaml
+helm install palworld-server kriegalex/palworld-server \
+  --set secret.existingSecret=palworld-passwords
+```
+
+### Option 2: Values File (Development/Testing Only)
+
+For development or testing environments, you can specify passwords directly in values.yaml:
+
+```yaml
+server:
+  password: "my-server-password"
+  adminPassword: "my-admin-password"
+```
+
+**WARNING:** Do not commit passwords to version control. Use separate values files or CI/CD variables for sensitive data.
+
+### Option 3: Command Line Override
+
+```bash
+helm install palworld-server kriegalex/palworld-server \
+  --set server.password='your-password' \
+  --set server.adminPassword='your-admin-password'
 ```
 
 ## Values
@@ -52,16 +91,18 @@ resources:
 | readinessProbe.periodSeconds | int | `15` | Period seconds |
 | readinessProbe.timeoutSeconds | int | `5` | Timeout seconds |
 | resources | object | {} | Container resource requests and limits |
+| secret.annotations | object | {} | Annotations to add to the secret (only used when existingSecret is not set) |
+| secret.existingSecret | string | "" | Use an existing Kubernetes secret for server and admin passwords The secret must contain the keys: SERVER_PASSWORD and/or ADMIN_PASSWORD This is the recommended approach for production deployments |
 | securityContext.capabilities | object | `{"drop":["ALL"]}` | Security capabilities to drop |
 | securityContext.runAsGroup | int | `1000` | Group ID to run the container |
 | securityContext.runAsNonRoot | bool | `true` | Run container as non-root user |
 | securityContext.runAsUser | int | `1000` | User ID to run the container |
-| server.adminPassword | string | "changemeAdmin" | Admin password for RCON access |
+| server.adminPassword | string | "" | Admin password for RCON access WARNING: Storing passwords in values.yaml is NOT recommended for production. Use existingSecret or external secret managers (sealed-secrets, external-secrets-operator) instead. |
 | server.community | bool | `false` | Enable to show in community servers tab WARNING: USE WITH SERVER_PASSWORD! |
 | server.description | string | `"Palworld Dedicated Server powered by Kubernetes"` | Server description displayed in the server browser |
 | server.multithreading | bool | `true` | Enable multithreading for better performance |
 | server.name | string | `"Palworld Server"` | Server name displayed in the server browser |
-| server.password | string | `"changeme"` | Server password Optional but recommended for security |
+| server.password | string | "" | Server password WARNING: Storing passwords in values.yaml is NOT recommended for production. Use existingSecret or external secret managers (sealed-secrets, external-secrets-operator) instead. |
 | server.players | int | `16` | Maximum number of players allowed on the server |
 | server.port | int | `8211` | Server port (must match service port) |
 | server.rconEnabled | bool | `true` | Enable RCON for server administration |

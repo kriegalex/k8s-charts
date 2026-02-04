@@ -15,3 +15,5 @@ charts/**/charts
 
 # Other
 .env
+
+CLAUDE.md

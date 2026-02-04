@@ -99,11 +99,15 @@ server:
   # -- Server description displayed in the server browser
   description: "Palworld Dedicated Server powered by Kubernetes"
   # -- Server password
-  # Optional but recommended for security
-  password: "changeme"
+  # WARNING: Storing passwords in values.yaml is NOT recommended for production.
+  # Use existingSecret or external secret managers (sealed-secrets, external-secrets-operator) instead.
+  # @default -- ""
+  password: ""
   # -- Admin password for RCON access
-  # @default -- "changemeAdmin"
-  adminPassword: "changemeAdmin"
+  # WARNING: Storing passwords in values.yaml is NOT recommended for production.
+  # Use existingSecret or external secret managers (sealed-secrets, external-secrets-operator) instead.
+  # @default -- ""
+  adminPassword: ""
   # -- Enable RCON for server administration
   rconEnabled: true
   # -- RCON port for admin commands
@@ -119,6 +123,17 @@ server:
   # Advanced settings:
   # For a complete list of available options, see:
   # https://github.com/thijsvanloef/palworld-server-docker/blob/main/README.md#environment-variables
+
+# Secret configuration
+secret:
+  # -- Use an existing Kubernetes secret for server and admin passwords
+  # The secret must contain the keys: SERVER_PASSWORD and/or ADMIN_PASSWORD
+  # This is the recommended approach for production deployments
+  # @default -- ""
+  existingSecret: ""
+  # -- Annotations to add to the secret (only used when existingSecret is not set)
+  # @default -- {}
+  annotations: {}
 
 # -- Additional environment variables
 # @default -- []
