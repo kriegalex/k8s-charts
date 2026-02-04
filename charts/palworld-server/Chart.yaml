@@ -2,8 +2,8 @@ apiVersion: v2
 name: palworld-server
 description: This Helm chart deploys a Palworld dedicated game server on a Kubernetes cluster.
 type: application
-version: 1.1.0
-appVersion: "v1.2.3"
+version: 1.2.0
+appVersion: "v2.3.0"
 home: https://www.pocketpair.jp/palworld
 icon: https://cdn2.steamgriddb.com/icon/82cf0712367108660c5339a4897a728e/32/128x128.png
 keywords:
@@ -26,4 +26,4 @@ annotations:
       url: https://github.com/thijsvanloef/palworld-server-docker
   artifacthub.io/images: |
     - name: palworld-server-docker
-      image: thijsvanloef/palworld-server-docker:v1.2.3
+      image: thijsvanloef/palworld-server-docker:v2.3.0

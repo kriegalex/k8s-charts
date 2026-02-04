@@ -17,3 +17,6 @@ data:
   TZ: "{{ .Values.server.timezone | default "UTC" }}"
   MULTITHREADING: "{{ .Values.server.multithreading | default "true" }}"
   COMMUNITY: "{{ .Values.server.community | default "false" }}"
+  REST_API_ENABLED: "{{ .Values.server.restApiEnabled | default "true" }}"
+  REST_API_PORT: "{{ .Values.server.restApiPort | default "8212" }}"
+  CROSSPLAY_PLATFORMS: "{{ .Values.server.crossplayPlatforms | default "(Steam,Xbox,PS5,Mac)" }}"
