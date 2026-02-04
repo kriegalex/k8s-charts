@@ -119,6 +119,12 @@ server:
   # -- Enable to show in community servers tab
   # WARNING: USE WITH SERVER_PASSWORD!
   community: false
+  # -- Enable REST API for server management
+  restApiEnabled: true
+  # -- REST API port for server management
+  restApiPort: 8212
+  # -- Crossplay platforms (Steam, Xbox, PS5, Mac)
+  crossplayPlatforms: "(Steam,Xbox,PS5,Mac)"
 
   # Advanced settings:
   # For a complete list of available options, see:

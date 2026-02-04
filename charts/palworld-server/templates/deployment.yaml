@@ -51,6 +51,11 @@ spec:
               containerPort: {{ .Values.server.rconPort }}
               protocol: TCP
             {{- end }}
+            {{- if .Values.server.restApiEnabled }}
+            - name: rest-api
+              containerPort: {{ .Values.server.restApiPort }}
+              protocol: TCP
+            {{- end }}
             {{- if .Values.server.community }}
             - name: query
               containerPort: 27015

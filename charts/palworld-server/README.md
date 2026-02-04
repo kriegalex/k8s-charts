@@ -1,6 +1,6 @@
 # Palworld Server Helm Chart
 
-![Version: 1.1.0](https://img.shields.io/badge/Version-1.1.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.2.3](https://img.shields.io/badge/AppVersion-v1.2.3-informational?style=flat-square)
+![Version: 1.2.0](https://img.shields.io/badge/Version-1.2.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v2.3.0](https://img.shields.io/badge/AppVersion-v2.3.0-informational?style=flat-square)
 
 This Helm chart deploys a Palworld dedicated game server on a Kubernetes cluster.
 
@@ -99,6 +99,7 @@ helm install palworld-server kriegalex/palworld-server \
 | securityContext.runAsUser | int | `1000` | User ID to run the container |
 | server.adminPassword | string | "" | Admin password for RCON access WARNING: Storing passwords in values.yaml is NOT recommended for production. Use existingSecret or external secret managers (sealed-secrets, external-secrets-operator) instead. |
 | server.community | bool | `false` | Enable to show in community servers tab WARNING: USE WITH SERVER_PASSWORD! |
+| server.crossplayPlatforms | string | `"(Steam,Xbox,PS5,Mac)"` | Crossplay platforms (Steam, Xbox, PS5, Mac) |
 | server.description | string | `"Palworld Dedicated Server powered by Kubernetes"` | Server description displayed in the server browser |
 | server.multithreading | bool | `true` | Enable multithreading for better performance |
 | server.name | string | `"Palworld Server"` | Server name displayed in the server browser |
@@ -107,6 +108,8 @@ helm install palworld-server kriegalex/palworld-server \
 | server.port | int | `8211` | Server port (must match service port) |
 | server.rconEnabled | bool | `true` | Enable RCON for server administration |
 | server.rconPort | int | `25575` | RCON port for admin commands |
+| server.restApiEnabled | bool | `true` | Enable REST API for server management |
+| server.restApiPort | int | `8212` | REST API port for server management |
 | server.timezone | string | `"UTC"` | Server timezone |
 | service.annotations | object | {} | Additional service annotations |
 | service.nodePort | string | "" | Specify a nodePort value if using NodePort service type |

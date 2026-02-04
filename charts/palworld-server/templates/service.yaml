@@ -24,6 +24,12 @@ spec:
       protocol: TCP
       name: rcon
     {{- end }}
+    {{- if .Values.server.restApiEnabled }}
+    - port: {{ .Values.server.restApiPort }}
+      targetPort: rest-api
+      protocol: TCP
+      name: rest-api
+    {{- end }}
     {{- if .Values.server.community }}
     - port: 27015
       targetPort: query
