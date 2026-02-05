@@ -49,12 +49,12 @@ env:
   # @section VPN Configuration
 
   # -- Private Internet Access (PIA) username
-  # Overrides the VPN section secret if provided
+  # Overrides vpn.pia.existingSecret if provided
   # @default -- ""
   VPN_PIA_USER: ""
 
   # -- Private Internet Access (PIA) password
-  # Overrides the VPN section secret if provided
+  # Overrides vpn.pia.existingSecret if provided
   # @default -- ""
   VPN_PIA_PASS: ""
 
@@ -109,37 +109,74 @@ env:
   # Useful if consistent port forwarding is required
   VPN_PIA_PORT_FORWARD_PERSIST: false
 
-# VPN connection configuration
-vpn:
-  # -- Enable VPN support (same as VPN_ENABLED env var)
-  enabled: false
-  # -- VPN provider, currently supports PIA (same as VPN_PROVIDER env)
-  provider: pia
-  # -- Name of existing secret to use for PIA VPN
-  # @default -- ""
-  existingSecret: ""
-  # -- Names of keys in existing secret to use for credentials
-  existingKeys:
-    # -- Username key in the secret (same as VPN_PIA_USER env)
-    # @default -- ""
-    usernameKey: ""
-    # -- Password key in the secret (same as VPN_PIA_PASS env)
-    # @default -- ""
-    passwordKey: ""
+  # -- Enable Privoxy HTTP proxy
+  PRIVOXY_ENABLED: false
 
-  # -- WireGuard configuration to be copied to /config/wireguard/wg0.conf
-  # @default -- ""
-  # @example
-  # config: |
-  #   [Interface]
-  #   PrivateKey = MY-PRIVATE-KEY
-  #   Address = 10.0.0.1/24
-  #   ListenPort = 51820
-  #
-  #   [Peer]
-  #   PublicKey = PEER-PUBLIC-KEY
-  #   AllowedIPs = 0.0.0.0/0
-  config: ""
+  # -- Enable Unbound DNS resolver
+  UNBOUND_ENABLED: false
+
+# VPN connection configuration
+# Two mutually exclusive options: PIA VPN or Custom WireGuard
+vpn:
+  # @section PIA VPN Configuration
+  # Private Internet Access (PIA) VPN provider.
+  # Enable this to use PIA's VPN service with username/password authentication.
+  # Do NOT enable both PIA and WireGuard - they are mutually exclusive.
+
+  pia:
+    # -- Enable PIA VPN (sets VPN_ENABLED=true and VPN_PROVIDER=pia)
+    enabled: false
+
+    # -- Name of existing secret to use for PIA VPN credentials (username/password)
+    # @default -- ""
+    existingSecret: ""
+    # -- Names of keys in existing secret to use for PIA credentials
+    existingKeys:
+      # -- Username key in the secret (same as VPN_PIA_USER env)
+      # @default -- ""
+      usernameKey: ""
+      # -- Password key in the secret (same as VPN_PIA_PASS env)
+      # @default -- ""
+      passwordKey: ""
+
+  # @section WireGuard VPN Configuration
+  # Custom WireGuard VPN configuration using your own WireGuard server.
+  # Enable this to use a custom WireGuard setup with wg0.conf file.
+  # Do NOT enable both PIA and WireGuard - they are mutually exclusive.
+
+  wireguard:
+    # -- Enable custom WireGuard VPN (sets VPN_ENABLED=true)
+    enabled: false
+
+    # -- Inline WireGuard configuration to be copied to /config/wireguard/wg0.conf
+    # @default -- ""
+    # @example
+    # config: |
+    #   [Interface]
+    #   PrivateKey = MY-PRIVATE-KEY
+    #   Address = 10.0.0.1/24
+    #   ListenPort = 51820
+    #
+    #   [Peer]
+    #   PublicKey = PEER-PUBLIC-KEY
+    #   AllowedIPs = 0.0.0.0/0
+    config: ""
+
+    # -- Name of existing Secret containing WireGuard wg0.conf file (recommended for production)
+    # Takes precedence over existingConfigMap and inline config
+    # @default -- ""
+    existingSecret: ""
+    # -- Key in the existing Secret that contains the wg0.conf data
+    # @default -- "wg0.conf"
+    secretKey: "wg0.conf"
+
+    # -- Name of existing ConfigMap containing WireGuard wg0.conf file (not recommended for production)
+    # Only used if existingSecret is not set. Takes precedence over inline config
+    # @default -- ""
+    existingConfigMap: ""
+    # -- Key in the existing ConfigMap that contains the wg0.conf data
+    # @default -- "wg0.conf"
+    configMapKey: "wg0.conf"
 
 # Persistent storage configuration
 persistence:

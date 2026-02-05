@@ -1,4 +1,4 @@
-{{- if and .Values.vpn.enabled .Values.vpn.config }}
+{{- if and .Values.vpn.wireguard.enabled .Values.vpn.wireguard.config (not .Values.vpn.wireguard.existingSecret) (not .Values.vpn.wireguard.existingConfigMap) }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -7,5 +7,5 @@ metadata:
     {{- include "qbittorrent.labels" . | nindent 4 }}
 data:
   wg0.conf: |
-    {{- .Values.vpn.config | nindent 4 }}
+    {{- .Values.vpn.wireguard.config | nindent 4 }}
 {{- end}}

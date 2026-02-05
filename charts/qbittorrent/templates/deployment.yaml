@@ -24,7 +24,7 @@ spec:
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- if .Values.vpn.enabled }}
+      {{- if or .Values.vpn.pia.enabled .Values.vpn.wireguard.enabled }}
       # make sure you allowed them on your worker nodes ! check "allowed-unsafe-sysctls" kubelet documentation
       securityContext:
         sysctls:
@@ -33,7 +33,7 @@ spec:
           - name: net.ipv6.conf.all.disable_ipv6
             value: "1"
       {{- end }}
-      {{- if and .Values.vpn.enabled .Values.vpn.config }}
+      {{- if and .Values.vpn.wireguard.enabled (or .Values.vpn.wireguard.existingSecret .Values.vpn.wireguard.existingConfigMap .Values.vpn.wireguard.config) }}
       initContainers:
         - name: copy-config
           image: busybox:1.28
@@ -70,11 +70,25 @@ spec:
             {{- toYaml .Values.resources | nindent 12 }}
 
       volumes:
-        {{- if .Values.vpn.enabled }}
-        {{- if .Values.vpn.config  }}
+        {{- if .Values.vpn.wireguard.enabled }}
+        {{- if or .Values.vpn.wireguard.existingSecret .Values.vpn.wireguard.existingConfigMap .Values.vpn.wireguard.config }}
         - name: wg-config
+          {{- if .Values.vpn.wireguard.existingSecret }}
+          secret:
+            secretName: {{ .Values.vpn.wireguard.existingSecret }}
+            items:
+              - key: {{ .Values.vpn.wireguard.secretKey }}
+                path: wg0.conf
+          {{- else if .Values.vpn.wireguard.existingConfigMap }}
+          configMap:
+            name: {{ .Values.vpn.wireguard.existingConfigMap }}
+            items:
+              - key: {{ .Values.vpn.wireguard.configMapKey }}
+                path: wg0.conf
+          {{- else }}
           configMap:
             name: {{ include "qbittorrent.fullname" . }}-wg
+          {{- end }}
         {{- end }}
         # - name: dev-net-tun
         #   hostPath:
