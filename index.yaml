@@ -1114,6 +1114,40 @@ entries:
           url: https://github.com/hotio/qbittorrent
     apiVersion: v2
     appVersion: legacy-4.3.9
+    created: "2026-02-05T21:27:25.841822536Z"
+    description: A Helm chart for deploying a QBittorrent client that uses a wireguard
+      VPN tunnel.
+    digest: 0ccc5333b2f9a00ffb3dfd1b7acddcc5aaeb49aad4b8c3f51fa9db029b501bba
+    home: https://www.qbittorrent.org/
+    icon: https://cloud.githubusercontent.com/assets/14862437/23586868/89ef2922-01c4-11e7-869c-52aafcece17f.png
+    keywords:
+    - qbittorrent
+    - torrent
+    - vpn
+    kubeVersion: '>=1.19.0-0'
+    maintainers:
+    - email: kriegalex@gmail.com
+      name: kriegalex
+    name: qbittorrent
+    sources:
+    - https://github.com/qbittorrent/qBittorrent
+    - https://github.com/hotio/qbittorrent
+    - https://github.com/kriegalex/k8s-charts/tree/main/charts/qbittorrent
+    type: application
+    urls:
+    - https://github.com/kriegalex/k8s-charts/releases/download/qbittorrent-2.0.1/qbittorrent-2.0.1.tgz
+    version: 2.0.1
+  - annotations:
+      artifacthub.io/images: |
+        - name: qbittorrent
+          image: ghcr.io/hotio/qbittorrent:legacy-4.3.9
+      artifacthub.io/links: |
+        - name: Chart source
+          url: https://github.com/kriegalex/k8s-charts/tree/main/charts/qbittorrent
+        - name: Docker image source
+          url: https://github.com/hotio/qbittorrent
+    apiVersion: v2
+    appVersion: legacy-4.3.9
     created: "2026-02-05T20:42:44.995729513Z"
     description: A Helm chart for deploying a QBittorrent client that uses a wireguard
       VPN tunnel.
@@ -1491,4 +1525,4 @@ entries:
     urls:
     - https://github.com/kriegalex/k8s-charts/releases/download/valheim-server-1.0.0/valheim-server-1.0.0.tgz
     version: 1.0.0
-generated: "2026-02-05T20:42:44.995882106Z"
+generated: "2026-02-05T21:27:25.841989558Z"
