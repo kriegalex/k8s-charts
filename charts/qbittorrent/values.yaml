@@ -77,7 +77,8 @@ env:
 
   # -- Enables automatic port forwarding through the VPN
   # This is often necessary for torrenting to allow incoming connections
-  VPN_AUTO_PORT_FORWARD: true
+  # Automatically set to true when using PIA or Proton VPN providers
+  VPN_AUTO_PORT_FORWARD: false
 
   # -- Specific ports to forward if VPN_AUTO_PORT_FORWARD is enabled
   # Leave empty to let the VPN provider choose
@@ -147,6 +148,10 @@ vpn:
   wireguard:
     # -- Enable custom WireGuard VPN (sets VPN_ENABLED=true)
     enabled: false
+
+    # -- Enable Proton VPN provider (sets VPN_PROVIDER=proton and VPN_AUTO_PORT_FORWARD=true)
+    # Only applicable when WireGuard is enabled
+    proton: false
 
     # -- Inline WireGuard configuration to be copied to /config/wireguard/wg0.conf
     # @default -- ""

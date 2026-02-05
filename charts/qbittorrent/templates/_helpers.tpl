@@ -76,6 +76,12 @@ Create environment variables used to configure the qbittorrent container as well
 {{- if .Values.vpn.pia.enabled }}
 - name: VPN_PROVIDER
   value: "pia"
+{{- else if and .Values.vpn.wireguard.enabled .Values.vpn.wireguard.proton }}
+- name: VPN_PROVIDER
+  value: "proton"
+{{- else }}
+- name: VPN_PROVIDER
+  value: "generic"
 {{- end }}
 - name: VPN_LAN_NETWORK
   value: {{ .Values.env.VPN_LAN_NETWORK | quote }}
@@ -84,7 +90,11 @@ Create environment variables used to configure the qbittorrent container as well
 - name: VPN_EXPOSE_PORTS_ON_LAN
   value: {{ .Values.env.VPN_EXPOSE_PORTS_ON_LAN | quote }}
 - name: VPN_AUTO_PORT_FORWARD
+{{- if or .Values.vpn.pia.enabled (and .Values.vpn.wireguard.enabled .Values.vpn.wireguard.proton) }}
+  value: "true"
+{{- else }}
   value: {{ .Values.env.VPN_AUTO_PORT_FORWARD | quote }}
+{{- end }}
 - name: VPN_AUTO_PORT_FORWARD_TO_PORTS
   value: {{ .Values.env.VPN_AUTO_PORT_FORWARD_TO_PORTS | quote}}
 - name: VPN_KEEP_LOCAL_DNS

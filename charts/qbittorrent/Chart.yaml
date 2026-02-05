@@ -4,7 +4,7 @@ description: A Helm chart for deploying a QBittorrent client that uses a wiregua
 home: https://www.qbittorrent.org/
 icon: https://cloud.githubusercontent.com/assets/14862437/23586868/89ef2922-01c4-11e7-869c-52aafcece17f.png
 type: application
-version: 2.0.0
+version: 2.0.1
 appVersion: "legacy-4.3.9"  # legacy stable version
 kubeVersion: ">=1.19.0-0"
 keywords:

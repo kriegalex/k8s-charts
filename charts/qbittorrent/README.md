@@ -1,6 +1,6 @@
 # QBittorrent Chart
 
-![Version: 2.0.0](https://img.shields.io/badge/Version-2.0.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: legacy-4.3.9](https://img.shields.io/badge/AppVersion-legacy--4.3.9-informational?style=flat-square)
+![Version: 2.0.1](https://img.shields.io/badge/Version-2.0.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: legacy-4.3.9](https://img.shields.io/badge/AppVersion-legacy--4.3.9-informational?style=flat-square)
 
 A Helm chart for deploying a QBittorrent client that uses a wireguard VPN tunnel.
 
@@ -274,7 +274,7 @@ vpn:
 | env.TZ | string | "Etc/UTC" | Timezone setting |
 | env.UMASK | int | `2` | The file permission mask Controls default file and directory permissions 002 means new files will have 664 (-rw-rw-r--) and directories 775 (drwxrwxr-x) |
 | env.UNBOUND_ENABLED | bool | `false` | Enable Unbound DNS resolver |
-| env.VPN_AUTO_PORT_FORWARD | bool | `true` | Enables automatic port forwarding through the VPN This is often necessary for torrenting to allow incoming connections |
+| env.VPN_AUTO_PORT_FORWARD | bool | `false` | Enables automatic port forwarding through the VPN This is often necessary for torrenting to allow incoming connections Automatically set to true when using PIA or Proton VPN providers |
 | env.VPN_AUTO_PORT_FORWARD_TO_PORTS | string | "" | Specific ports to forward if VPN_AUTO_PORT_FORWARD is enabled Leave empty to let the VPN provider choose |
 | env.VPN_CONF | string | `"wg0"` | The VPN configuration file to use Typically set to 'wg0' for WireGuard or 'openvpn' for OpenVPN configurations |
 | env.VPN_EXPOSE_PORTS_ON_LAN | string | "" | Ports to be exposed to the LAN network Leave empty to disable or specify ports if needed |
@@ -319,6 +319,7 @@ vpn:
 | vpn.wireguard.enabled | bool | `false` | Enable custom WireGuard VPN (sets VPN_ENABLED=true) |
 | vpn.wireguard.existingConfigMap | string | "" | Name of existing ConfigMap containing WireGuard wg0.conf file (not recommended for production) Only used if existingSecret is not set. Takes precedence over inline config |
 | vpn.wireguard.existingSecret | string | "" | Name of existing Secret containing WireGuard wg0.conf file (recommended for production) Takes precedence over existingConfigMap and inline config |
+| vpn.wireguard.proton | bool | `false` | Enable Proton VPN provider (sets VPN_PROVIDER=proton and VPN_AUTO_PORT_FORWARD=true) Only applicable when WireGuard is enabled |
 | vpn.wireguard.secretKey | string | "wg0.conf" | Key in the existing Secret that contains the wg0.conf data |
 
 ----------------------------------------------
