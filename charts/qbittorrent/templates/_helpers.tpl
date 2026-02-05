@@ -68,13 +68,15 @@ Create environment variables used to configure the qbittorrent container as well
   value: {{ .Values.env.UMASK | quote }}
 - name: TZ
   value: {{ .Values.env.TZ | quote }}
-{{- if .Values.vpn.enabled }}
+{{- if or .Values.vpn.pia.enabled .Values.vpn.wireguard.enabled }}
 - name: VPN_ENABLED
-  value: {{ .Values.vpn.enabled | quote }}
+  value: "true"
 - name: VPN_CONF
   value: {{ .Values.env.VPN_CONF | quote }}
+{{- if .Values.vpn.pia.enabled }}
 - name: VPN_PROVIDER
-  value: {{ .Values.vpn.provider | quote }}
+  value: "pia"
+{{- end }}
 - name: VPN_LAN_NETWORK
   value: {{ .Values.env.VPN_LAN_NETWORK | quote }}
 - name: VPN_LAN_LEAK_ENABLED
@@ -95,7 +97,7 @@ Create environment variables used to configure the qbittorrent container as well
   value: {{ .Values.env.PRIVOXY_ENABLED | quote }}
 - name: UNBOUND_ENABLED
   value: {{ .Values.env.UNBOUND_ENABLED | quote }}
-{{- if eq .Values.vpn.provider "pia" }}
+{{- if .Values.vpn.pia.enabled }}
 - name: VPN_PIA_PREFERRED_REGION
   value: {{ .Values.env.VPN_PIA_PREFERRED_REGION | quote }}
 {{- if .Values.env.VPN_PIA_DIP_TOKEN}}
@@ -104,28 +106,28 @@ Create environment variables used to configure the qbittorrent container as well
 {{- end }}
 - name: VPN_PIA_PORT_FORWARD_PERSIST
   value: {{ .Values.env.VPN_PIA_PORT_FORWARD_PERSIST | quote }}
-{{- if and .Values.vpn.existingSecret .Values.vpn.existingKeys.usernameKey (not .Values.env.VPN_PIA_USER) }}
+{{- if and .Values.vpn.pia.existingSecret .Values.vpn.pia.existingKeys.usernameKey (not .Values.env.VPN_PIA_USER) }}
 - name: VPN_PIA_USER
   valueFrom:
     secretKeyRef:
-      name: {{ .Values.vpn.existingSecret | quote }}
-      key: {{ .Values.vpn.existingKeys.usernameKey | quote }}
+      name: {{ .Values.vpn.pia.existingSecret | quote }}
+      key: {{ .Values.vpn.pia.existingKeys.usernameKey | quote }}
 {{- else }}
 - name: VPN_PIA_USER
   value: {{ required "PIA username required" .Values.env.VPN_PIA_USER | quote }}
 {{- end }}
-{{- if and .Values.vpn.existingSecret .Values.vpn.existingKeys.passwordKey (not .Values.env.VPN_PIA_PASS) }}
+{{- if and .Values.vpn.pia.existingSecret .Values.vpn.pia.existingKeys.passwordKey (not .Values.env.VPN_PIA_PASS) }}
 - name: VPN_PIA_PASS
   valueFrom:
     secretKeyRef:
-      name: {{ .Values.vpn.existingSecret | quote }}
-      key: {{ .Values.vpn.existingKeys.passwordKey | quote }}
+      name: {{ .Values.vpn.pia.existingSecret | quote }}
+      key: {{ .Values.vpn.pia.existingKeys.passwordKey | quote }}
 {{- else }}
 - name: VPN_PIA_PASS
   value: {{ required "PIA password required" .Values.env.VPN_PIA_PASS | quote }}
 {{- end }}
-{{- end }} # eq .Values.vpn.provider "pia"
-{{- end }} # .Values.vpn.enabled
+{{- end }} # .Values.vpn.pia.enabled
+{{- end }} # or .Values.vpn.pia.enabled .Values.vpn.wireguard.enabled
 {{- if .Values.extraEnv }}
 {{ toYaml .Values.extraEnv }}
 {{- end }}
