@@ -1,7 +1,7 @@
 # BentoPDF Chart
 ===========
 
-![Version: 1.0.1](https://img.shields.io/badge/Version-1.0.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1.1.5](https://img.shields.io/badge/AppVersion-1.1.5-informational?style=flat-square)
+![Version: 1.1.0](https://img.shields.io/badge/Version-1.1.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2.1.0](https://img.shields.io/badge/AppVersion-2.1.0-informational?style=flat-square)
 
 A Helm chart for BentoPDF - PDF manipulation service using BentoML
 
@@ -66,7 +66,7 @@ The following table lists the configurable parameters of the BentoPDF chart and 
 | config.workers | int | `1` | Number of workers |
 | fullnameOverride | string | `""` | String to fully override bentopdf.fullname template |
 | image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
-| image.repository | string | `"bentopdf/bentopdf-simple"` | Docker image repository for BentoPDF (uses nginx-unprivileged for enhanced security) |
+| image.repository | string | `"ghcr.io/alam00000/bentopdf-simple"` | Docker image repository for BentoPDF (uses nginx-unprivileged for enhanced security) |
 | image.tag | string | "" | Overrides the image tag whose default is the chart appVersion |
 | imagePullSecrets | list | `[]` | Image pull secrets for private Docker registry |
 | ingress.annotations | object | `{}` | Additional ingress annotations @example annotations:   cert-manager.io/cluster-issuer: letsencrypt-prod |

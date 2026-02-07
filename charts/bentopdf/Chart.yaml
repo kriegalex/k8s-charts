@@ -2,8 +2,8 @@ apiVersion: v2
 name: bentopdf
 description: A Helm chart for BentoPDF - PDF manipulation service using BentoML
 type: application
-version: 1.0.1
-appVersion: "1.1.5"
+version: 1.1.0
+appVersion: "2.1.0"
 home: https://github.com/alam00000/bentopdf
 icon: https://raw.githubusercontent.com/bentoml/BentoML/main/docs/source/_static/img/bentoml-icon.png
 kubeVersion: ">=1.19.0-0"
@@ -27,4 +27,4 @@ annotations:
       url: https://github.com/alam00000/bentopdf
   artifacthub.io/images: |
     - name: bentopdf
-      image: bentopdf/bentopdf-simple:latest
+      image: ghcr.io/alam00000/bentopdf-simple:latest
