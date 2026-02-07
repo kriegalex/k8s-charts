@@ -7,7 +7,7 @@ replicaCount: 1
 
 image:
   # -- Docker image repository for BentoPDF (uses nginx-unprivileged for enhanced security)
-  repository: bentopdf/bentopdf-simple
+  repository: ghcr.io/alam00000/bentopdf-simple
   # -- Image pull policy
   pullPolicy: IfNotPresent
   # -- Overrides the image tag whose default is the chart appVersion
