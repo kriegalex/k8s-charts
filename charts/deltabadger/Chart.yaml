@@ -1,10 +1,11 @@
 apiVersion: v2
 name: deltabadger
 description: A Helm chart for Deltabadger - Auto-DCA bot for crypto investments
+home: https://deltabadger.com
+icon: https://raw.githubusercontent.com/deltabadger/deltabadger/refs/heads/main/app/assets/images/favicon/favicon-96x96.png
 type: application
 version: 1.0.0
 appVersion: "1.6.26"
-home: https://deltabadger.com
 kubeVersion: ">=1.19.0-0"
 keywords:
   - deltabadger
