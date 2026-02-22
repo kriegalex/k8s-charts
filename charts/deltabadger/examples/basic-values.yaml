@@ -1,0 +1,15 @@
+# Basic deployment example using bjw-s common library
+# Install with: helm install deltabadger ./deltabadger-helm -f examples/basic-values.yaml
+
+controllers:
+  deltabadger:
+    replicas: 1
+
+persistence:
+  storage:
+    enabled: true
+    size: 10Gi
+
+# Access via port-forward:
+# kubectl port-forward svc/deltabadger-app 3737:3000
+# Open browser at http://localhost:3737
