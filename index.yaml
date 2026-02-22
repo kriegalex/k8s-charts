@@ -1241,7 +1241,7 @@ entries:
   - annotations:
       artifacthub.io/images: |
         - name: qbittorrent
-          image: hotio/qbittorrent:legacy-4.3.9
+          image: ghcr.io/hotio/qbittorrent:legacy-4.3.9
       artifacthub.io/links: |
         - name: Chart source
           url: https://github.com/kriegalex/k8s-charts/tree/main/charts/qbittorrent
@@ -1275,7 +1275,7 @@ entries:
   - annotations:
       artifacthub.io/images: |
         - name: qbittorrent
-          image: hotio/qbittorrent:legacy-4.3.9
+          image: ghcr.io/hotio/qbittorrent:legacy-4.3.9
       artifacthub.io/links: |
         - name: Chart source
           url: https://github.com/kriegalex/k8s-charts/tree/main/charts/qbittorrent
@@ -1309,7 +1309,7 @@ entries:
   - annotations:
       artifacthub.io/images: |
         - name: qbittorrent
-          image: hotio/qbittorrent:legacy-4.3.9
+          image: ghcr.io/hotio/qbittorrent:legacy-4.3.9
       artifacthub.io/links: |
         - name: Chart source
           url: https://github.com/kriegalex/k8s-charts/tree/main/charts/qbittorrent
@@ -1343,7 +1343,7 @@ entries:
   - annotations:
       artifacthub.io/images: |
         - name: qbittorrent
-          image: hotio/qbittorrent:legacy-4.3.9
+          image: ghcr.io/hotio/qbittorrent:legacy-4.3.9
       artifacthub.io/links: |
         - name: Chart source
           url: https://github.com/kriegalex/k8s-charts/tree/main/charts/qbittorrent
