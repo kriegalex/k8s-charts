@@ -120,6 +120,10 @@ jobs:
         with:
           version: v3.17.0
 
+      - name: Add Helm repositories
+        run: |
+          helm repo add bjw-s https://bjw-s-labs.github.io/helm-charts
+
       - name: Update dependencies
         run: |
           for chart in charts/*/; do
