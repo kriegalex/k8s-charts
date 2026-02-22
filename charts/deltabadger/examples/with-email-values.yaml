@@ -1,0 +1,36 @@
+# Deployment with email notifications enabled
+# Install with: helm install deltabadger ./deltabadger-helm -f examples/with-email-values.yaml
+
+controllers:
+  deltabadger:
+    replicas: 1
+    containers:
+      app:
+        env:
+          APP_ROOT_URL: "https://deltabadger.example.com"
+          HOME_PAGE_URL: "https://deltabadger.example.com"
+
+persistence:
+  storage:
+    enabled: true
+    size: 10Gi
+
+# Optional ConfigMap for email settings
+configMaps:
+  config:
+    enabled: true
+    data:
+      SMTP_ADDRESS: "smtp.gmail.com"
+      SMTP_DOMAIN: "example.com"
+      SMTP_PORT: "587"
+      SMTP_USER_NAME: "notifications@example.com"
+      NOTIFICATIONS_SENDER: "noreply@example.com"
+
+secrets:
+  secrets:
+    enabled: true
+    stringData:
+      SECRET_KEY_BASE: "REPLACE_WITH_YOUR_SECRET_KEY_BASE"
+      DEVISE_SECRET_KEY: "REPLACE_WITH_YOUR_DEVISE_SECRET_KEY"
+      APP_ENCRYPTION_KEY: "REPLACE_WITH_YOUR_APP_ENCRYPTION_KEY"
+      SMTP_PASSWORD: "your-smtp-app-password"
