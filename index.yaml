@@ -326,6 +326,44 @@ entries:
     urls:
     - https://github.com/kriegalex/k8s-charts/releases/download/bitcoin-stack-1.0.0/bitcoin-stack-1.0.0.tgz
     version: 1.0.0
+  deltabadger:
+  - annotations:
+      artifacthub.io/images: |
+        - name: deltabadger
+          image: ghcr.io/deltabadger/deltabadger:1.6.26
+      artifacthub.io/links: |
+        - name: Chart source
+          url: https://github.com/kriegalex/k8s-charts/tree/main/charts/deltabadger
+        - name: Application source
+          url: https://github.com/deltabadger/deltabadger
+    apiVersion: v2
+    appVersion: 1.6.26
+    created: "2026-02-22T14:26:41.503937039Z"
+    dependencies:
+    - name: common
+      repository: https://bjw-s-labs.github.io/helm-charts
+      version: 4.6.2
+    description: A Helm chart for Deltabadger - Auto-DCA bot for crypto investments
+    digest: b73eb5c275fc64d0b6e5581ce262e748f33c0cd33a0d2849cf78a19731a6d46d
+    home: https://deltabadger.com
+    icon: https://raw.githubusercontent.com/deltabadger/deltabadger/refs/heads/main/app/assets/images/favicon/favicon-96x96.png
+    keywords:
+    - deltabadger
+    - dca
+    - crypto
+    - investment
+    kubeVersion: '>=1.19.0-0'
+    maintainers:
+    - email: kriegalex@gmail.com
+      name: kriegalex
+    name: deltabadger
+    sources:
+    - https://github.com/deltabadger/deltabadger
+    - https://github.com/kriegalex/k8s-charts/tree/main/charts/deltabadger
+    type: application
+    urls:
+    - https://github.com/kriegalex/k8s-charts/releases/download/deltabadger-1.0.0/deltabadger-1.0.0.tgz
+    version: 1.0.0
   enshrouded-server:
   - annotations:
       artifacthub.io/images: |
@@ -1558,4 +1596,4 @@ entries:
     urls:
     - https://github.com/kriegalex/k8s-charts/releases/download/valheim-server-1.0.0/valheim-server-1.0.0.tgz
     version: 1.0.0
-generated: "2026-02-22T03:25:08.822062236Z"
+generated: "2026-02-22T14:26:41.504037166Z"
