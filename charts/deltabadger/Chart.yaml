@@ -1,0 +1,34 @@
+apiVersion: v2
+name: deltabadger
+description: A Helm chart for Deltabadger - Auto-DCA bot for crypto investments
+home: https://deltabadger.com
+icon: https://raw.githubusercontent.com/deltabadger/deltabadger/refs/heads/main/app/assets/images/favicon/favicon-96x96.png
+type: application
+version: 1.0.0
+appVersion: "1.6.26"
+kubeVersion: ">=1.19.0-0"
+keywords:
+  - deltabadger
+  - dca
+  - crypto
+  - investment
+maintainers:
+  - name: kriegalex
+    email: kriegalex@gmail.com
+sources:
+  - https://github.com/deltabadger/deltabadger
+  - https://github.com/kriegalex/k8s-charts/tree/main/charts/deltabadger
+deprecated: false
+annotations:
+  artifacthub.io/links: |
+    - name: Chart source
+      url: https://github.com/kriegalex/k8s-charts/tree/main/charts/deltabadger
+    - name: Application source
+      url: https://github.com/deltabadger/deltabadger
+  artifacthub.io/images: |
+    - name: deltabadger
+      image: ghcr.io/deltabadger/deltabadger:1.6.26
+dependencies:
+  - name: common
+    repository: https://bjw-s-labs.github.io/helm-charts
+    version: 4.6.2

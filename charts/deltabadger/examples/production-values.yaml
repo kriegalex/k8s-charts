@@ -1,0 +1,66 @@
+# Production deployment example with ingress and SSL
+# Install with: helm install deltabadger ./deltabadger-helm -f examples/production-values.yaml
+
+controllers:
+  deltabadger:
+    replicas: 1
+    containers:
+      app:
+        image:
+          tag: "latest"
+          pullPolicy: Always
+        env:
+          APP_ROOT_URL: "https://deltabadger.example.com"
+          HOME_PAGE_URL: "https://deltabadger.example.com"
+          FORCE_SSL: "true"
+        resources:
+          limits:
+            cpu: 2000m
+            memory: 2Gi
+          requests:
+            cpu: 500m
+            memory: 1Gi
+
+service:
+  app:
+    type: ClusterIP
+
+ingress:
+  app:
+    enabled: true
+    className: nginx
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-prod
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+      # Backend protocol - Tell NGINX to use HTTP (not HTTPS) for backend
+      nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+    hosts:
+      - host: deltabadger.example.com
+        paths:
+          - path: /
+            pathType: Prefix
+            service:
+              identifier: app
+              port: http
+    tls:
+      - secretName: deltabadger-tls
+        hosts:
+          - deltabadger.example.com
+
+persistence:
+  storage:
+    enabled: true
+    storageClass: "fast-ssd"
+    size: 20Gi
+
+# IMPORTANT: Replace these with your own generated secrets!
+# Generate with:
+#   openssl rand -hex 64  # For SECRET_KEY_BASE and DEVISE_SECRET_KEY
+#   openssl rand -hex 32  # For APP_ENCRYPTION_KEY
+secrets:
+  secrets:
+    enabled: true
+    stringData:
+      SECRET_KEY_BASE: "REPLACE_WITH_YOUR_SECRET_KEY_BASE"
+      DEVISE_SECRET_KEY: "REPLACE_WITH_YOUR_DEVISE_SECRET_KEY"
+      APP_ENCRYPTION_KEY: "REPLACE_WITH_YOUR_APP_ENCRYPTION_KEY"

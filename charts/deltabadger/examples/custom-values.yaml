@@ -1,0 +1,70 @@
+# Production deployment example with ingress and SSL
+# Install with: helm install deltabadger ./deltabadger-helm -f examples/production-values.yaml
+
+controllers:
+  deltabadger:
+    replicas: 1
+    containers:
+      app:
+        image:
+          tag: "latest"
+          pullPolicy: Always
+        env:
+          APP_ROOT_URL: "https://badger.lourenco.ch"
+          HOME_PAGE_URL: "https://badger.lourenco.ch"
+          # Rails assumes SSL when behind reverse proxy - generates HTTPS URLs
+          # but does NOT force redirects (that's handled by the ingress)
+          RAILS_ASSUME_SSL: "true"
+        # Use external secret instead of chart-managed secret
+        envFrom:
+          - secretRef:
+              name: deltabadger-secrets
+        resources:
+          limits:
+            memory: 8Gi
+          requests:
+            cpu: 500m
+            memory: 2Gi
+
+service:
+  app:
+    type: ClusterIP
+
+ingress:
+  app:
+    enabled: true
+    className: nginx
+    annotations:
+      # SSL/TLS Configuration
+      cert-manager.io/cluster-issuer: letsencrypt-prod
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+
+      # Backend protocol - CRITICAL: Tell NGINX to use HTTP (not HTTPS) for backend
+      # This fixes the "Are you trying to open an SSL connection to a non-SSL Puma?" error
+      nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+    hosts:
+      - host: badger.lourenco.ch
+        paths:
+          - path: /
+            pathType: Prefix
+            service:
+              identifier: app
+              port: http
+    tls:
+      - secretName: deltabadger-tls
+        hosts:
+          - badger.lourenco.ch
+
+persistence:
+  storage:
+    enabled: true
+    storageClass: "longhorn"
+    size: 50Gi
+
+# IMPORTANT: Replace these with your own generated secrets!
+# Generate with:
+#   openssl rand -hex 64  # For SECRET_KEY_BASE and DEVISE_SECRET_KEY
+#   openssl rand -hex 32  # For APP_ENCRYPTION_KEY
+secrets:
+  secrets:
+    enabled: false

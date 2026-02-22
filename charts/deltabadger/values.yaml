@@ -1,0 +1,210 @@
+# Default values for deltabadger using bjw-s common library
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# -- Controller configuration (bjw-s common library format)
+controllers:
+  deltabadger:
+    # -- Enable the deltabadger controller
+    enabled: true
+    # -- Controller type
+    type: deployment
+    # -- Number of replicas
+    replicas: 1
+    # -- Deployment strategy
+    strategy: Recreate
+
+    containers:
+      app:
+        image:
+          # -- Image repository
+          repository: ghcr.io/deltabadger/deltabadger
+          # -- Image tag
+          tag: "{{ .Chart.AppVersion }}"
+          # -- Image pull policy
+          pullPolicy: IfNotPresent
+
+        # -- Container arguments (standalone mode runs web + jobs in one process)
+        args: ["standalone"]
+
+        env:
+          # -- Rails environment
+          RAILS_ENV: production
+          # -- Node environment
+          NODE_ENV: production
+          # -- Log to stdout
+          RAILS_LOG_TO_STDOUT: "true"
+          # -- Serve static files from Rails
+          RAILS_SERVE_STATIC_FILES: "true"
+          # -- Application root URL
+          APP_ROOT_URL: "http://deltabadger.local"
+          # -- Home page URL
+          HOME_PAGE_URL: "http://deltabadger.local"
+          # -- Force SSL (set to "true" for HTTPS)
+          FORCE_SSL: "false"
+          # -- Minimum seconds between orders
+          ORDERS_FREQUENCY_LIMIT: "60"
+
+        # -- Env from ConfigMap and Secret
+        envFrom:
+          - configMapRef:
+              name: '{{ include "bjw-s.common.lib.chart.names.fullname" $ }}-config'
+              optional: true
+          - secretRef:
+              name: '{{ include "bjw-s.common.lib.chart.names.fullname" $ }}'
+
+        probes:
+          # -- Liveness probe configuration
+          liveness:
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /health-check
+                port: 3000
+                scheme: HTTP
+              initialDelaySeconds: 60
+              periodSeconds: 30
+              timeoutSeconds: 10
+              failureThreshold: 3
+          # -- Readiness probe configuration
+          readiness:
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /health-check
+                port: 3000
+                scheme: HTTP
+              initialDelaySeconds: 30
+              periodSeconds: 10
+              timeoutSeconds: 5
+              failureThreshold: 3
+
+        # -- Resource limits and requests
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 1Gi
+          requests:
+            cpu: 250m
+            memory: 512Mi
+
+        # -- Container security context
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: false
+          capabilities:
+            drop:
+              - ALL
+
+# -- Default pod-level security context
+defaultPodOptions:
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 1000
+    fsGroup: 1000
+    seccompProfile:
+      type: RuntimeDefault
+
+# -- Service configuration
+service:
+  app:
+    # -- Controller to associate the service with
+    controller: deltabadger
+    # -- Service type
+    type: ClusterIP
+    ports:
+      http:
+        # -- Service port
+        port: 3000
+        # -- Port protocol
+        protocol: HTTP
+
+# -- Ingress configuration
+ingress:
+  app:
+    # -- Enable ingress
+    enabled: false
+    # -- Ingress class name
+    className: nginx
+    # -- Ingress annotations
+    annotations: {}
+      # cert-manager.io/cluster-issuer: letsencrypt-prod
+    # -- Ingress hosts
+    hosts:
+      - host: deltabadger.local
+        paths:
+          - path: /
+            pathType: Prefix
+            service:
+              identifier: app
+              port: http
+    # -- Ingress TLS configuration
+    tls: []
+      # - secretName: deltabadger-tls
+      #   hosts:
+      #     - deltabadger.local
+
+# -- Persistence configuration for SQLite databases and storage
+persistence:
+  storage:
+    # -- Enable persistent storage
+    enabled: true
+    # -- PVC type
+    type: persistentVolumeClaim
+    # -- Storage class (empty string uses default)
+    storageClass: ""
+    # -- Access mode
+    accessMode: ReadWriteOnce
+    # -- Storage size
+    size: 10Gi
+    # -- Retain PVC on chart uninstall
+    retain: true
+    # -- Mount path in the container
+    globalMounts:
+      - path: /app/storage
+
+# -- ConfigMap for optional configuration
+configMaps:
+  config:
+    # -- Enable the config ConfigMap
+    enabled: false
+    # -- ConfigMap data (performance tuning, SMTP settings, etc.)
+    # @default -- See values.yaml for available options
+    data: {}
+      # Performance tuning (defaults shown):
+      # RAILS_MAX_THREADS: "5"        # Max threads per Puma worker
+      # WEB_CONCURRENCY: "0"          # Number of Puma workers (0 = single mode)
+      # MAX_DB_CONNECTIONS: "5"       # Max database connections per process
+      #
+      # Other optional settings:
+      # ALLOWED_HOSTS: "example.com,www.example.com"
+      # SMTP_ADDRESS: "smtp.example.com"
+      # SMTP_DOMAIN: "example.com"
+      # SMTP_PORT: "587"
+      # SMTP_USER_NAME: "user@example.com"
+      # NOTIFICATIONS_SENDER: "noreply@example.com"
+
+# -- Secrets configuration
+# @default -- See values.yaml for required secrets
+secrets:
+  secrets:
+    # -- Enable the secrets Secret
+    enabled: true
+    # -- Secret string data (IMPORTANT: change these for production!)
+    # @default -- Development placeholder values - must be changed for production
+    stringData:
+      # Secret key base for Rails (generate with: openssl rand -hex 64)
+      SECRET_KEY_BASE: "dev-secret-key-not-for-production-change-me"
+      # Devise secret key (generate with: openssl rand -hex 64)
+      DEVISE_SECRET_KEY: "dev-devise-key-not-for-production-change-me"
+      # App encryption key (generate with: openssl rand -hex 32)
+      APP_ENCRYPTION_KEY: "aiD/O2fq61cu1nqWqN7u3He721VTR5+A"
+      # SMTP password (if using email notifications)
+      # SMTP_PASSWORD: ""
+
+# -- Service account configuration
+serviceAccount:
+  # -- Create a service account
+  create: true

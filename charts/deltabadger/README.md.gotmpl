@@ -1,0 +1,80 @@
+# Deltabadger Chart
+===========
+
+{{ template "chart.badgesSection" . }}
+
+{{ template "chart.description" . }}
+
+## Overview
+
+Deltabadger is an auto-DCA (Dollar Cost Averaging) bot for crypto investments. This Helm chart deploys Deltabadger using the [bjw-s common library](https://github.com/bjw-s-labs/helm-charts) chart.
+
+## Prerequisites
+
+- Kubernetes >= 1.19
+- Helm >= 3.x
+- The bjw-s common library dependency (pulled automatically via `helm dependency update`)
+
+## Installation
+
+### Installation via Helm
+
+1. Add the Helm chart repo
+
+```bash
+helm repo add k8s-charts https://kriegalex.github.io/k8s-charts/
+```
+
+2. Inspect & modify the default values (optional)
+
+```bash
+helm show values k8s-charts/deltabadger > custom-values.yaml
+```
+
+3. Install the chart
+
+```bash
+helm upgrade --install deltabadger k8s-charts/deltabadger -f custom-values.yaml
+```
+
+## Configuration
+
+This chart uses the [bjw-s common library](https://bjw-s-labs.github.io/helm-charts/) for templating. The values follow the bjw-s structure rather than the flat format used by other charts in this repo.
+
+### Key Configuration Sections
+
+| Section | Description |
+|---------|-------------|
+| `controllers.deltabadger` | Main controller (deployment) configuration |
+| `controllers.deltabadger.containers.app.image` | Container image settings |
+| `controllers.deltabadger.containers.app.env` | Environment variables |
+| `service.app` | Service configuration (default: ClusterIP on port 3000) |
+| `ingress.app` | Ingress configuration (disabled by default) |
+| `persistence.storage` | Persistent storage for SQLite databases (10Gi default) |
+| `configMaps.config` | Optional ConfigMap for performance tuning / SMTP |
+| `secrets.secrets` | Required secrets (Rails keys, encryption key) |
+
+### Required Secrets
+
+Before deploying to production, generate new secrets:
+
+```bash
+# Secret key base
+openssl rand -hex 64
+
+# Devise secret key
+openssl rand -hex 64
+
+# App encryption key
+openssl rand -hex 32
+```
+
+Set them in your custom values file under `secrets.secrets.stringData`.
+
+## Values
+
+The following table lists the configurable parameters of the Deltabadger chart and their default values.
+
+{{ template "chart.valuesTable" . }}
+
+{{ template "helm-docs.versionFooter" . }}
