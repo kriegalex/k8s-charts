@@ -4,7 +4,7 @@ description: A Helm chart for Deltabadger - Auto-DCA bot for crypto investments
 home: https://deltabadger.com
 icon: https://raw.githubusercontent.com/deltabadger/deltabadger/refs/heads/main/app/assets/images/favicon/favicon-96x96.png
 type: application
-version: 1.0.0
+version: 1.0.1
 appVersion: "1.6.26"
 kubeVersion: ">=1.19.0-0"
 keywords:
