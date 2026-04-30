@@ -326,6 +326,47 @@ entries:
     urls:
     - https://github.com/kriegalex/k8s-charts/releases/download/bitcoin-stack-1.0.0/bitcoin-stack-1.0.0.tgz
     version: 1.0.0
+  clonarr:
+  - annotations:
+      artifacthub.io/images: |
+        - name: clonarr
+          image: ghcr.io/prophetse7en/clonarr:latest
+      artifacthub.io/links: |
+        - name: Chart source
+          url: https://github.com/kriegalex/k8s-charts/tree/main/charts/clonarr
+        - name: Upstream project
+          url: https://github.com/prophetse7en/clonarr
+    apiVersion: v2
+    appVersion: latest
+    created: "2026-04-30T18:51:02.747662683Z"
+    dependencies:
+    - name: app-template
+      repository: https://bjw-s-labs.github.io/helm-charts/
+      version: 4.6.2
+    description: A Helm chart for Clonarr, a visual TRaSH-Guides sync tool for Radarr
+      and Sonarr (Custom Formats, Quality Profiles, Scores, Quality Sizes).
+    digest: 018c3675281a80b170f89d550bfacd45ea6ade95b0c90411662db2a36d785196
+    home: https://github.com/prophetse7en/clonarr
+    icon: https://raw.githubusercontent.com/prophetse7en/clonarr/main/static/logo.png
+    keywords:
+    - clonarr
+    - radarr
+    - sonarr
+    - trash-guides
+    - custom-formats
+    - media
+    kubeVersion: '>=1.19.0-0'
+    maintainers:
+    - email: kriegalex@gmail.com
+      name: kriegalex
+    name: clonarr
+    sources:
+    - https://github.com/prophetse7en/clonarr
+    - https://github.com/kriegalex/k8s-charts/tree/main/charts/clonarr
+    type: application
+    urls:
+    - https://github.com/kriegalex/k8s-charts/releases/download/clonarr-0.9.0/clonarr-0.9.0.tgz
+    version: 0.9.0
   deltabadger:
   - annotations:
       artifacthub.io/images: |
@@ -1596,4 +1637,4 @@ entries:
     urls:
     - https://github.com/kriegalex/k8s-charts/releases/download/valheim-server-1.0.0/valheim-server-1.0.0.tgz
     version: 1.0.0
-generated: "2026-02-22T14:26:41.504037166Z"
+generated: "2026-04-30T18:51:02.747768731Z"
