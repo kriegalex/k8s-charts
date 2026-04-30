@@ -1,0 +1,60 @@
+# Clonarr Chart
+
+{{ template "chart.badgesSection" . }}
+
+{{ template "chart.description" . }}
+
+[Clonarr](https://github.com/prophetse7en/clonarr) is a fully visual TRaSH-Guides
+sync tool for Radarr and Sonarr — browse, customize, and sync Custom Formats,
+Quality Profiles, Scores, and Quality Sizes from the browser instead of YAML.
+
+This chart is a thin wrapper around [bjw-s/app-template](https://bjw-s-labs.github.io/helm-charts/docs/app-template/).
+All upstream values are exposed under the `app-template` key.
+
+## Prerequisites
+
+1. Kubernetes 1.19+
+2. Helm 3.0+
+3. A `StorageClass` that supports `ReadWriteOnce` for the `/config` volume.
+
+## Installation
+
+1. Add the Helm chart repo:
+
+   ```bash
+   helm repo add k8s-charts https://kriegalex.github.io/k8s-charts/
+   helm repo update
+   ```
+
+2. Inspect & override the default values:
+
+   ```bash
+   helm show values k8s-charts/clonarr > custom-values.yaml
+   ```
+
+3. Install:
+
+   ```bash
+   helm upgrade --install clonarr k8s-charts/clonarr \
+     --namespace media --create-namespace \
+     --values custom-values.yaml
+   ```
+
+## First-time setup
+
+Browse to the ingress host (or `kubectl port-forward svc/clonarr 6060:80`) and
+follow the `/setup` flow to create the admin account, then add your Radarr and
+Sonarr instances under Settings.
+
+## Coexistence with Recyclarr / Configarr
+
+Clonarr, Recyclarr, and Configarr all sync TRaSH-Guides content into Radarr and
+Sonarr. **Pick one** — running two of them against the same instance will cause
+each to prune the other's Custom Formats on its next sync. If you want a sandbox
+to compare them, point them at different instances (or different namespaces).
+
+## Values
+
+{{ template "chart.valuesTable" . }}
+
+{{ template "helm-docs.versionFooter" . }}
