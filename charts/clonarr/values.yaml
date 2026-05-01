@@ -80,8 +80,8 @@ ingress:
 persistence:
   config:
     type: persistentVolumeClaim
-    # accessMode: ReadWriteOnce
-    # size: 2Gi
+    accessMode: ReadWriteOnce
+    size: 2Gi
     # storageClass: ""
     # existingClaim: ""
     globalMounts:
