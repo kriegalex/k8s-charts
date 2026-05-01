@@ -1,6 +1,6 @@
 # Clonarr Chart
 
-![Version: 0.9.0](https://img.shields.io/badge/Version-0.9.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: latest](https://img.shields.io/badge/AppVersion-latest-informational?style=flat-square)
+![Version: 0.10.0](https://img.shields.io/badge/Version-0.10.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: latest](https://img.shields.io/badge/AppVersion-latest-informational?style=flat-square)
 
 A Helm chart for Clonarr, a visual TRaSH-Guides sync tool for Radarr and Sonarr (Custom Formats, Quality Profiles, Scores, Quality Sizes).
 
@@ -8,8 +8,7 @@ A Helm chart for Clonarr, a visual TRaSH-Guides sync tool for Radarr and Sonarr 
 sync tool for Radarr and Sonarr — browse, customize, and sync Custom Formats,
 Quality Profiles, Scores, and Quality Sizes from the browser instead of YAML.
 
-This chart is a thin wrapper around [bjw-s/app-template](https://bjw-s-labs.github.io/helm-charts/docs/app-template/).
-All upstream values are exposed under the `app-template` key.
+This chart uses the [bjw-s common library](https://bjw-s-labs.github.io/helm-charts/docs/common-library/).
 
 ## Prerequisites
 
@@ -57,12 +56,12 @@ to compare them, point them at different instances (or different namespaces).
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| app-template.controllers | object | `{"clonarr":{"containers":{"app":{"env":{"PORT":"6060","TZ":"UTC"},"image":{"pullPolicy":"IfNotPresent","repository":"ghcr.io/prophetse7en/clonarr","tag":"latest"},"probes":{"liveness":{"custom":true,"enabled":true,"spec":{"failureThreshold":3,"initialDelaySeconds":30,"periodSeconds":30,"tcpSocket":{"port":6060},"timeoutSeconds":5}},"readiness":{"custom":true,"enabled":true,"spec":{"failureThreshold":3,"initialDelaySeconds":10,"periodSeconds":10,"tcpSocket":{"port":6060},"timeoutSeconds":5}},"startup":{"enabled":false}},"resources":{"limits":{"cpu":"500m","memory":"512Mi"},"requests":{"cpu":"50m","memory":"128Mi"}}}},"strategy":"Recreate"}}` | Default controller (Deployment) running the Clonarr web UI. |
-| app-template.controllers.clonarr.containers.app.probes | object | `{"liveness":{"custom":true,"enabled":true,"spec":{"failureThreshold":3,"initialDelaySeconds":30,"periodSeconds":30,"tcpSocket":{"port":6060},"timeoutSeconds":5}},"readiness":{"custom":true,"enabled":true,"spec":{"failureThreshold":3,"initialDelaySeconds":10,"periodSeconds":10,"tcpSocket":{"port":6060},"timeoutSeconds":5}},"startup":{"enabled":false}}` | Clonarr does not currently ship a documented health endpoint; use a TCP probe on the web port. |
-| app-template.defaultPodOptions | object | `{"affinity":{},"nodeSelector":{},"tolerations":[]}` | Pod placement defaults. Override per-deployment as needed (e.g. node affinity to a specific k3s worker, anti-affinity vs Plex, etc.). |
-| app-template.ingress | object | `{"app":{"annotations":{},"className":"nginx","enabled":false,"hosts":[{"host":"clonarr.k3s.home","paths":[{"path":"/","pathType":"Prefix","service":{"identifier":"app","port":"http"}}]}],"tls":[]}}` | Ingress for the web UI. Disabled by default — set `host` to enable. |
-| app-template.persistence | object | `{"config":{"accessMode":"ReadWriteOnce","enabled":true,"globalMounts":[{"path":"/config"}],"size":"2Gi","storageClass":"","type":"persistentVolumeClaim"}}` | Persistent /config volume. The chart will create a PVC by default. Set `existingClaim` to reuse a pre-created PVC (e.g. Longhorn). |
-| app-template.service | object | `{"app":{"controller":"clonarr","ports":{"http":{"port":80,"targetPort":6060}}}}` | ClusterIP service exposing the Clonarr web UI on port 80 → 6060. |
+| controllers | object | `{"clonarr":{"containers":{"app":{"env":{"PORT":"6060","TZ":"UTC"},"image":{"pullPolicy":"IfNotPresent","repository":"ghcr.io/prophetse7en/clonarr","tag":"latest"},"probes":{"liveness":{"custom":true,"enabled":true,"spec":{"failureThreshold":3,"initialDelaySeconds":30,"periodSeconds":30,"tcpSocket":{"port":6060},"timeoutSeconds":5}},"readiness":{"custom":true,"enabled":true,"spec":{"failureThreshold":3,"initialDelaySeconds":10,"periodSeconds":10,"tcpSocket":{"port":6060},"timeoutSeconds":5}},"startup":{"enabled":false}},"resources":{"limits":{"cpu":"500m","memory":"512Mi"},"requests":{"cpu":"50m","memory":"128Mi"}}}},"strategy":"Recreate"}}` | Default controller (Deployment) running the Clonarr web UI. |
+| controllers.clonarr.containers.app.probes | object | `{"liveness":{"custom":true,"enabled":true,"spec":{"failureThreshold":3,"initialDelaySeconds":30,"periodSeconds":30,"tcpSocket":{"port":6060},"timeoutSeconds":5}},"readiness":{"custom":true,"enabled":true,"spec":{"failureThreshold":3,"initialDelaySeconds":10,"periodSeconds":10,"tcpSocket":{"port":6060},"timeoutSeconds":5}},"startup":{"enabled":false}}` | Clonarr does not currently ship a documented health endpoint; use a TCP probe on the web port. |
+| defaultPodOptions | object | `{"affinity":{},"nodeSelector":{},"tolerations":[]}` | Pod placement defaults. Override per-deployment as needed. |
+| ingress | object | `{"app":{"annotations":{},"className":"nginx","enabled":false,"hosts":[{"host":"clonarr.k3s.home","paths":[{"path":"/","pathType":"Prefix","service":{"identifier":"app","port":"http"}}]}],"tls":[]}}` | Ingress for the web UI. Disabled by default — set `host` to enable. |
+| persistence | object | `{"config":{"globalMounts":[{"path":"/config"}],"type":"persistentVolumeClaim"}}` | Persistent /config volume. To create a new PVC, set accessMode + size (+ storageClass if non-default). To reuse an existing PVC (e.g. Longhorn), set existingClaim instead. These two options are mutually exclusive per the bjw-s schema. |
+| service | object | `{"app":{"controller":"clonarr","ports":{"http":{"port":80,"targetPort":6060}}}}` | ClusterIP service exposing the Clonarr web UI on port 80 → 6060. |
 
 ----------------------------------------------
 Autogenerated from chart metadata using [helm-docs v1.14.2](https://github.com/norwoodj/helm-docs/releases/v1.14.2)

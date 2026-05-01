@@ -1,96 +1,94 @@
 # Default values for clonarr.
-# This chart wraps bjw-s/app-template — values are passed through under the
-# `app-template` key. See https://bjw-s-labs.github.io/helm-charts/docs/app-template/
-# for the full schema.
+# This chart uses the bjw-s common library — see
+# https://bjw-s-labs.github.io/helm-charts/docs/common-library/ for the full schema.
 
-app-template:
-  # -- Default controller (Deployment) running the Clonarr web UI.
-  controllers:
-    clonarr:
-      strategy: Recreate
-      containers:
-        app:
-          image:
-            repository: ghcr.io/prophetse7en/clonarr
-            tag: latest
-            pullPolicy: IfNotPresent
-          env:
-            TZ: UTC
-            PORT: "6060"
-          # -- Clonarr does not currently ship a documented health endpoint;
-          # use a TCP probe on the web port.
-          probes:
-            liveness:
-              enabled: true
-              custom: true
-              spec:
-                tcpSocket:
-                  port: 6060
-                initialDelaySeconds: 30
-                periodSeconds: 30
-                timeoutSeconds: 5
-                failureThreshold: 3
-            readiness:
-              enabled: true
-              custom: true
-              spec:
-                tcpSocket:
-                  port: 6060
-                initialDelaySeconds: 10
-                periodSeconds: 10
-                timeoutSeconds: 5
-                failureThreshold: 3
-            startup:
-              enabled: false
-          resources:
-            requests:
-              cpu: 50m
-              memory: 128Mi
-            limits:
-              cpu: 500m
-              memory: 512Mi
+# -- Default controller (Deployment) running the Clonarr web UI.
+controllers:
+  clonarr:
+    strategy: Recreate
+    containers:
+      app:
+        image:
+          repository: ghcr.io/prophetse7en/clonarr
+          tag: latest
+          pullPolicy: IfNotPresent
+        env:
+          TZ: UTC
+          PORT: "6060"
+        # -- Clonarr does not currently ship a documented health endpoint;
+        # use a TCP probe on the web port.
+        probes:
+          liveness:
+            enabled: true
+            custom: true
+            spec:
+              tcpSocket:
+                port: 6060
+              initialDelaySeconds: 30
+              periodSeconds: 30
+              timeoutSeconds: 5
+              failureThreshold: 3
+          readiness:
+            enabled: true
+            custom: true
+            spec:
+              tcpSocket:
+                port: 6060
+              initialDelaySeconds: 10
+              periodSeconds: 10
+              timeoutSeconds: 5
+              failureThreshold: 3
+          startup:
+            enabled: false
+        resources:
+          requests:
+            cpu: 50m
+            memory: 128Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
 
-  # -- ClusterIP service exposing the Clonarr web UI on port 80 → 6060.
-  service:
-    app:
-      controller: clonarr
-      ports:
-        http:
-          port: 80
-          targetPort: 6060
+# -- ClusterIP service exposing the Clonarr web UI on port 80 → 6060.
+service:
+  app:
+    controller: clonarr
+    ports:
+      http:
+        port: 80
+        targetPort: 6060
 
-  # -- Ingress for the web UI. Disabled by default — set `host` to enable.
-  ingress:
-    app:
-      enabled: false
-      className: nginx
-      annotations: {}
-      hosts:
-        - host: clonarr.k3s.home
-          paths:
-            - path: /
-              pathType: Prefix
-              service:
-                identifier: app
-                port: http
-      tls: []
+# -- Ingress for the web UI. Disabled by default — set `host` to enable.
+ingress:
+  app:
+    enabled: false
+    className: nginx
+    annotations: {}
+    hosts:
+      - host: clonarr.k3s.home
+        paths:
+          - path: /
+            pathType: Prefix
+            service:
+              identifier: app
+              port: http
+    tls: []
 
-  # -- Persistent /config volume. The chart will create a PVC by default.
-  # Set `existingClaim` to reuse a pre-created PVC (e.g. Longhorn).
-  persistence:
-    config:
-      enabled: true
-      type: persistentVolumeClaim
-      accessMode: ReadWriteOnce
-      size: 2Gi
-      storageClass: ""
-      # existingClaim: clonarr
-      globalMounts:
-        - path: /config
+# -- Persistent /config volume.
+# To create a new PVC, set accessMode + size (+ storageClass if non-default).
+# To reuse an existing PVC (e.g. Longhorn), set existingClaim instead.
+# These two options are mutually exclusive per the bjw-s schema.
+persistence:
+  config:
+    type: persistentVolumeClaim
+    # accessMode: ReadWriteOnce
+    # size: 2Gi
+    # storageClass: ""
+    # existingClaim: ""
+    globalMounts:
+      - path: /config
 
-  # -- Pod placement defaults. Override per-deployment as needed (e.g. node
-  # affinity to a specific k3s worker, anti-affinity vs Plex, etc.).
-  defaultPodOptions:
-    affinity: {}
-    nodeSelector: {}
-    tolerations: []
+# -- Pod placement defaults. Override per-deployment as needed.
+defaultPodOptions:
+  affinity: {}
+  nodeSelector: {}
+  tolerations: []
