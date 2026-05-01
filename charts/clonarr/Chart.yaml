@@ -4,7 +4,7 @@ description: A Helm chart for Clonarr, a visual TRaSH-Guides sync tool for Radar
 home: https://github.com/prophetse7en/clonarr
 icon: https://raw.githubusercontent.com/prophetse7en/clonarr/main/static/logo.png
 type: application
-version: 0.9.0
+version: 0.10.0
 appVersion: "latest"
 kubeVersion: ">=1.19.0-0"
 keywords:
@@ -21,9 +21,9 @@ sources:
   - https://github.com/prophetse7en/clonarr
   - https://github.com/kriegalex/k8s-charts/tree/main/charts/clonarr
 dependencies:
-  - name: app-template
+  - name: common
     version: 4.6.2
-    repository: https://bjw-s-labs.github.io/helm-charts/
+    repository: https://bjw-s-labs.github.io/helm-charts
 deprecated: false
 annotations:
   artifacthub.io/links: |
