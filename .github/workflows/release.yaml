@@ -27,7 +27,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           submodules: 'true'
           fetch-depth: 0
@@ -58,7 +58,7 @@ jobs:
     if: ${{ needs.changes.outputs.charts == 'true' && github.event_name == 'pull_request' }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
           submodules: 'true'
@@ -68,7 +68,7 @@ jobs:
         with:
           version: v3.17.0
 
-      - uses: actions/setup-python@v5.3.0
+      - uses: actions/setup-python@v6.2.0
         with:
           python-version: '3.x'
           check-latest: true
@@ -104,7 +104,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
           submodules: 'true'
