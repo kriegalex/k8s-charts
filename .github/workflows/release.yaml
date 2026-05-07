@@ -4,13 +4,9 @@ on:
   push:
     branches:
       - main
-    paths:
-      - 'charts/**'
   pull_request:
     branches:
       - main
-    paths:
-      - 'charts/**'
 
 permissions:
   contents: read
@@ -24,10 +20,11 @@ jobs:
     if: github.repository == 'kriegalex/k8s-charts'
     outputs:
       charts: ${{ steps.filter.outputs.charts }}
+      workflows: ${{ steps.filter.outputs.workflows }}
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           submodules: 'true'
           fetch-depth: 0
@@ -42,7 +39,7 @@ jobs:
           ./ah lint || exit 1
           rm -f ./ah ./ah_1.20.0_linux_amd64.tar.gz
 
-      - uses: dorny/paths-filter@v3.0.2
+      - uses: dorny/paths-filter@v4.0.1
         id: filter
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -51,45 +48,59 @@ jobs:
               - 'charts/*/Chart.yaml'
               - 'charts/*/values.yaml'
               - 'charts/*/templates/**'
+            workflows:
+              - '.github/workflows/**'
 
   lint-test:
     runs-on: ubuntu-latest
     needs: changes
-    if: ${{ needs.changes.outputs.charts == 'true' && github.event_name == 'pull_request' }}
+    if: ${{ github.event_name == 'pull_request' }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
           submodules: 'true'
 
+      - name: Lint workflows (actionlint)
+        if: ${{ needs.changes.outputs.workflows == 'true' }}
+        run: docker run --rm -v "${PWD}:/repo" --workdir /repo rhysd/actionlint:1.7.7 -color
+
       - name: Set up Helm
+        if: ${{ needs.changes.outputs.charts == 'true' }}
         uses: azure/setup-helm@v4.2.0
         with:
           version: v3.17.0
 
-      - uses: actions/setup-python@v5.3.0
+      - if: ${{ needs.changes.outputs.charts == 'true' }}
+        uses: actions/setup-python@v6.2.0
         with:
           python-version: '3.x'
           check-latest: true
 
       - name: Set up chart-testing
+        if: ${{ needs.changes.outputs.charts == 'true' }}
         uses: helm/chart-testing-action@v2.8.0
 
       - name: Add Helm repositories
+        if: ${{ needs.changes.outputs.charts == 'true' }}
         run: |
           helm repo add bjw-s https://bjw-s-labs.github.io/helm-charts
 
       - name: Run chart-testing (list-changed)
+        if: ${{ needs.changes.outputs.charts == 'true' }}
         run: ct list-changed --target-branch main
 
       - name: Run chart-testing (lint)
+        if: ${{ needs.changes.outputs.charts == 'true' }}
         run: ct lint --target-branch main 2>&1
 
       - name: Create kind cluster
+        if: ${{ needs.changes.outputs.charts == 'true' }}
         uses: helm/kind-action@v1.12.0
 
       - name: Run chart-testing (install)
+        if: ${{ needs.changes.outputs.charts == 'true' }}
         run: ct install --config ct-install-skip.yaml 2>&1
 
   release:
@@ -104,7 +115,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
           submodules: 'true'
