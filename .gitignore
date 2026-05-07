@@ -17,3 +17,4 @@ charts/**/charts
 .env
 
 CLAUDE.md
+.claude
