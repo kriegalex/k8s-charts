@@ -165,6 +165,14 @@ config:
       icon: ""
       # -- List of supported NIPs as JSON array, or empty string to use default
       nips: ""
+      # -- NIP-11: Relay's own pubkey (npub or hex format)
+      self: ""
+      # -- NIP-11: Banner image URL
+      banner: ""
+      # -- NIP-11: Privacy policy URL
+      privacy: ""
+      # -- NIP-11: Terms of service URL
+      terms: ""
     # -- Maximum accepted incoming websocket frame size (bytes)
     maxWebsocketPayloadSize: "131072"
     # -- Maximum number of filters allowed in a REQ
@@ -178,10 +186,14 @@ config:
     # -- Maximum records that can be returned per filter
     maxFilterLimit: 500
     # -- Maximum number of subscriptions a connection can have open
-    maxSubsPerConnection: 20
+    maxSubsPerConnection: 200
+    # -- Maximum records that can be returned per filter for NIP-45 COUNT (0 = disable)
+    maxFilterLimitCount: "1000000"
     writePolicy:
       # -- Path to an executable script that implements the writePolicy plugin logic
       plugin: ""
+      # -- Timeout in seconds for the writePolicy plugin response
+      timeoutSeconds: 10
     compression:
       # -- Enable permessage-deflate compression if supported by client
       enabled: true
@@ -212,3 +224,21 @@ config:
       enabled: true
       # -- Maximum records that sync will process before returning an error
       maxSyncEvents: "1000000"
+    auth:
+      # -- Enable NIP-42 authentication. When true, `serviceUrl` must be set.
+      enabled: false
+      # -- External relay URL required for NIP-42 validation (e.g. wss://relay.example.com)
+      serviceUrl: ""
+    filterValidation:
+      # -- Enable REQ filter validation
+      enabled: false
+      # -- Maximum number of filters allowed per REQ
+      maxFiltersPerReq: 3
+      # -- Minimum number of filters required per REQ
+      minFiltersPerReq: 1
+      # -- Maximum number of kinds allowed per filter
+      maxKindsPerFilter: 3
+      # -- Comma-separated list of allowed kinds (empty = all)
+      allowedKinds: ""
+      # -- Require filters to contain an author or tag constraint
+      requireAuthorOrTag: false

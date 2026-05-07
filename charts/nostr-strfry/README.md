@@ -1,6 +1,6 @@
 # nostr-strfry
 
-![Version: 1.1.2](https://img.shields.io/badge/Version-1.1.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1.0.4](https://img.shields.io/badge/AppVersion-1.0.4-informational?style=flat-square)
+![Version: 1.2.0](https://img.shields.io/badge/Version-1.2.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1.1.0](https://img.shields.io/badge/AppVersion-1.1.0-informational?style=flat-square)
 
 A Helm chart for deploying a Nostr strfry relay
 
@@ -49,25 +49,38 @@ The following table lists the configurable parameters for the nostr-strfry chart
 | config.events.rejectEphemeralEventsOlderThanSeconds | int | `60` | Ephemeral events older than this (in seconds) will be rejected |
 | config.events.rejectEventsNewerThanSeconds | int | `900` | Events newer than this (in seconds) will be rejected |
 | config.events.rejectEventsOlderThanSeconds | string | `"94608000"` | Events older than this (in seconds) will be rejected |
+| config.relay.auth.enabled | bool | `false` | Enable NIP-42 authentication. When true, `serviceUrl` must be set. |
+| config.relay.auth.serviceUrl | string | `""` | External relay URL required for NIP-42 validation (e.g. wss://relay.example.com) |
 | config.relay.autoPingSeconds | int | `55` | Websocket-level PING message frequency (seconds) |
 | config.relay.bind | string | `"0.0.0.0"` | Interface to listen on (Use 0.0.0.0 for k3s) |
 | config.relay.compression.enabled | bool | `true` | Enable permessage-deflate compression if supported by client |
 | config.relay.compression.slidingWindow | bool | `true` | Maintain a sliding window buffer for each connection |
 | config.relay.enableTcpKeepalive | bool | `false` | Enable TCP keep-alive to detect dropped connections |
+| config.relay.filterValidation.allowedKinds | string | `""` | Comma-separated list of allowed kinds (empty = all) |
+| config.relay.filterValidation.enabled | bool | `false` | Enable REQ filter validation |
+| config.relay.filterValidation.maxFiltersPerReq | int | `3` | Maximum number of filters allowed per REQ |
+| config.relay.filterValidation.maxKindsPerFilter | int | `3` | Maximum number of kinds allowed per filter |
+| config.relay.filterValidation.minFiltersPerReq | int | `1` | Minimum number of filters required per REQ |
+| config.relay.filterValidation.requireAuthorOrTag | bool | `false` | Require filters to contain an author or tag constraint |
+| config.relay.info.banner | string | `""` | NIP-11: Banner image URL |
 | config.relay.info.contact | string | `""` | NIP-11: Alternative administrative contact |
 | config.relay.info.description | string | `"This is a strfry instance."` | NIP-11: Detailed information about relay |
 | config.relay.info.icon | string | `""` | NIP-11: URL pointing to an image to be used as an icon for the relay |
 | config.relay.info.name | string | `"strfry default"` | NIP-11: Name of this server (< 30 characters) |
 | config.relay.info.nips | string | `""` | List of supported NIPs as JSON array, or empty string to use default |
+| config.relay.info.privacy | string | `""` | NIP-11: Privacy policy URL |
 | config.relay.info.pubkey | string | `""` | NIP-11: Administrative nostr pubkey, for contact purposes |
+| config.relay.info.self | string | `""` | NIP-11: Relay's own pubkey (npub or hex format) |
+| config.relay.info.terms | string | `""` | NIP-11: Terms of service URL |
 | config.relay.logging.dbScanPerf | bool | `false` | Log performance metrics for initial REQ database scans |
 | config.relay.logging.dumpInAll | bool | `false` | Dump all incoming messages |
 | config.relay.logging.dumpInEvents | bool | `false` | Dump all incoming EVENT messages |
 | config.relay.logging.dumpInReqs | bool | `false` | Dump all incoming REQ/CLOSE messages |
 | config.relay.logging.invalidEvents | bool | `true` | Log reason for invalid event rejection |
 | config.relay.maxFilterLimit | int | `500` | Maximum records that can be returned per filter |
+| config.relay.maxFilterLimitCount | string | `"1000000"` | Maximum records that can be returned per filter for NIP-45 COUNT (0 = disable) |
 | config.relay.maxReqFilterSize | int | `200` | Maximum number of filters allowed in a REQ |
-| config.relay.maxSubsPerConnection | int | `20` | Maximum number of subscriptions a connection can have open |
+| config.relay.maxSubsPerConnection | int | `200` | Maximum number of subscriptions a connection can have open |
 | config.relay.maxWebsocketPayloadSize | string | `"131072"` | Maximum accepted incoming websocket frame size (bytes) |
 | config.relay.negentropy.enabled | bool | `true` | Support negentropy protocol messages |
 | config.relay.negentropy.maxSyncEvents | string | `"1000000"` | Maximum records that sync will process before returning an error |
@@ -80,6 +93,7 @@ The following table lists the configurable parameters for the nostr-strfry chart
 | config.relay.queryTimesliceBudgetMicroseconds | string | `"10000"` | Uninterrupted CPU time for a REQ query during DB scan (microseconds) |
 | config.relay.realIpHeader | string | `""` | HTTP header that contains the client's real IP, before reverse proxying (must be all lower-case) |
 | config.relay.writePolicy.plugin | string | `""` | Path to an executable script that implements the writePolicy plugin logic |
+| config.relay.writePolicy.timeoutSeconds | int | `10` | Timeout in seconds for the writePolicy plugin response |
 | fullnameOverride | string | `""` | String to fully override nostr-relay.fullname template |
 | image.pullPolicy | string | `"IfNotPresent"` | Nostr relay Docker image pull policy |
 | image.repository | string | `"dockurr/strfry"` | Nostr strfry Docker image repository |
