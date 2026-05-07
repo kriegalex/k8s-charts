@@ -16,13 +16,20 @@ This repository contains Helm charts designed for easy deployment of popular sel
 
 ## Available Charts
 
-| Chart         | Description                                                      |
-| ------------- | ---------------------------------------------------------------- |
-| actual-budget | A self-hosted budgeting application                              |
-| jellyfin      | Media system that puts you in control of your media              |
-| palworld      | Dedicated server for Palworld                                    |
-| enshrouded    | Dedicated server for Enshrouded                                  |
-| qbittorrent   | BitTorrent client with built-in VPN support                      |
+| Chart            | Description                                                                                |
+| ---------------- | ------------------------------------------------------------------------------------------ |
+| actual-budget    | A self-hosted budgeting application                                                        |
+| bentopdf         | PDF manipulation service using BentoML                                                     |
+| bitcoin-stack    | A full Bitcoin stack (bitcoind, and more to come)                                          |
+| clonarr          | Visual TRaSH-Guides sync tool for Radarr and Sonarr                                        |
+| deltabadger      | Auto-DCA bot for crypto investments                                                        |
+| enshrouded-server| Dedicated server for Enshrouded                                                            |
+| jellyfin         | Media system that puts you in control of your media                                        |
+| nostr-rs-relay   | A Nostr relay (nostr-rs-relay)                                                             |
+| nostr-strfry     | A Nostr relay (strfry)                                                                     |
+| palworld-server  | Dedicated server for Palworld                                                              |
+| qbittorrent      | BitTorrent client with built-in WireGuard VPN tunnel                                       |
+| valheim-server   | Dedicated server for Valheim                                                               |
 
 ## Getting Started
 
@@ -59,10 +66,17 @@ helm install my-jellyfin k8s-charts/jellyfin -f my-values.yaml
 Each chart includes detailed documentation on available configuration options:
 
 - [**Actual Budget**](charts/actual-budget/README.md)
+- [**BentoPDF**](charts/bentopdf/README.md)
+- [**Bitcoin Stack**](charts/bitcoin-stack/README.md)
+- [**Clonarr**](charts/clonarr/README.md)
+- [**Deltabadger**](charts/deltabadger/README.md)
+- [**Enshrouded**](charts/enshrouded-server/README.md)
 - [**Jellyfin**](charts/jellyfin/README.md)
+- [**Nostr RS Relay**](charts/nostr-rs-relay/README.md)
+- [**Nostr strfry**](charts/nostr-strfry/README.md)
 - [**Palworld**](charts/palworld-server/README.md)
-- [**Enshourded**](charts/enshrouded-server/README.md)
 - [**qBittorrent**](charts/qbittorrent/README.md)
+- [**Valheim**](charts/valheim-server/README.md)
 
 ## Configuration
 
