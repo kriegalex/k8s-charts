@@ -39,7 +39,7 @@ jobs:
           ./ah lint || exit 1
           rm -f ./ah ./ah_1.20.0_linux_amd64.tar.gz
 
-      - uses: dorny/paths-filter@v3.0.2
+      - uses: dorny/paths-filter@v4.0.1
         id: filter
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
