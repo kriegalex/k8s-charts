@@ -1,3 +1,6 @@
+{{- if and .Values.config.relay.auth.enabled (not .Values.config.relay.auth.serviceUrl) -}}
+{{- fail "config.relay.auth.enabled is true but config.relay.auth.serviceUrl is empty. NIP-42 challenge validation requires an external relay URL (e.g. wss://relay.example.com)." -}}
+{{- end -}}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -74,6 +77,18 @@ data:
 
         # List of supported lists as JSON array, or empty string to use default. Example: "[1,2]"
         nips = {{ .Values.config.relay.info.nips | quote }}
+
+        # NIP-11: Relay's own pubkey (npub or hex format)
+        self = {{ .Values.config.relay.info.self | quote }}
+
+        # NIP-11: Banner image URL
+        banner = {{ .Values.config.relay.info.banner | quote }}
+
+        # NIP-11: Privacy policy URL
+        privacy = {{ .Values.config.relay.info.privacy | quote }}
+
+        # NIP-11: Terms of service URL
+        terms = {{ .Values.config.relay.info.terms | quote }}
       }
 
       # Maximum accepted incoming websocket frame size (should be larger than max event) (restart required)
@@ -94,12 +109,18 @@ data:
       # Maximum records that can be returned per filter
       maxFilterLimit = {{ .Values.config.relay.maxFilterLimit }}
 
+      # Maximum records that can be returned per filter for NIP-45 COUNT (0 = disable)
+      maxFilterLimitCount = {{ .Values.config.relay.maxFilterLimitCount }}
+
       # Maximum number of subscriptions (concurrent REQs) a connection can have open at any time
       maxSubsPerConnection = {{ .Values.config.relay.maxSubsPerConnection }}
 
       writePolicy {
         # If non-empty, path to an executable script that implements the writePolicy plugin logic
         plugin = {{ .Values.config.relay.writePolicy.plugin | quote }}
+
+        # Timeout in seconds for the writePolicy plugin response
+        timeoutSeconds = {{ .Values.config.relay.writePolicy.timeoutSeconds }}
       }
 
       compression {
@@ -147,6 +168,34 @@ data:
 
         # Maximum records that sync will process before returning an error
         maxSyncEvents = {{ .Values.config.relay.negentropy.maxSyncEvents }}
+      }
+
+      auth {
+        # Enable NIP-42 authentication
+        enabled = {{ .Values.config.relay.auth.enabled }}
+
+        # External relay URL required for NIP-42 validation
+        serviceUrl = {{ .Values.config.relay.auth.serviceUrl | quote }}
+      }
+
+      filterValidation {
+        # Enable REQ filter validation
+        enabled = {{ .Values.config.relay.filterValidation.enabled }}
+
+        # Maximum number of filters allowed per REQ
+        maxFiltersPerReq = {{ .Values.config.relay.filterValidation.maxFiltersPerReq }}
+
+        # Minimum number of filters required per REQ
+        minFiltersPerReq = {{ .Values.config.relay.filterValidation.minFiltersPerReq }}
+
+        # Maximum number of kinds allowed per filter
+        maxKindsPerFilter = {{ .Values.config.relay.filterValidation.maxKindsPerFilter }}
+
+        # Comma-separated list of allowed kinds (empty = all)
+        allowedKinds = {{ .Values.config.relay.filterValidation.allowedKinds | quote }}
+
+        # Require filters to contain an author or tag constraint
+        requireAuthorOrTag = {{ .Values.config.relay.filterValidation.requireAuthorOrTag }}
       }
     }
 {{ if .Values.nip05.enabled }}
