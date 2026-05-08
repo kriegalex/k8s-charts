@@ -15,6 +15,34 @@ fullnameOverride: ""
 # -- Number of replicas to be deployed
 replicaCount: 1
 
+# qBittorrent.conf seeding / enforcement.
+# When enabled, an init container upserts the keys defined under `entries`
+# into /config/qBittorrent/qBittorrent.conf on every pod start. Existing
+# values for those specific keys are overwritten; all other keys (and any
+# changes made via the WebUI to keys not listed here) are preserved.
+#
+# Keys are organised by INI section. The default set targets the
+# libtorrent v2.x memory-mapped-IO problem:
+#   - DiskIOType=3 (Simple pread/pwrite) bypasses mmap-based caching.
+#   - MemoryWorkingSetLimit caps qBittorrent's working set in MiB.
+#   - UseOSCache=false stops leaning on the kernel page cache.
+qbittorrentConf:
+  # -- Enable the qBittorrent.conf init container
+  enabled: false
+  # -- INI sections and keys to upsert. Use Qt-style sub-keys with backslashes
+  # (e.g. `Session\DiskIOType`). Values are written verbatim — keep them as
+  # plain strings/integers/booleans.
+  entries:
+    BitTorrent:
+      Session\DiskIOType: 3
+      Session\MemoryWorkingSetLimit: 4096
+      Session\UseOSCache: false
+  # -- Image used by the seeding init container. Needs `awk` and `sh`.
+  image:
+    repository: busybox
+    tag: "1.36"
+    pullPolicy: IfNotPresent
+
 # Service configuration for qBittorrent
 service:
   # -- Service type

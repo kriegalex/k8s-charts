@@ -1,6 +1,6 @@
 # QBittorrent Chart
 
-![Version: 2.0.1](https://img.shields.io/badge/Version-2.0.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: legacy-4.3.9](https://img.shields.io/badge/AppVersion-legacy--4.3.9-informational?style=flat-square)
+![Version: 2.1.0](https://img.shields.io/badge/Version-2.1.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: legacy-4.3.9](https://img.shields.io/badge/AppVersion-legacy--4.3.9-informational?style=flat-square)
 
 A Helm chart for deploying a QBittorrent client that uses a wireguard VPN tunnel.
 
@@ -262,6 +262,95 @@ vpn:
 
 ⚠️ **Warning:** Private keys will be visible in your values files and Helm release history.
 
+## qBittorrent.conf — pinning settings via Helm
+
+When `qbittorrentConf.enabled=true`, the chart deploys an init container that
+upserts a chosen set of `qBittorrent.conf` keys into
+`/config/qBittorrent/qBittorrent.conf` on every pod start. Only the keys you
+list are touched; everything else (including settings you change later via
+the WebUI) is preserved across restarts.
+
+The default entries target the libtorrent v2.x memory-mapped-IO behaviour
+([context](https://github.com/arvidn/libtorrent/issues/7551)), which causes
+runaway page-cache usage in containers:
+
+```yaml
+qbittorrentConf:
+  enabled: true
+  entries:
+    BitTorrent:
+      Session\DiskIOType: 3            # 0=Default, 1=MMap, 2=Posix, 3=SimplePreadPwrite
+      Session\MemoryWorkingSetLimit: 4096   # MiB
+      Session\UseOSCache: false
+```
+
+### Discovering the keys you want to pin
+
+Top-level YAML keys map to `[Section]` headers; second-level keys map to the
+INI keys *as they appear in the file*, including Qt's backslash group
+separator (e.g. `Session\Port`). The simplest discovery flow:
+
+1. Configure qBittorrent the way you want via the WebUI.
+2. `kubectl exec` into the pod and `cat /config/qBittorrent/qBittorrent.conf`.
+3. Copy the lines you care about into `qbittorrentConf.entries`, mirroring
+   their section.
+
+### Worked examples
+
+Pin connection limits and a fixed listen port:
+
+```yaml
+qbittorrentConf:
+  enabled: true
+  entries:
+    BitTorrent:
+      Session\Port: 6881
+      Session\MaxActiveDownloads: 5
+      Session\MaxActiveUploads: 10
+      Session\MaxActiveTorrents: 15
+      Session\GlobalMaxRatio: 2.0
+```
+
+Lock the WebUI port and the default save path:
+
+```yaml
+qbittorrentConf:
+  enabled: true
+  entries:
+    Preferences:
+      WebUI\Port: 8080
+      Downloads\SavePath: /data/downloads/
+      Downloads\TempPath: /data/incomplete/
+```
+
+Combine the libtorrent-v2 mitigations with custom rate limits:
+
+```yaml
+qbittorrentConf:
+  enabled: true
+  entries:
+    BitTorrent:
+      Session\DiskIOType: 3
+      Session\MemoryWorkingSetLimit: 4096
+      Session\UseOSCache: false
+      Session\GlobalDLSpeedLimit: 0
+      Session\GlobalUPSpeedLimit: 5242880   # bytes/s
+```
+
+### Caveats
+
+- **Set-only.** You can override or add keys; you cannot delete a key
+  through this mechanism. Remove a pinned key from `entries` and wipe the
+  line by hand once if you want it gone.
+- **Single-line values only.** Values are passed through a tab-delimited
+  pipe; no qBittorrent value is multi-line, but be aware if you extend it.
+- **YAML quoting.** A single `\` in a YAML scalar is literal, so
+  `Session\DiskIOType:` works bare. If a future key ever contained `\\` or
+  `\n`, wrap the key in single quotes.
+- **Order isn't preserved across keys you didn't list** — qBittorrent
+  doesn't depend on it, but expect new keys to be appended to their
+  section.
+
 ## Values
 
 | Key | Type | Default | Description |
@@ -305,6 +394,9 @@ vpn:
 | persistence.data.accessMode | string | `"ReadWriteOnce"` | Access mode for the data PVC |
 | persistence.data.enabled | bool | `false` | Enable persistent storage for downloads |
 | persistence.data.size | string | `"500Gi"` | Size of the data PVC |
+| qbittorrentConf.enabled | bool | `false` | Enable the qBittorrent.conf init container |
+| qbittorrentConf.entries | object | `{"BitTorrent":{"Session\\DiskIOType":3,"Session\\MemoryWorkingSetLimit":4096,"Session\\UseOSCache":false}}` | INI sections and keys to upsert. Use Qt-style sub-keys with backslashes (e.g. `Session\DiskIOType`). Values are written verbatim — keep them as plain strings/integers/booleans. |
+| qbittorrentConf.image | object | `{"pullPolicy":"IfNotPresent","repository":"busybox","tag":"1.36"}` | Image used by the seeding init container. Needs `awk` and `sh`. |
 | replicaCount | int | `1` | Number of replicas to be deployed |
 | resources | object | {} | Resource requests and limits for the qBittorrent container @example resources:   limits:     cpu: 100m     memory: 128Mi   requests:     cpu: 100m     memory: 128Mi |
 | service.port | int | `8080` | Port for the qBittorrent WebUI |

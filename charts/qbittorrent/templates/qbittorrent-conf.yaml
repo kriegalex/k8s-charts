@@ -1,0 +1,82 @@
+{{- if .Values.qbittorrentConf.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "qbittorrent.fullname" . }}-conf
+  labels:
+    app.kubernetes.io/name: {{ include "qbittorrent.name" . }}
+    helm.sh/chart: {{ include "qbittorrent.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+data:
+  # Newline-separated "Section\tKey\tValue" tuples consumed by the init container.
+  # Tab-delimited so values may contain '=' or spaces without ambiguity.
+  entries.tsv: |
+    {{- range $section, $kv := .Values.qbittorrentConf.entries }}
+    {{- range $key, $val := $kv }}
+    {{ $section }}	{{ $key }}	{{ $val }}
+    {{- end }}
+    {{- end }}
+  upsert.sh: |
+    #!/bin/sh
+    # Upsert each (section,key,value) tuple into qBittorrent.conf.
+    # Idempotent: replaces a line "key=*" inside [section] if present,
+    # appends "key=value" at the end of the section otherwise. Creates
+    # the section (and the file) if they don't exist.
+    set -eu
+
+    CONF="${QBT_CONF:-/config/qBittorrent/qBittorrent.conf}"
+    TUPLES="${QBT_TUPLES:-/seed/entries.tsv}"
+
+    mkdir -p "$(dirname "$CONF")"
+    [ -f "$CONF" ] || : > "$CONF"
+
+    while IFS="	" read -r section key value; do
+      [ -z "${section:-}" ] && continue
+      case "$section" in \#*) continue ;; esac
+
+      # Pass values through ENVIRON so awk does not interpret backslash
+      # escapes (qBittorrent keys like "Session\DiskIOType" contain literal
+      # backslashes that -v would mangle).
+      QBT_SECTION="[$section]" QBT_KEY="$key" QBT_VALUE="$value" awk '
+        BEGIN {
+          section = ENVIRON["QBT_SECTION"]
+          key     = ENVIRON["QBT_KEY"]
+          value   = ENVIRON["QBT_VALUE"]
+          in_section = 0; replaced = 0; section_seen = 0
+        }
+        # Section header line
+        /^\[.*\]$/ {
+          # Leaving the target section without having replaced -> append before exiting it
+          if (in_section && !replaced) {
+            print key "=" value
+            replaced = 1
+          }
+          in_section = ($0 == section)
+          if (in_section) section_seen = 1
+          print
+          next
+        }
+        # Inside target section: replace existing key
+        in_section && index($0, key "=") == 1 {
+          if (!replaced) {
+            print key "=" value
+            replaced = 1
+          }
+          next
+        }
+        { print }
+        END {
+          if (!section_seen) {
+            print section
+            print key "=" value
+          } else if (in_section && !replaced) {
+            # File ended while still inside target section
+            print key "=" value
+          }
+        }
+      ' "$CONF" > "$CONF.tmp"
+      mv "$CONF.tmp" "$CONF"
+      echo "upserted [$section] $key=$value"
+    done < "$TUPLES"
+{{- end }}
