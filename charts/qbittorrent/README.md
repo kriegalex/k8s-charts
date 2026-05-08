@@ -1,12 +1,78 @@
 # QBittorrent Chart
 
-![Version: 2.1.0](https://img.shields.io/badge/Version-2.1.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: legacy-4.3.9](https://img.shields.io/badge/AppVersion-legacy--4.3.9-informational?style=flat-square)
+![Version: 3.0.0](https://img.shields.io/badge/Version-3.0.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: release-5.2.0](https://img.shields.io/badge/AppVersion-release--5.2.0-informational?style=flat-square)
 
 A Helm chart for deploying a QBittorrent client that uses a wireguard VPN tunnel.
 
 ## Important note
 
-**By default, this chart uses the 4.3.9 version of qBittorrent, known to be stable.**
+**Since chart 3.0.0, the default image is qBittorrent 5.x on libtorrent v2.x
+(`ghcr.io/hotio/qbittorrent:release-5.2.0`).** The legacy 4.3.9 image is still
+fully supported — see [Pinning the legacy image](#pinning-the-legacy-image)
+below.
+
+## Breaking Changes in v3.0.0
+
+**⚠️ Important:** Version 3.0.0 switches the default qBittorrent image from
+the legacy `legacy-4.3.9` build to the modern `release-5.2.0` build, and
+flips two related defaults to keep the new image stable in containers.
+
+### What changed
+
+| | v2.x default | v3.0.0 default |
+| --- | --- | --- |
+| `appVersion` (image tag) | `legacy-4.3.9` | `release-5.2.0` |
+| `env.LIBTORRENT` | (unset → image default `v1`) | `v2` |
+| `qbittorrentConf.enabled` | `false` | `true` |
+
+The libtorrent-v2.x build is the upstream default and gets all current
+fixes, but its memory-mapped IO interacts badly with the Linux page cache
+inside containers
+([context](https://github.com/arvidn/libtorrent/issues/7551)). The
+`qbittorrentConf` init container introduced in 2.1.0 is now enabled by
+default and pins three keys that defuse the issue:
+
+```
+[BitTorrent]
+Session\DiskIOType=3            # Simple pread/pwrite (bypasses mmap)
+Session\MemoryWorkingSetLimit=4096
+Session\UseOSCache=false
+```
+
+### Why this change?
+
+- 4.3.9 is from 2021 and no longer receives security or correctness fixes
+  upstream.
+- The mmap memory-growth problem that originally justified pinning legacy
+  is now mitigated *inside the chart*, not just by image choice.
+- New users hitting the chart for the first time should land on a current
+  qBittorrent.
+
+### Migration
+
+**If you've been pinning `image.tag` explicitly (e.g. `legacy-4.3.9` or a
+specific `release-*` tag):** nothing changes — your pin still wins.
+
+**If you were relying on the chart default and want to upgrade to 5.x:**
+just `helm upgrade` to 3.0.0. Note one-way migration of `.fastresume`
+files: once libtorrent-v2 has touched your resume data, rolling back to
+the legacy image requires re-checking torrents.
+
+**If you want to stay on legacy:** see below.
+
+### Pinning the legacy image
+
+```yaml
+image:
+  tag: legacy-4.3.9
+env:
+  LIBTORRENT: v1
+qbittorrentConf:
+  enabled: false   # legacy doesn't need the mmap mitigations
+```
+
+This restores the 2.x behaviour exactly. Resume data created on legacy is
+forward-compatible with libtorrent v2, so you can switch back later.
 
 ## Breaking Changes in v2.0.0
 
@@ -357,6 +423,7 @@ qbittorrentConf:
 |-----|------|---------|-------------|
 | affinity | object | `{}` | Pod affinity/anti-affinity settings |
 | commonLabels | object | {} | Common labels for all resources created by this chart |
+| env.LIBTORRENT | string | "v2" | Selects the libtorrent variant baked into the hotio image. `v2` matches the default appVersion (release-5.x); set to `v1` to pull the libtorrent 1.2.x build for the same qBittorrent version. |
 | env.PGID | int | `1000` | The group ID (GID) for running the container Ensures files are created with the correct group ownership |
 | env.PRIVOXY_ENABLED | bool | `false` | Enable Privoxy HTTP proxy |
 | env.PUID | int | `1000` | The user ID (UID) for running the container Ensures files are created with the correct user ownership |
@@ -394,7 +461,7 @@ qbittorrentConf:
 | persistence.data.accessMode | string | `"ReadWriteOnce"` | Access mode for the data PVC |
 | persistence.data.enabled | bool | `false` | Enable persistent storage for downloads |
 | persistence.data.size | string | `"500Gi"` | Size of the data PVC |
-| qbittorrentConf.enabled | bool | `false` | Enable the qBittorrent.conf init container |
+| qbittorrentConf.enabled | bool | `true` | Enable the qBittorrent.conf init container. Defaults to true since 3.0.0 because the chart's default image now ships libtorrent v2.x, which needs these mitigations to behave well in containers. |
 | qbittorrentConf.entries | object | `{"BitTorrent":{"Session\\DiskIOType":3,"Session\\MemoryWorkingSetLimit":4096,"Session\\UseOSCache":false}}` | INI sections and keys to upsert. Use Qt-style sub-keys with backslashes (e.g. `Session\DiskIOType`). Values are written verbatim — keep them as plain strings/integers/booleans. |
 | qbittorrentConf.image | object | `{"pullPolicy":"IfNotPresent","repository":"busybox","tag":"1.36"}` | Image used by the seeding init container. Needs `awk` and `sh`. |
 | replicaCount | int | `1` | Number of replicas to be deployed |

@@ -27,8 +27,11 @@ replicaCount: 1
 #   - MemoryWorkingSetLimit caps qBittorrent's working set in MiB.
 #   - UseOSCache=false stops leaning on the kernel page cache.
 qbittorrentConf:
-  # -- Enable the qBittorrent.conf init container
-  enabled: false
+  # -- Enable the qBittorrent.conf init container.
+  # Defaults to true since 3.0.0 because the chart's default image now
+  # ships libtorrent v2.x, which needs these mitigations to behave well
+  # in containers.
+  enabled: true
   # -- INI sections and keys to upsert. Use Qt-style sub-keys with backslashes
   # (e.g. `Session\DiskIOType`). Values are written verbatim — keep them as
   # plain strings/integers/booleans.
@@ -72,6 +75,12 @@ env:
   # -- Timezone setting
   # @default -- "Etc/UTC"
   TZ: "Etc/UTC"
+
+  # -- Selects the libtorrent variant baked into the hotio image.
+  # `v2` matches the default appVersion (release-5.x); set to `v1` to
+  # pull the libtorrent 1.2.x build for the same qBittorrent version.
+  # @default -- "v2"
+  LIBTORRENT: "v2"
 
   # -- VPN Configuration Settings
   # @section VPN Configuration

@@ -68,6 +68,10 @@ Create environment variables used to configure the qbittorrent container as well
   value: {{ .Values.env.UMASK | quote }}
 - name: TZ
   value: {{ .Values.env.TZ | quote }}
+{{- if .Values.env.LIBTORRENT }}
+- name: LIBTORRENT
+  value: {{ .Values.env.LIBTORRENT | quote }}
+{{- end }}
 {{- if or .Values.vpn.pia.enabled .Values.vpn.wireguard.enabled }}
 - name: VPN_ENABLED
   value: "true"
