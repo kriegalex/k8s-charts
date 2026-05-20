@@ -2,7 +2,7 @@ apiVersion: v2
 name: valheim-server
 description: A Helm chart for deploying a Valheim dedicated server on Kubernetes
 type: application
-version: 1.0.0
+version: 1.1.0
 appVersion: "3.1.0"
 home: https://www.valheimgame.com/
 icon: https://cdn2.steamgriddb.com/icon/d17892563a6984845a0e23df7841f903/32/256x256.png

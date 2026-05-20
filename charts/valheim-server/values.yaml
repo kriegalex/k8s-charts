@@ -70,6 +70,15 @@ service:
   annotations: {}
   # -- External source IP ranges allowed to access the server
   loadBalancerSourceRanges: []
+  # Static NodePort assignments (only used when service.type is "NodePort").
+  # Leave a field empty to let Kubernetes auto-assign a port in the NodePort range.
+  nodePorts:
+    # -- NodePort for the game port (server.port)
+    game: ""
+    # -- NodePort for server.port + 1
+    game1: ""
+    # -- NodePort for server.port + 2
+    game2: ""
 
 # Storage configuration for server data
 persistence:
