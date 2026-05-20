@@ -1,0 +1,23 @@
+alertmanager-ntfy has been installed.
+
+Point Alertmanager at this webhook receiver:
+
+  receivers:
+    - name: ntfy
+      webhook_configs:
+        - url: http://{{ include "alertmanager-ntfy.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local/
+          send_resolved: true
+
+Effective ntfy topic: {{ .Values.ntfyAlertmanager.ntfy.topic }}
+
+{{- if .Values.ntfyAlertmanager.template.enabled }}
+
+A custom notification body template is mounted at
+/etc/ntfy-alertmanager/template.tmpl and referenced via ntfy.template-path.
+{{- end }}
+
+Verify the rendered scfg config:
+
+  kubectl --namespace {{ .Release.Namespace }} get secret \
+    {{ include "alertmanager-ntfy.fullname" . }} \
+    -o jsonpath='{.data.config}' | base64 -d

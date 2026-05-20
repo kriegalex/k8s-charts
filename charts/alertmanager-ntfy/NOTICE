@@ -1,0 +1,47 @@
+alertmanager-ntfy Helm chart
+============================
+
+This chart is a fork of the upstream chart that ships in
+the xenrox/ntfy-alertmanager repository at:
+
+    https://codeberg.org/xenrox/ntfy-alertmanager
+    (contrib/charts/alertmanager-ntfy/)
+
+Upstream maintainer: WrenIX <https://wrenix.eu>
+Upstream license:    GNU Affero General Public License v3.0 (AGPL-3.0)
+
+This fork inherits AGPL-3.0 (see LICENSE in this directory).
+The rest of the kriegalex/k8s-charts repository remains under MIT;
+only this chart subtree is AGPL-3.0.
+
+Changes from upstream
+---------------------
+
+- templates/secret.yaml: expanded the rendered scfg config to expose
+  the full set of ntfy-alertmanager options (alert-mode, base-url,
+  ntfy.markdown / template-path / generator-url-label, resolved.*,
+  per-label icon/email-address/call/topic, alertmanager{} silence
+  block, cache{} block) instead of the small whitelist the upstream
+  chart rendered. The Secret also carries an optional second key
+  `template.tmpl` holding a user-supplied Go text/template for the
+  notification body, gated on .Values.ntfyAlertmanager.template.enabled
+  and a non-empty body. Mounted via the existing Secret-as-directory
+  mount; no separate ConfigMap or extra volume is introduced.
+- templates/secret.yaml: tightened guards that the upstream chart
+  inherited from its scfg template — `markdown` uses kindIs "bool"
+  so `false` is honored (upstream's `with` swallowed it); empty
+  `topic` no longer emits a broken `topic` line; `password` without
+  a matching `user` is suppressed in the webhook-auth, ntfy, and
+  alertmanager{} blocks.
+- templates/_helpers.tpl: new alertmanager-ntfy.templatePath helper
+  resolves the bridge's template-path field from either an explicit
+  override or the auto-mount location when the template feature is
+  enabled with a non-empty body.
+- templates/deployment.yaml: probes use /health (matches binary
+  appVersion 1.0.0). Sets automountServiceAccountToken: false on
+  the PodSpec.
+- templates/serviceaccount.yaml: adds automountServiceAccountToken:
+  false on the SA, matching the repo-wide convention.
+- values.yaml: documented the new keys with helm-docs annotations;
+  appVersion bumped to 1.0.0 so image.tag defaults track the current
+  binary release.
