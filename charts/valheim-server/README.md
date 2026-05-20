@@ -1,6 +1,6 @@
 # valheim-server
 
-![Version: 1.0.0](https://img.shields.io/badge/Version-1.0.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 3.1.0](https://img.shields.io/badge/AppVersion-3.1.0-informational?style=flat-square)
+![Version: 1.1.0](https://img.shields.io/badge/Version-1.1.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 3.1.0](https://img.shields.io/badge/AppVersion-3.1.0-informational?style=flat-square)
 
 A Helm chart for deploying a Valheim dedicated server on Kubernetes
 
@@ -181,6 +181,9 @@ kubectl delete pvc -l app.kubernetes.io/instance=my-valheim-server
 | service.annotations | object | `{}` | Annotations for the service |
 | service.loadBalancerIP | string | `""` | Set specific load balancer IP (depends on cloud provider support) |
 | service.loadBalancerSourceRanges | list | `[]` | External source IP ranges allowed to access the server |
+| service.nodePorts.game | string | `""` | NodePort for the game port (server.port) |
+| service.nodePorts.game1 | string | `""` | NodePort for server.port + 1 |
+| service.nodePorts.game2 | string | `""` | NodePort for server.port + 2 |
 | service.type | string | `"LoadBalancer"` | Service type |
 | startupProbe.enabled | bool | `true` | Enable startup probe |
 | startupProbe.failureThreshold | int | 30 (allows up to 5 minutes for initial startup) | Failure threshold |
