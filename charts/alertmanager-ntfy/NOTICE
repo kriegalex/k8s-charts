@@ -22,12 +22,26 @@ Changes from upstream
   ntfy.markdown / template-path / generator-url-label, resolved.*,
   per-label icon/email-address/call/topic, alertmanager{} silence
   block, cache{} block) instead of the small whitelist the upstream
-  chart rendered.
-- templates/configmap.yaml: new optional ConfigMap that holds a
-  user-supplied Go text/template for the notification body, mounted
-  alongside the config Secret so ntfy.template-path can reference it.
-- templates/deployment.yaml: optional second volume/mount for the
-  template ConfigMap (gated on .Values.ntfyAlertmanager.template.enabled).
+  chart rendered. The Secret also carries an optional second key
+  `template.tmpl` holding a user-supplied Go text/template for the
+  notification body, gated on .Values.ntfyAlertmanager.template.enabled
+  and a non-empty body. Mounted via the existing Secret-as-directory
+  mount; no separate ConfigMap or extra volume is introduced.
+- templates/secret.yaml: tightened guards that the upstream chart
+  inherited from its scfg template — `markdown` uses kindIs "bool"
+  so `false` is honored (upstream's `with` swallowed it); empty
+  `topic` no longer emits a broken `topic` line; `password` without
+  a matching `user` is suppressed in the webhook-auth, ntfy, and
+  alertmanager{} blocks.
+- templates/_helpers.tpl: new alertmanager-ntfy.templatePath helper
+  resolves the bridge's template-path field from either an explicit
+  override or the auto-mount location when the template feature is
+  enabled with a non-empty body.
+- templates/deployment.yaml: probes use /health (matches binary
+  appVersion 1.0.0). Sets automountServiceAccountToken: false on
+  the PodSpec.
+- templates/serviceaccount.yaml: adds automountServiceAccountToken:
+  false on the SA, matching the repo-wide convention.
 - values.yaml: documented the new keys with helm-docs annotations;
   appVersion bumped to 1.0.0 so image.tag defaults track the current
   binary release.
