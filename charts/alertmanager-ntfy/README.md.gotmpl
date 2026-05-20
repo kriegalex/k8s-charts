@@ -1,0 +1,91 @@
+# {{ .Name }}
+
+{{ template "chart.versionBadge" . }}{{ template "chart.typeBadge" . }}{{ template "chart.appVersionBadge" . }}
+
+{{ template "chart.description" . }}
+
+## Introduction
+
+This chart deploys [xenrox/ntfy-alertmanager](https://codeberg.org/xenrox/ntfy-alertmanager), a small bridge that receives Alertmanager webhooks and forwards them to a [ntfy](https://ntfy.sh) server with per-severity priority/tags/icons.
+
+It is a fork of the chart that ships in `xenrox/ntfy-alertmanager`'s `contrib/charts/` directory, extended to expose the full set of [scfg config options](https://codeberg.org/xenrox/ntfy-alertmanager/src/branch/master/config.scfg) the upstream binary supports — including `alert-mode`, `ntfy.template-path`, `ntfy.generator-url-label`, `resolved.update-notification`, the `alertmanager{}` silence-button block, and the `cache{}` block. The upstream chart only renders a small whitelist; this fork renders everything so you can tune notification verbosity without post-render patches.
+
+## License
+
+The upstream binary and chart are licensed under **AGPL-3.0**. This fork inherits that license — see [`LICENSE`](./LICENSE) and [`NOTICE`](./NOTICE) in this directory. The remainder of the [`kriegalex/k8s-charts`](https://github.com/kriegalex/k8s-charts) repository is MIT; only this chart subtree is AGPL-3.0.
+
+## Prerequisites
+
+- Kubernetes 1.19+
+- Helm 3.16+
+- A reachable ntfy server (in-cluster or external) with a publisher credential
+
+## Installing the Chart
+
+```bash
+helm repo add k8s-charts https://kriegalex.github.io/k8s-charts/
+helm repo update
+helm install alertmanager-ntfy k8s-charts/alertmanager-ntfy \
+  --namespace ntfy --create-namespace \
+  -f values.yaml -f helm-values-secret.yaml
+```
+
+Credentials (the ntfy publisher password, optional webhook basic-auth) belong in a separate gitignored `helm-values-secret.yaml` so they don't land in version control.
+
+## Reducing notification verbosity
+
+The upstream binary's default formatter dumps every label and annotation into the notification body. Three knobs cut that down considerably on a phone:
+
+```yaml
+ntfyAlertmanager:
+  alertMode: single                # one ntfy message per alert; cleaner title
+  ntfy:
+    generatorUrlLabel: "View"      # adds an action button to the Prometheus alert URL
+  resolved:
+    updateNotification: true       # updates the original notification on resolve
+
+  # Optional: replace the default label/annotation dump with your own template.
+  template:
+    enabled: true
+    body: |
+      **{{ "{{" }} index .CommonAnnotations "summary" {{ "}}" }}**
+
+      {{ "{{" }} index .CommonAnnotations "description" {{ "}}" }}
+
+  # When alertMode is "single", enable a cache so re-evaluations of the same
+  # alert don't re-publish on every Alertmanager group_interval.
+  cache:
+    type: memory
+    duration: 24h
+```
+
+When `template.enabled` is true, the chart writes the template body into the config Secret as a second key (`template.tmpl`), mounts it at `/etc/ntfy-alertmanager/template.tmpl`, and sets `ntfy.template-path` automatically.
+
+> **Pair `alertMode: single` with a cache.** In single mode the bridge does not deduplicate per-alert by default — every Alertmanager re-evaluation (typically every 30 s while the alert is firing) re-publishes. Set `ntfyAlertmanager.cache.type: memory` and a duration matching your `repeat_interval` to suppress recurrences.
+
+## Silence button (optional)
+
+To enable the in-notification "Silence" button:
+
+```yaml
+ntfyAlertmanager:
+  baseURL: https://alertmanager-ntfy.example.com
+  alertmanager:
+    silenceDuration: 24h
+
+ingress:
+  enabled: true
+  hosts:
+    - host: alertmanager-ntfy.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+```
+
+The Silence button on each ntfy message posts back to this Ingress, which the bridge proxies on to the Alertmanager API.
+
+## Configuration
+
+{{ template "chart.valuesTable" . }}
+
+{{ template "helm-docs.versionFooter" . }}

@@ -1,0 +1,208 @@
+global:
+  image:
+    # -- Overwrites all registry entries if set.
+    registry: ""
+    # -- Overwrites all imagePullPolicy entries if set.
+    pullPolicy: ""
+
+# -- Number of replicas.
+replicaCount: 1
+
+image:
+  # -- Image registry (overridable via global.image.registry).
+  registry: codeberg.org
+  # -- Image repository.
+  repository: xenrox/ntfy-alertmanager
+  # -- Image pull policy (overridable via global.image.pullPolicy).
+  pullPolicy: IfNotPresent
+  # -- Image tag. When empty, defaults to .Chart.AppVersion.
+  tag: ""
+
+# ntfy-alertmanager rendered config (scfg). Every field is optional unless
+# noted; empty/unset fields are omitted from the rendered config so the
+# binary falls back to its own defaults.
+ntfyAlertmanager:
+  # -- Listening port for the webhook receiver.
+  port: 80
+  # -- Log level (debug, info, warning, error).
+  logLevel: info
+  # -- Log format (text or json).
+  logFormat: ""
+  # -- Public-facing base URL of the bridge. Required if you want the
+  # "Silence" action button (alertmanager.silenceDuration) to work.
+  baseURL: ""
+  # -- How alerts are grouped into ntfy messages. "multi" keeps grouped
+  # alerts in one notification; "single" sends each alert separately
+  # (cleaner title, enables generator-url-label button).
+  alertMode: ""
+  # -- Optional HTTP basic auth on the webhook endpoint itself
+  # (Alertmanager -> bridge). Leave empty for in-cluster trust.
+  user: ""
+  # -- HTTP basic auth password for the webhook endpoint.
+  password: ""
+
+  ntfy:
+    # -- URL of the ntfy topic (required). Either a full URL
+    # (https://ntfy.example.com/my-topic) or just the topic name when
+    # combined with `server`.
+    topic: https://ntfy.sh/alertmanager-alerts
+    # -- ntfy server URL when `topic` is just a topic name.
+    server: ""
+    # -- ntfy publisher username.
+    user: ""
+    # -- ntfy publisher password.
+    password: ""
+    # -- ntfy access token (alternative to user/password).
+    accessToken: ""
+    # -- SHA-512 certificate fingerprint for self-signed ntfy servers.
+    certificateFingerprint: ""
+    # -- Forward every alert to this email address via ntfy.
+    emailAddress: ""
+    # -- Place a phone call for every alert (use "yes" for first verified).
+    call: ""
+    # -- Render the notification body as Markdown. Empty = upstream default (true).
+    markdown: ""
+    # -- Label for the action button that opens the alert's generator/Prometheus
+    # URL. Only effective when alertMode is "single". Example: "View".
+    generatorUrlLabel: ""
+    # -- Absolute path inside the pod to a Go text/template file that overrides
+    # the default notification body. When `template.enabled` is true and this
+    # is left empty, it auto-fills to /etc/ntfy-alertmanager/template.tmpl.
+    templatePath: ""
+
+  # Optional rendering template for the notification body. When enabled,
+  # a ConfigMap is created and mounted at /etc/ntfy-alertmanager/template.tmpl
+  # and ntfy.templatePath is auto-set to point at it.
+  template:
+    # -- Render the template ConfigMap and mount it into the pod.
+    enabled: false
+    # -- Go text/template source. See xenrox/ntfy-alertmanager docs for the
+    # available `.Alerts[]`, `.CommonLabels`, `.CommonAnnotations`, etc.
+    body: ""
+
+  # Label-driven priority/tag/icon/topic mapping. `order` defines the
+  # decreasing priority of label lookups; entries map specific label=value
+  # pairs to ntfy attributes.
+  labels:
+    # -- Decreasing-priority list of label names to consult.
+    order:
+      - severity
+      - instance
+    # -- Per-label mapping entries. Each entry takes `label`, `value`, and
+    # any of: `priority`, `tags` (list), `icon`, `emailAddress`, `call`, `topic`.
+    entries:
+      - label: severity
+        value: critical
+        priority: 5
+        tags:
+          - "rotating_light"
+      - label: severity
+        value: info
+        priority: 1
+
+  # Settings applied to "resolved" notifications. Take precedence over the
+  # entries in `labels.entries` for matching alerts.
+  resolved:
+    # -- Update the original ntfy notification instead of pushing a new one
+    # when an alert resolves. Halves the notification count in practice.
+    updateNotification: false
+    # -- Tags appended to resolved-alert notifications.
+    tags:
+      - "white_check_mark"
+    # -- ntfy priority for resolved-alert notifications.
+    priority: ""
+    # -- Icon URL for resolved-alert notifications.
+    icon: ""
+
+  # Alertmanager integration (silence-button proxy). When silenceDuration is
+  # set and baseURL is configured, ntfy notifications include a "Silence"
+  # action button that round-trips through this bridge to the Alertmanager API.
+  alertmanager:
+    # -- How long a silence created from the notification lasts (e.g. "24h").
+    silenceDuration: ""
+    # -- Alertmanager basic-auth user when the API is protected.
+    user: ""
+    # -- Alertmanager basic-auth password.
+    password: ""
+    # -- Override the Alertmanager URL parsed from the webhook payload.
+    url: ""
+
+  # Cache to deduplicate recurring alerts when alertMode is "single".
+  cache:
+    # -- Cache backend (disabled, memory, redis).
+    type: ""
+    # -- How long entries stay in the cache.
+    duration: ""
+    # -- Memory cache cleanup interval.
+    cleanupInterval: ""
+    # -- Redis URL (only used when type is redis).
+    redisURL: ""
+
+# -- Image pull secrets.
+imagePullSecrets: []
+# -- Override the chart name used in resource names.
+nameOverride: ""
+# -- Override the fully qualified app name.
+fullnameOverride: ""
+
+serviceAccount:
+  # -- Create a service account for the bridge.
+  create: true
+  # -- Service account annotations.
+  annotations: {}
+  # -- Pre-existing service account name. Generated if empty and create is true.
+  name: ""
+
+# -- Extra labels added to every Pod.
+podLabels: {}
+# -- Extra annotations added to every Pod.
+podAnnotations: {}
+
+# -- Pod-level securityContext.
+podSecurityContext: {}
+# -- Container-level securityContext.
+securityContext: {}
+
+service:
+  # -- Service type.
+  type: ClusterIP
+  # -- Service port.
+  port: 80
+
+ingress:
+  # -- Expose the bridge through an Ingress (needed for the Silence button).
+  enabled: false
+  # -- IngressClass name.
+  className: ""
+  # -- Ingress annotations.
+  annotations: {}
+  # -- Ingress hosts/paths.
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  # -- Ingress TLS configuration.
+  tls: []
+
+# -- Container resources.
+resources: {}
+
+autoscaling:
+  # -- Enable HorizontalPodAutoscaler.
+  enabled: false
+  # -- Minimum replicas under autoscaling.
+  minReplicas: 1
+  # -- Maximum replicas under autoscaling.
+  maxReplicas: 5
+  # -- Target CPU utilization percentage.
+  targetCPUUtilizationPercentage: 80
+  # -- Target memory utilization percentage.
+  targetMemoryUtilizationPercentage: ""
+
+# -- Node selector for pod scheduling.
+nodeSelector: {}
+# -- Tolerations for pod scheduling.
+tolerations: []
+# -- Affinity rules for pod scheduling.
+affinity: {}
