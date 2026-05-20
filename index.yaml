@@ -153,6 +153,44 @@ entries:
     urls:
     - https://github.com/kriegalex/k8s-charts/releases/download/actual-budget-0.1.0/actual-budget-0.1.0.tgz
     version: 0.1.0
+  alertmanager-ntfy:
+  - annotations:
+      artifacthub.io/images: |
+        - name: ntfy-alertmanager
+          image: codeberg.org/xenrox/ntfy-alertmanager:1.0.0
+      artifacthub.io/license: AGPL-3.0-only
+      artifacthub.io/links: |
+        - name: Upstream chart (xenrox/ntfy-alertmanager contrib/charts)
+          url: https://codeberg.org/xenrox/ntfy-alertmanager/src/branch/master/contrib/charts/alertmanager-ntfy
+        - name: Docker image source
+          url: https://codeberg.org/xenrox/ntfy-alertmanager
+        - name: Chart source
+          url: https://github.com/kriegalex/k8s-charts/tree/main/charts/alertmanager-ntfy
+    apiVersion: v2
+    appVersion: 1.0.0
+    created: "2026-05-20T21:22:00.098980457Z"
+    description: Bridge that receives Alertmanager webhooks and forwards them to a
+      ntfy server.
+    digest: 3fb8e2432028fc475ec9a75560e2f0b0380a06a0d2a3716264685c54f1d97c01
+    home: https://codeberg.org/xenrox/ntfy-alertmanager
+    icon: https://github.com/binwiederhier/ntfy/raw/main/web/public/static/images/pwa-512x512.png
+    keywords:
+    - alertmanager
+    - ntfy
+    - notifications
+    - monitoring
+    kubeVersion: '>=1.19.0-0'
+    maintainers:
+    - email: kriegalex@gmail.com
+      name: kriegalex
+    name: alertmanager-ntfy
+    sources:
+    - https://codeberg.org/xenrox/ntfy-alertmanager
+    - https://github.com/kriegalex/k8s-charts/tree/main/charts/alertmanager-ntfy
+    type: application
+    urls:
+    - https://github.com/kriegalex/k8s-charts/releases/download/alertmanager-ntfy-0.2.0/alertmanager-ntfy-0.2.0.tgz
+    version: 0.2.0
   bentopdf:
   - annotations:
       artifacthub.io/images: |
@@ -1808,4 +1846,4 @@ entries:
     urls:
     - https://github.com/kriegalex/k8s-charts/releases/download/valheim-server-1.0.0/valheim-server-1.0.0.tgz
     version: 1.0.0
-generated: "2026-05-20T20:08:56.795270989Z"
+generated: "2026-05-20T21:22:00.099087719Z"
