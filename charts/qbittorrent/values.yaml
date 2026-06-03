@@ -252,6 +252,26 @@ persistence:
     # @default -- ""
     # existingClaim: ""
 
+# -- Additional volumes to attach to the pod (verbatim Kubernetes volume specs).
+# Use together with `extraVolumeMounts` to mount extra storage (e.g. library
+# shares for hardlink-on-import) beyond the built-in config/data volumes.
+# @default -- []
+# @example
+# extraVolumes:
+#   - name: nfs-tv
+#     persistentVolumeClaim:
+#       claimName: nfs-tv
+extraVolumes: []
+
+# -- Additional volumeMounts for the qBittorrent container (verbatim specs).
+# Pair each entry with a matching `extraVolumes` item by name.
+# @default -- []
+# @example
+# extraVolumeMounts:
+#   - name: nfs-tv
+#     mountPath: /mnt/user/tv
+extraVolumeMounts: []
+
 # Ingress configuration for exposing the qBittorrent UI
 ingress:
   # -- Enable ingress

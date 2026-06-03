@@ -1,6 +1,6 @@
 # QBittorrent Chart
 
-![Version: 3.0.0](https://img.shields.io/badge/Version-3.0.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: release-5.2.0](https://img.shields.io/badge/AppVersion-release--5.2.0-informational?style=flat-square)
+![Version: 3.1.0](https://img.shields.io/badge/Version-3.1.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: release-5.2.0](https://img.shields.io/badge/AppVersion-release--5.2.0-informational?style=flat-square)
 
 A Helm chart for deploying a QBittorrent client that uses a wireguard VPN tunnel.
 
@@ -445,6 +445,8 @@ qbittorrentConf:
 | env.VPN_PIA_PREFERRED_REGION | string | "" | Preferred region for the PIA VPN Leave empty to let PIA choose the optimal server automatically |
 | env.VPN_PIA_USER | string | "" | Private Internet Access (PIA) username Overrides vpn.pia.existingSecret if provided |
 | env.WEBUI_PORTS | string | "8080/tcp,8080/udp" | Ports for the qBittorrent Web UI |
+| extraVolumeMounts | list | [] | Additional volumeMounts for the qBittorrent container (verbatim specs). Pair each entry with a matching `extraVolumes` item by name. @example extraVolumeMounts:   - name: nfs-tv     mountPath: /mnt/user/tv |
+| extraVolumes | list | [] | Additional volumes to attach to the pod (verbatim Kubernetes volume specs). Use together with `extraVolumeMounts` to mount extra storage (e.g. library shares for hardlink-on-import) beyond the built-in config/data volumes. @example extraVolumes:   - name: nfs-tv     persistentVolumeClaim:       claimName: nfs-tv |
 | fullnameOverride | string | `""` | Override the full name of the chart |
 | image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
 | image.repository | string | `"ghcr.io/hotio/qbittorrent"` | Docker image repository for qBittorrent |

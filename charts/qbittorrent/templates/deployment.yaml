@@ -81,6 +81,9 @@ spec:
               mountPath: /config
             - name: qbittorrent-data
               mountPath: /data
+            {{- with .Values.extraVolumeMounts }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
 
@@ -129,3 +132,6 @@ spec:
           {{- else }}
           emptyDir: { }
           {{- end }}
+        {{- with .Values.extraVolumes }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
