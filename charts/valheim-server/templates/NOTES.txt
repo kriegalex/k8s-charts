@@ -31,6 +31,28 @@ Note: You've deployed with service type "{{ .Values.service.type }}" which may n
 You might need to set up port forwarding or ingress to access your server.
 {{- end }}
 
+{{- if eq (.Values.modding.bepInEx | toString) "1" }}
+
+MODDING (BepInEx) is ENABLED:
+- The container starts with TYPE=BepInEx.
+{{- if .Values.modding.mods }}
+- The following mods will be downloaded on startup:
+  {{- range .Values.modding.mods }}
+  - {{ . }}
+  {{- end }}
+{{- else }}
+- No mods are listed in `modding.mods`; set that value to have the container download mods.
+{{- end }}
+- Mods and their config persist under BepInEx/ inside the server PVC across restarts.
+- Upstream recommends disabling `automation.autoUpdate` while modding to avoid breaking mods.
+{{- if eq (.Values.server.crossplay | toString) "1" }}
+
+WARNING: crossplay (server.crossplay=1) and BepInEx mods are MUTUALLY EXCLUSIVE.
+With crossplay on, Valheim uses PlayFab networking, which BepInEx cannot hook, so your
+mods will NOT load. For a modded server, set server.crossplay=0 (Steam-only players).
+{{- end }}
+{{- end }}
+
 IMPORTANT SECURITY NOTES:
 - Make sure your server password is at least 5 characters long
 - Properly secure access to your Kubernetes cluster
