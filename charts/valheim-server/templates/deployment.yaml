@@ -16,6 +16,8 @@ spec:
       labels:
         {{- include "valheim-server.selectorLabels" . | nindent 8 }}
     spec:
+      automountServiceAccountToken: false
+      terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       {{- if .Values.initContainers.enabled }}
@@ -62,6 +64,20 @@ spec:
               value: "{{ .Values.securityContext.runAsGroup | default "1000" }}"
             - name: PUBLIC
               value: "{{ .Values.server.public }}"
+            - name: ENABLE_CROSSPLAY
+              value: "{{ .Values.server.crossplay }}"
+            {{- if .Values.server.preset }}
+            - name: PRESET
+              value: "{{ .Values.server.preset }}"
+            {{- end }}
+            {{- if .Values.server.modifiers }}
+            - name: MODIFIERS
+              value: "{{ .Values.server.modifiers }}"
+            {{- end }}
+            {{- if .Values.server.setKey }}
+            - name: SET_KEY
+              value: "{{ .Values.server.setKey }}"
+            {{- end }}
             - name: AUTO_UPDATE
               value: "{{ .Values.automation.autoUpdate }}"
             - name: AUTO_UPDATE_SCHEDULE
@@ -80,6 +96,10 @@ spec:
               value: "{{ .Values.automation.autoBackupOnUpdate }}"
             - name: AUTO_BACKUP_ON_SHUTDOWN
               value: "{{ .Values.automation.autoBackupOnShutdown }}"
+            - name: SCHEDULED_RESTART
+              value: "{{ .Values.automation.scheduledRestart }}"
+            - name: SCHEDULED_RESTART_SCHEDULE
+              value: "{{ .Values.automation.scheduledRestartSchedule }}"
             {{- if .Values.notifications.webhookUrl }}
             - name: WEBHOOK_URL
               value: "{{ .Values.notifications.webhookUrl }}"
@@ -87,8 +107,13 @@ spec:
               value: "{{ .Values.notifications.includePublicIp }}"
             {{- end }}
             {{- if eq (.Values.modding.bepInEx | toString) "1" }}
-            - name: BEPINEX
-              value: "1"
+            - name: TYPE
+              value: "BepInEx"
+            {{- if .Values.modding.mods }}
+            - name: MODS
+              value: |-
+{{ .Values.modding.mods | join "\n" | indent 16 }}
+            {{- end }}
             {{- end }}
             {{- with .Values.extraEnv }}
             {{- toYaml . | nindent 12 }}
@@ -114,10 +139,6 @@ spec:
               mountPath: /home/steam/valheim
             - name: backups
               mountPath: /home/steam/backups
-            {{- if eq (.Values.modding.bepInEx | toString) "1" }}
-            - name: mods
-              mountPath: {{ .Values.modding.modPath }}
-            {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           # Startup probe - wait for server to initialize
@@ -184,16 +205,12 @@ spec:
           {{- if and .Values.persistence.enabled .Values.persistence.backups.existingClaim }}
           persistentVolumeClaim:
             claimName: {{ .Values.persistence.backups.existingClaim }}
-          {{- else if .Values.persistence.enabled }}
+          {{- else if and .Values.persistence.enabled (include "valheim-server.backupsEnabled" .) }}
           persistentVolumeClaim:
             claimName: {{ include "valheim-server.fullname" . }}-backups
           {{- else }}
           emptyDir: {}
           {{- end }}
-        {{- if eq (.Values.modding.bepInEx | toString) "1" }}
-        - name: mods
-          emptyDir: {}
-        {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

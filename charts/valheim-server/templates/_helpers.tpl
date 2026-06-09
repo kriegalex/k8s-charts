@@ -49,3 +49,13 @@ Selector labels
 app.kubernetes.io/name: {{ include "valheim-server.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
+
+{{/*
+Returns a non-empty string when any backup feature is enabled (scheduled, on-update, or
+on-shutdown). Used to decide whether the backups PVC should be provisioned.
+*/}}
+{{- define "valheim-server.backupsEnabled" -}}
+{{- if or (eq (.Values.automation.autoBackup | toString) "1") (eq (.Values.automation.autoBackupOnUpdate | toString) "1") (eq (.Values.automation.autoBackupOnShutdown | toString) "1") -}}
+true
+{{- end -}}
+{{- end }}

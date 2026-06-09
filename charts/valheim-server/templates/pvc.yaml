@@ -43,7 +43,7 @@ spec:
       storage: {{ .Values.persistence.server.size }}
 {{- end }}
 
-{{- if and .Values.persistence.enabled (not .Values.persistence.backups.existingClaim) }}
+{{- if and .Values.persistence.enabled (include "valheim-server.backupsEnabled" .) (not .Values.persistence.backups.existingClaim) }}
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

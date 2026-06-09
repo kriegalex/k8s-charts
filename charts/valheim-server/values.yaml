@@ -10,6 +10,10 @@ image:
 # -- Number of replicas to deploy (should typically stay at 1)
 replicaCount: 1
 
+# -- Grace period (seconds) for the pod to shut down. Gives the server time to save the
+# world and run an optional shutdown backup before being force-killed.
+terminationGracePeriodSeconds: 120
+
 # -- Provide a name override for resources
 nameOverride: ""
 
@@ -31,6 +35,15 @@ server:
   public: 0
   # -- Timezone for the server
   timezone: "UTC"
+  # -- Enable crossplay/PlayFab networking (1=enabled, 0=disabled). NOTE: crossplay is
+  # mutually exclusive with BepInEx mods — with crossplay on, mods will not load.
+  crossplay: 0
+  # -- World preset (e.g. Normal, Casual, Hard, Hardcore, Immersive, Hammer). Leave empty to skip.
+  preset: ""
+  # -- World modifiers as space-separated "key value" pairs (e.g. "combat veryhard portals casual"). Leave empty to skip.
+  modifiers: ""
+  # -- Global keys to set (e.g. "nobuildcost,nomap"). Leave empty to skip.
+  setKey: ""
 
 # Automation configuration for the server
 automation:
@@ -52,6 +65,10 @@ automation:
   autoBackupOnUpdate: 1
   # -- Create backup on server shutdown (1=enabled, 0=disabled)
   autoBackupOnShutdown: 0
+  # -- Enable a scheduled server restart (1=enabled, 0=disabled)
+  scheduledRestart: 0
+  # -- Cron schedule for the scheduled restart
+  scheduledRestartSchedule: "0 2 * * *"
 
 # Notification settings for server events
 notifications:
@@ -106,7 +123,9 @@ persistence:
     # -- Existing claim to use (leave empty to create a new one)
     existingClaim: ""
 
-  # Data volume configuration for backups. Requires "autoBackup: 1".
+  # Data volume configuration for backups. The PVC is only provisioned when a backup feature
+  # is enabled (automation.autoBackup, autoBackupOnUpdate, or autoBackupOnShutdown = 1);
+  # otherwise the backups directory uses an ephemeral emptyDir.
   backups:
     # -- Size of PVC for backups
     size: 10Gi
@@ -159,12 +178,17 @@ initContainers:
 
 # Modding configuration
 modding:
-  # -- Enable BepInEx for mods (1=enabled, 0=disabled)
+  # -- Enable BepInEx mod loader (1=enabled, 0=disabled). When enabled, sets the
+  # container's TYPE=BepInEx. Mods and their config live in the persistent server
+  # PVC under BepInEx/, so they survive pod restarts.
   bepInEx: 0
-  # -- Path to mounted mod directory
-  modPath: "/home/steam/valheim/BepInEx"
-  # -- Enable mounting a ConfigurationManager config
-  useConfigurationManager: false
+  # -- List of mods for the container to download on startup (requires bepInEx=1).
+  # Each entry is a Thunderstore dependency string (Author-Package-Version) or a
+  # direct URL. Supported files: zip, dll, cfg.
+  mods: []
+    # - ZenDragon-Zen_ModLib-1.11.4
+    # - ZenDragon-ZenCompass-1.7.1
+    # - ZenDragon-ZenPortal-0.7.6
 
 # Pod security context settings
 # @descriptionStart

@@ -1,6 +1,6 @@
 # valheim-server
 
-![Version: 1.1.0](https://img.shields.io/badge/Version-1.1.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 3.1.0](https://img.shields.io/badge/AppVersion-3.1.0-informational?style=flat-square)
+![Version: 1.2.0](https://img.shields.io/badge/Version-1.2.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 3.1.0](https://img.shields.io/badge/AppVersion-3.1.0-informational?style=flat-square)
 
 A Helm chart for deploying a Valheim dedicated server on Kubernetes
 
@@ -114,6 +114,28 @@ Note: This will not delete the Persistent Volume Claims. To delete them:
 kubectl delete pvc -l app.kubernetes.io/instance=my-valheim-server
 ```
 
+## Troubleshooting
+
+### `Failed to install app '896660' (Missing configuration)` on first boot
+
+On a brand-new deployment the container may log a SteamCMD error like
+`Failed to install app '896660' (Missing configuration)` and the pod may restart once or
+twice before the server comes up. This is a known, transient SteamCMD behaviour (it
+self-updates and restarts on the first run, completing the app install on a subsequent
+attempt) — it is not specific to this chart and also happens with plain `docker run` of the
+upstream image. The pod recovers on its own; with persistence enabled the already-downloaded
+server files are reused, so later restarts skip the install entirely. If it does not recover,
+check that the `server` PVC has enough free space (the game needs a few GB).
+
+## Modding (BepInEx)
+
+Set `modding.bepInEx: 1` to start the server with `TYPE=BepInEx`, and list mods in
+`modding.mods` (Thunderstore `Author-Package-Version` strings or direct URLs). Mods and their
+configuration are stored under `BepInEx/` inside the persistent `server` PVC, so they survive
+pod restarts. Note: BepInEx mods are **mutually exclusive with crossplay** — with
+`server.crossplay: 1`, Valheim uses PlayFab networking, which BepInEx cannot hook, so mods
+will not load.
+
 ## Values
 
 | Key | Type | Default | Description |
@@ -127,6 +149,8 @@ kubectl delete pvc -l app.kubernetes.io/instance=my-valheim-server
 | automation.autoBackupSchedule | string | `"*/15 * * * *"` | Cron schedule for automatic backups |
 | automation.autoUpdate | int | `1` | Enable automatic updates (1=enabled, 0=disabled) |
 | automation.autoUpdateSchedule | string | `"0 1 * * *"` | Cron schedule for automatic updates |
+| automation.scheduledRestart | int | `0` | Enable a scheduled server restart (1=enabled, 0=disabled) |
+| automation.scheduledRestartSchedule | string | `"0 2 * * *"` | Cron schedule for the scheduled restart |
 | automation.updateOnStartup | int | `0` | Update server when container starts (1=enabled, 0=disabled) |
 | extraEnv | list | `[]` | Additional environment variables for the Valheim server |
 | fullnameOverride | string | `""` | Provide a full name override for resources |
@@ -143,9 +167,8 @@ kubectl delete pvc -l app.kubernetes.io/instance=my-valheim-server
 | livenessProbe.initialDelaySeconds | int | `60` | Initial delay seconds |
 | livenessProbe.periodSeconds | int | `20` | Period seconds |
 | livenessProbe.timeoutSeconds | int | `5` | Timeout seconds |
-| modding.bepInEx | int | `0` | Enable BepInEx for mods (1=enabled, 0=disabled) |
-| modding.modPath | string | `"/home/steam/valheim/BepInEx"` | Path to mounted mod directory |
-| modding.useConfigurationManager | bool | `false` | Enable mounting a ConfigurationManager config |
+| modding.bepInEx | int | `0` | Enable BepInEx mod loader (1=enabled, 0=disabled). When enabled, sets the container's TYPE=BepInEx. Mods and their config live in the persistent server PVC under BepInEx/, so they survive pod restarts. |
+| modding.mods | list | `[]` | List of mods for the container to download on startup (requires bepInEx=1). Each entry is a Thunderstore dependency string (Author-Package-Version) or a direct URL. Supported files: zip, dll, cfg. |
 | nameOverride | string | `""` | Provide a name override for resources |
 | nodeSelector | object | `{}` | Node selector for pod assignment |
 | notifications.includePublicIp | int | `0` | Include the server's public IP in notifications (1=enabled, 0=disabled) |
@@ -172,10 +195,14 @@ kubectl delete pvc -l app.kubernetes.io/instance=my-valheim-server
 | securityContext.runAsGroup | int | `1000` | Group ID to run the container processes |
 | securityContext.runAsNonRoot | bool | `true` | Force the container to run as a non-root user |
 | securityContext.runAsUser | int | `111` | User ID to run the container processes. Should default to the steam user ID. |
+| server.crossplay | int | `0` | Enable crossplay/PlayFab networking (1=enabled, 0=disabled). NOTE: crossplay is mutually exclusive with BepInEx mods — with crossplay on, mods will not load. |
+| server.modifiers | string | `""` | World modifiers as space-separated "key value" pairs (e.g. "combat veryhard portals casual"). Leave empty to skip. |
 | server.name | string | `"Valheim Server with Helm"` | Server name as displayed in-game |
 | server.password | string | you MUST change this value | Server access password (minimum 5 characters) |
 | server.port | int | `2456` | UDP port for game server (will use PORT, PORT+1, and PORT+2) |
+| server.preset | string | `""` | World preset (e.g. Normal, Casual, Hard, Hardcore, Immersive, Hammer). Leave empty to skip. |
 | server.public | int | `0` | Set to 1 to make server visible publicly, 0 for private |
+| server.setKey | string | `""` | Global keys to set (e.g. "nobuildcost,nomap"). Leave empty to skip. |
 | server.timezone | string | `"UTC"` | Timezone for the server |
 | server.world | string | `"Dedicated"` | World name used for save files |
 | service.annotations | object | `{}` | Annotations for the service |
@@ -190,6 +217,7 @@ kubectl delete pvc -l app.kubernetes.io/instance=my-valheim-server
 | startupProbe.initialDelaySeconds | int | `30` | Initial delay seconds |
 | startupProbe.periodSeconds | int | `10` | Period seconds |
 | startupProbe.timeoutSeconds | int | `5` | Timeout seconds |
+| terminationGracePeriodSeconds | int | `120` | Grace period (seconds) for the pod to shut down. Gives the server time to save the world and run an optional shutdown backup before being force-killed. |
 | tolerations | list | `[]` | Tolerations for pod assignment |
 
 ----------------------------------------------

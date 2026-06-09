@@ -108,6 +108,28 @@ Note: This will not delete the Persistent Volume Claims. To delete them:
 kubectl delete pvc -l app.kubernetes.io/instance=my-valheim-server
 ```
 
+## Troubleshooting
+
+### `Failed to install app '896660' (Missing configuration)` on first boot
+
+On a brand-new deployment the container may log a SteamCMD error like
+`Failed to install app '896660' (Missing configuration)` and the pod may restart once or
+twice before the server comes up. This is a known, transient SteamCMD behaviour (it
+self-updates and restarts on the first run, completing the app install on a subsequent
+attempt) — it is not specific to this chart and also happens with plain `docker run` of the
+upstream image. The pod recovers on its own; with persistence enabled the already-downloaded
+server files are reused, so later restarts skip the install entirely. If it does not recover,
+check that the `server` PVC has enough free space (the game needs a few GB).
+
+## Modding (BepInEx)
+
+Set `modding.bepInEx: 1` to start the server with `TYPE=BepInEx`, and list mods in
+`modding.mods` (Thunderstore `Author-Package-Version` strings or direct URLs). Mods and their
+configuration are stored under `BepInEx/` inside the persistent `server` PVC, so they survive
+pod restarts. Note: BepInEx mods are **mutually exclusive with crossplay** — with
+`server.crossplay: 1`, Valheim uses PlayFab networking, which BepInEx cannot hook, so mods
+will not load.
+
 {{ template "chart.requirementsSection" . }}
 
 {{ template "chart.valuesSection" . }}
