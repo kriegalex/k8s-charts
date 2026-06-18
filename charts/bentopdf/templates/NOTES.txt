@@ -17,7 +17,6 @@
   kubectl --namespace {{ .Release.Namespace }} port-forward $POD_NAME 8080:$CONTAINER_PORT
 {{- end }}
 
-2. Test the PDF service:
-  curl -X POST http://localhost:8080/convert \
-    -F "file=@example.pdf" \
-    -F "format=png"
+2. BentoPDF is a fully client-side toolkit. Open the URL above in your browser
+   and process PDFs locally — files never leave your machine, and there is no
+   server-side API to call.

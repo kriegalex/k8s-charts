@@ -88,13 +88,6 @@ ingress:
     # @default -- "<release-name>-bentopdf-ingress-lets-encrypt"
     secretName: ""
 
-# BentoPDF application configuration
-config:
-  # -- Log level: DEBUG, INFO, WARNING, ERROR
-  logLevel: INFO
-  # -- Number of workers
-  workers: 1
-
 # -- Resource limits and requests for BentoPDF
 resources:
   limits:
@@ -105,11 +98,13 @@ resources:
     memory: 128Mi
 
 # Probes configuration
+# BentoPDF is a static client-side app served by nginx; it exposes no dedicated
+# health endpoint, so probes target the index page ("/") which returns HTTP 200.
 livenessProbe:
   # -- Enable liveness probe
   enabled: true
   httpGet:
-    path: /healthz
+    path: /
     port: http
   initialDelaySeconds: 30
   periodSeconds: 10
@@ -120,26 +115,9 @@ readinessProbe:
   # -- Enable readiness probe
   enabled: true
   httpGet:
-    path: /readyz
+    path: /
     port: http
   initialDelaySeconds: 10
   periodSeconds: 5
   timeoutSeconds: 3
   failureThreshold: 3
-
-# Persistent storage configuration for temporary files
-persistence:
-  # -- Enable persistent storage
-  enabled: false
-  # -- Storage class for the PVC
-  # @default -- ""
-  storageClass: ""
-  # -- Access mode for the persistent volume
-  accessMode: ReadWriteOnce
-  # -- Size of the persistent volume
-  size: 10Gi
-  # -- Mount path for persistent storage
-  mountPath: /tmp/bentopdf
-  # -- Use an existing PVC
-  # @default -- ""
-  existingClaim: ""

@@ -36,11 +36,6 @@ spec:
             - name: http
               containerPort: {{ .Values.service.targetPort }}
               protocol: TCP
-          env:
-            - name: LOG_LEVEL
-              value: {{ .Values.config.logLevel | quote }}
-            - name: BENTOML_PORT
-              value: {{ .Values.service.targetPort | quote }}
           {{- if .Values.livenessProbe.enabled }}
           livenessProbe:
             httpGet:
@@ -63,14 +58,3 @@ spec:
           {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-          {{- if .Values.persistence.enabled }}
-          volumeMounts:
-            - name: data
-              mountPath: {{ .Values.persistence.mountPath }}
-          {{- end }}
-      {{- if .Values.persistence.enabled }}
-      volumes:
-        - name: data
-          persistentVolumeClaim:
-            claimName: {{ if .Values.persistence.existingClaim }}{{ .Values.persistence.existingClaim }}{{- else }}{{ include "bentopdf.fullname" . }}{{- end }}
-      {{- end }}
