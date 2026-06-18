@@ -1,17 +1,18 @@
 apiVersion: v2
 name: bentopdf
-description: A Helm chart for BentoPDF - PDF manipulation service using BentoML
+description: A Helm chart for BentoPDF - a privacy-first, fully client-side PDF toolkit served as static files by nginx
 type: application
-version: 1.1.0
-appVersion: "2.1.0"
+version: 2.0.0
+appVersion: "2.8.5"
 home: https://github.com/alam00000/bentopdf
-icon: https://raw.githubusercontent.com/bentoml/BentoML/main/docs/source/_static/img/bentoml-icon.png
+icon: https://raw.githubusercontent.com/alam00000/bentopdf/v2.8.5/public/images/favicon-192x192.png
 kubeVersion: ">=1.19.0-0"
 keywords:
   - pdf
-  - bentoml
-  - converter
-  - gotenberg
+  - privacy
+  - self-hosted
+  - client-side
+  - toolkit
 maintainers:
   - name: kriegalex
     email: kriegalex@gmail.com

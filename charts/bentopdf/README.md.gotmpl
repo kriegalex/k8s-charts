@@ -7,7 +7,11 @@
 
 ## Overview
 
-BentoPDF is a PDF manipulation service built with BentoML. This Helm chart deploys BentoPDF along with a Gotenberg sidecar container for PDF conversion capabilities.
+BentoPDF is a privacy-first, **fully client-side** PDF toolkit. All processing
+(merge, split, convert, OCR, sign, etc.) happens in the user's browser — no files
+are ever uploaded and there is no server-side API. This Helm chart simply serves
+the BentoPDF static assets from the official `nginx-unprivileged`-based image
+(`ghcr.io/alam00000/bentopdf-simple`).
 
 ## Installation
 
@@ -33,21 +37,18 @@ helm upgrade --install bentopdf k8s-charts/bentopdf -f custom-values.yaml
 
 ## Features
 
-- **BentoPDF Service**: PDF manipulation and processing
-- **Gotenberg Sidecar**: Optional Gotenberg container for PDF conversion
-- **Ingress Support**: Optional ingress with automatic TLS configuration
-- **Horizontal Pod Autoscaling**: Optional HPA configuration
-- **Persistent Storage**: Optional persistent storage for temporary files
-- **Security Hardened**: Runs as non-root user (UID/GID 2000) following BentoPDF security best practices
+- **Client-Side PDF Toolkit**: Static web app — all PDF processing runs in the browser
+- **Ingress Support**: Optional ingress with optional TLS configuration
+- **Security Hardened**: Runs as non-root user (UID/GID 101) following BentoPDF security best practices
 
 ## Security
 
 This chart follows the official BentoPDF security recommendations:
 
-- **Non-Root Execution**: Container runs as user ID 2000 (non-root)
-- **Port 8080**: Uses high port number to avoid requiring root privileges
-- **nginx-unprivileged**: Based on nginx-unprivileged image for enhanced security
-- **Principle of Least Privilege**: Minimal container privileges with dropped capabilities
+- **Non-Root Execution**: Container runs as user ID 101 (the `nginx` user of the `nginx-unprivileged` base image)
+- **Port 8080**: Uses a high port number to avoid requiring root privileges
+- **nginx-unprivileged**: Based on the `nginx-unprivileged` image for enhanced security
+- **Principle of Least Privilege**: Minimal container privileges with all capabilities dropped
 - **No Privilege Escalation**: `allowPrivilegeEscalation` is set to false
 
 For more information about BentoPDF security features, see the [official security documentation](https://github.com/alam00000/bentopdf/blob/main/SECURITY.md).
