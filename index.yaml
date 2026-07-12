@@ -1074,6 +1074,39 @@ entries:
   - annotations:
       artifacthub.io/images: |
         - name: palworld-server-docker
+          image: thijsvanloef/palworld-server-docker:v2.5.0
+      artifacthub.io/links: |
+        - name: Chart source
+          url: https://github.com/kriegalex/k8s-charts/tree/main/charts/palworld-server
+        - name: Docker image source
+          url: https://github.com/thijsvanloef/palworld-server-docker
+    apiVersion: v2
+    appVersion: v2.5.0
+    created: "2026-07-12T21:02:22.088484378Z"
+    description: This Helm chart deploys a Palworld dedicated game server on a Kubernetes
+      cluster.
+    digest: 6a0f5b8e5f2b025c633bc0f00fc98b5e7ab8d0132d678c2547c8f32901fc8cfb
+    home: https://www.pocketpair.jp/palworld
+    icon: https://cdn2.steamgriddb.com/icon/82cf0712367108660c5339a4897a728e/32/128x128.png
+    keywords:
+    - palworld
+    - game
+    - gameserver
+    - dedicated server
+    maintainers:
+    - email: kriegalex@gmail.com
+      name: kriegalex
+    name: palworld-server
+    sources:
+    - https://github.com/thijsvanloef/palworld-server-docker
+    - https://github.com/kriegalex/k8s-charts/tree/main/charts/palworld-server
+    type: application
+    urls:
+    - https://github.com/kriegalex/k8s-charts/releases/download/palworld-server-1.2.1/palworld-server-1.2.1.tgz
+    version: 1.2.1
+  - annotations:
+      artifacthub.io/images: |
+        - name: palworld-server-docker
           image: thijsvanloef/palworld-server-docker:v2.3.0
       artifacthub.io/links: |
         - name: Chart source
@@ -1947,4 +1980,4 @@ entries:
     urls:
     - https://github.com/kriegalex/k8s-charts/releases/download/valheim-server-1.0.0/valheim-server-1.0.0.tgz
     version: 1.0.0
-generated: "2026-06-18T21:56:28.202721365Z"
+generated: "2026-07-12T21:02:22.088658132Z"
