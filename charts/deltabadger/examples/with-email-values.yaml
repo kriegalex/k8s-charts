@@ -26,11 +26,9 @@ configMaps:
       SMTP_USER_NAME: "notifications@example.com"
       NOTIFICATIONS_SENDER: "noreply@example.com"
 
+# Rails secrets are auto-generated since app v2; only SMTP_PASSWORD is needed here
 secrets:
   secrets:
     enabled: true
     stringData:
-      SECRET_KEY_BASE: "REPLACE_WITH_YOUR_SECRET_KEY_BASE"
-      DEVISE_SECRET_KEY: "REPLACE_WITH_YOUR_DEVISE_SECRET_KEY"
-      APP_ENCRYPTION_KEY: "REPLACE_WITH_YOUR_APP_ENCRYPTION_KEY"
       SMTP_PASSWORD: "your-smtp-app-password"

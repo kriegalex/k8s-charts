@@ -1,7 +1,7 @@
 # Deltabadger Chart
 ===========
 
-![Version: 1.0.0](https://img.shields.io/badge/Version-1.0.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1.6.26](https://img.shields.io/badge/AppVersion-1.6.26-informational?style=flat-square)
+![Version: 2.0.0](https://img.shields.io/badge/Version-2.0.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2.23.3](https://img.shields.io/badge/AppVersion-2.23.3-informational?style=flat-square)
 
 A Helm chart for Deltabadger - Auto-DCA bot for crypto investments
 
@@ -52,24 +52,28 @@ This chart uses the [bjw-s common library](https://bjw-s-labs.github.io/helm-cha
 | `ingress.app` | Ingress configuration (disabled by default) |
 | `persistence.storage` | Persistent storage for SQLite databases (10Gi default) |
 | `configMaps.config` | Optional ConfigMap for performance tuning / SMTP |
-| `secrets.secrets` | Required secrets (Rails keys, encryption key) |
+| `secrets.secrets` | Optional secrets (Rails secret key base, SMTP password) |
 
-### Required Secrets
+### Secrets
 
-Before deploying to production, generate new secrets:
+Since Deltabadger 2.x, no secrets are required: `SECRET_KEY_BASE` is
+auto-generated on first start and persisted to `/app/storage/.secrets` on the
+PVC (make sure it is part of your backups — the database encryption keys are
+derived from it). To manage it yourself instead, generate one with
+`openssl rand -hex 64` and set it under `secrets.secrets.stringData` (an
+env-provided value takes precedence over the generated one).
 
-```bash
-# Secret key base
-openssl rand -hex 64
+### Upgrading from chart 1.x (app 1.6.x)
 
-# Devise secret key
-openssl rand -hex 64
-
-# App encryption key
-openssl rand -hex 32
-```
-
-Set them in your custom values file under `secrets.secrets.stringData`.
+The 2.x image removed the `/health-check` endpoint (probes now use `/up` —
+handled by the chart defaults) and made `DEVISE_SECRET_KEY` /
+`APP_ENCRYPTION_KEY` legacy keys, read only by the one-time
+`MigrateToRailsEncryption` migration. When upgrading an existing 1.x install,
+keep providing the exact `SECRET_KEY_BASE`, `DEVISE_SECRET_KEY` and
+`APP_ENCRYPTION_KEY` values your 1.x release ran with (chart 2.x disables the
+chart-managed Secret by default — re-enable it with your old values). After the
+migration, the two legacy keys can be removed, but `SECRET_KEY_BASE` must be
+kept unchanged forever. See [QUICKSTART.md](QUICKSTART.md) for details.
 
 ## Values
 
@@ -80,7 +84,7 @@ The following table lists the configurable parameters of the Deltabadger chart a
 | configMaps | object | `{"config":{"data":{},"enabled":false}}` | ConfigMap for optional configuration |
 | configMaps.config.data | object | See values.yaml for available options | ConfigMap data (performance tuning, SMTP settings, etc.) |
 | configMaps.config.enabled | bool | `false` | Enable the config ConfigMap |
-| controllers | object | `{"deltabadger":{"containers":{"app":{"args":["standalone"],"env":{"APP_ROOT_URL":"http://deltabadger.local","FORCE_SSL":"false","HOME_PAGE_URL":"http://deltabadger.local","NODE_ENV":"production","ORDERS_FREQUENCY_LIMIT":"60","RAILS_ENV":"production","RAILS_LOG_TO_STDOUT":"true","RAILS_SERVE_STATIC_FILES":"true"},"envFrom":[{"configMapRef":{"name":"{{ include \"bjw-s.common.lib.chart.names.fullname\" $ }}-config","optional":true}},{"secretRef":{"name":"{{ include \"bjw-s.common.lib.chart.names.fullname\" $ }}"}}],"image":{"pullPolicy":"IfNotPresent","repository":"ghcr.io/deltabadger/deltabadger","tag":"{{ .Chart.AppVersion }}"},"probes":{"liveness":{"custom":true,"enabled":true,"spec":{"failureThreshold":3,"httpGet":{"path":"/health-check","port":3000,"scheme":"HTTP"},"initialDelaySeconds":60,"periodSeconds":30,"timeoutSeconds":10}},"readiness":{"custom":true,"enabled":true,"spec":{"failureThreshold":3,"httpGet":{"path":"/health-check","port":3000,"scheme":"HTTP"},"initialDelaySeconds":30,"periodSeconds":10,"timeoutSeconds":5}}},"resources":{"limits":{"cpu":"1000m","memory":"1Gi"},"requests":{"cpu":"250m","memory":"512Mi"}},"securityContext":{"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]},"readOnlyRootFilesystem":false}}},"enabled":true,"replicas":1,"strategy":"Recreate","type":"deployment"}}` | Controller configuration (bjw-s common library format) |
+| controllers | object | `{"deltabadger":{"containers":{"app":{"args":["standalone"],"env":{"APP_ROOT_URL":"http://deltabadger.local","FORCE_SSL":"false","HOME_PAGE_URL":"http://deltabadger.local","NODE_ENV":"production","ORDERS_FREQUENCY_LIMIT":"60","RAILS_ENV":"production","RAILS_LOG_TO_STDOUT":"true","RAILS_SERVE_STATIC_FILES":"true"},"envFrom":[{"configMapRef":{"name":"{{ include \"bjw-s.common.lib.chart.names.fullname\" $ }}-config","optional":true}},{"secretRef":{"name":"{{ include \"bjw-s.common.lib.chart.names.fullname\" $ }}","optional":true}}],"image":{"pullPolicy":"IfNotPresent","repository":"ghcr.io/deltabadger/deltabadger","tag":"{{ .Chart.AppVersion }}"},"probes":{"liveness":{"custom":true,"enabled":true,"spec":{"failureThreshold":3,"httpGet":{"path":"/up","port":3000,"scheme":"HTTP"},"initialDelaySeconds":60,"periodSeconds":30,"timeoutSeconds":10}},"readiness":{"custom":true,"enabled":true,"spec":{"failureThreshold":3,"httpGet":{"path":"/up","port":3000,"scheme":"HTTP"},"initialDelaySeconds":30,"periodSeconds":10,"timeoutSeconds":5}}},"resources":{"limits":{"cpu":"1000m","memory":"1Gi"},"requests":{"cpu":"250m","memory":"512Mi"}},"securityContext":{"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]},"readOnlyRootFilesystem":false}}},"enabled":true,"replicas":1,"strategy":"Recreate","type":"deployment"}}` | Controller configuration (bjw-s common library format) |
 | controllers.deltabadger.containers.app.args | list | `["standalone"]` | Container arguments (standalone mode runs web + jobs in one process) |
 | controllers.deltabadger.containers.app.env.APP_ROOT_URL | string | `"http://deltabadger.local"` | Application root URL |
 | controllers.deltabadger.containers.app.env.FORCE_SSL | string | `"false"` | Force SSL (set to "true" for HTTPS) |
@@ -90,12 +94,12 @@ The following table lists the configurable parameters of the Deltabadger chart a
 | controllers.deltabadger.containers.app.env.RAILS_ENV | string | `"production"` | Rails environment |
 | controllers.deltabadger.containers.app.env.RAILS_LOG_TO_STDOUT | string | `"true"` | Log to stdout |
 | controllers.deltabadger.containers.app.env.RAILS_SERVE_STATIC_FILES | string | `"true"` | Serve static files from Rails |
-| controllers.deltabadger.containers.app.envFrom | list | `[{"configMapRef":{"name":"{{ include \"bjw-s.common.lib.chart.names.fullname\" $ }}-config","optional":true}},{"secretRef":{"name":"{{ include \"bjw-s.common.lib.chart.names.fullname\" $ }}"}}]` | Env from ConfigMap and Secret |
+| controllers.deltabadger.containers.app.envFrom | list | `[{"configMapRef":{"name":"{{ include \"bjw-s.common.lib.chart.names.fullname\" $ }}-config","optional":true}},{"secretRef":{"name":"{{ include \"bjw-s.common.lib.chart.names.fullname\" $ }}","optional":true}}]` | Env from ConfigMap and Secret |
 | controllers.deltabadger.containers.app.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
 | controllers.deltabadger.containers.app.image.repository | string | `"ghcr.io/deltabadger/deltabadger"` | Image repository |
 | controllers.deltabadger.containers.app.image.tag | string | `"{{ .Chart.AppVersion }}"` | Image tag |
-| controllers.deltabadger.containers.app.probes.liveness | object | `{"custom":true,"enabled":true,"spec":{"failureThreshold":3,"httpGet":{"path":"/health-check","port":3000,"scheme":"HTTP"},"initialDelaySeconds":60,"periodSeconds":30,"timeoutSeconds":10}}` | Liveness probe configuration |
-| controllers.deltabadger.containers.app.probes.readiness | object | `{"custom":true,"enabled":true,"spec":{"failureThreshold":3,"httpGet":{"path":"/health-check","port":3000,"scheme":"HTTP"},"initialDelaySeconds":30,"periodSeconds":10,"timeoutSeconds":5}}` | Readiness probe configuration |
+| controllers.deltabadger.containers.app.probes.liveness | object | `{"custom":true,"enabled":true,"spec":{"failureThreshold":3,"httpGet":{"path":"/up","port":3000,"scheme":"HTTP"},"initialDelaySeconds":60,"periodSeconds":30,"timeoutSeconds":10}}` | Liveness probe configuration |
+| controllers.deltabadger.containers.app.probes.readiness | object | `{"custom":true,"enabled":true,"spec":{"failureThreshold":3,"httpGet":{"path":"/up","port":3000,"scheme":"HTTP"},"initialDelaySeconds":30,"periodSeconds":10,"timeoutSeconds":5}}` | Readiness probe configuration |
 | controllers.deltabadger.containers.app.resources | object | `{"limits":{"cpu":"1000m","memory":"1Gi"},"requests":{"cpu":"250m","memory":"512Mi"}}` | Resource limits and requests |
 | controllers.deltabadger.containers.app.securityContext | object | `{"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]},"readOnlyRootFilesystem":false}` | Container security context |
 | controllers.deltabadger.enabled | bool | `true` | Enable the deltabadger controller |
@@ -117,9 +121,9 @@ The following table lists the configurable parameters of the Deltabadger chart a
 | persistence.storage.size | string | `"10Gi"` | Storage size |
 | persistence.storage.storageClass | string | `""` | Storage class (empty string uses default) |
 | persistence.storage.type | string | `"persistentVolumeClaim"` | PVC type |
-| secrets | object | See values.yaml for required secrets | Secrets configuration |
-| secrets.secrets.enabled | bool | `true` | Enable the secrets Secret |
-| secrets.secrets.stringData | object | Development placeholder values - must be changed for production | Secret string data (IMPORTANT: change these for production!) |
+| secrets | object | Disabled - see values.yaml for available keys | Secrets configuration. Since app v2, SECRET_KEY_BASE is auto-generated on first start and persisted to /app/storage/.secrets on the PVC, so no Secret is required for new installs. An env-provided SECRET_KEY_BASE always takes precedence over the generated one. |
+| secrets.secrets.enabled | bool | `false` | Enable the chart-managed secrets Secret |
+| secrets.secrets.stringData | object | Empty - secrets are auto-generated by the app | Secret string data (all keys optional since app v2) |
 | service | object | `{"app":{"controller":"deltabadger","ports":{"http":{"port":3000,"protocol":"HTTP"}},"type":"ClusterIP"}}` | Service configuration |
 | service.app.controller | string | `"deltabadger"` | Controller to associate the service with |
 | service.app.ports.http.port | int | `3000` | Service port |
