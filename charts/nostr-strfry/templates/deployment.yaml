@@ -50,8 +50,13 @@ spec:
             {{- toYaml .Values.resources | nindent 12 }}
       volumes:
         - name: config
+          {{- if .Values.config.existingSecret }}
+          secret:
+            secretName: {{ .Values.config.existingSecret }}
+          {{- else }}
           configMap:
             name: {{ include "nostr-strfry.fullname" . }}-config
+          {{- end }}
         {{- if .Values.persistence.enabled }}
         - name: data
           persistentVolumeClaim:

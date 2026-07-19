@@ -1,3 +1,4 @@
+{{- if not .Values.config.existingSecret }}
 {{- if and .Values.config.relay.auth.enabled (not .Values.config.relay.auth.serviceUrl) -}}
 {{- fail "config.relay.auth.enabled is true but config.relay.auth.serviceUrl is empty. NIP-42 challenge validation requires an external relay URL (e.g. wss://relay.example.com)." -}}
 {{- end -}}
@@ -198,6 +199,7 @@ data:
         requireAuthorOrTag = {{ .Values.config.relay.filterValidation.requireAuthorOrTag }}
       }
     }
+{{- end }}
 {{ if .Values.nip05.enabled }}
 ---
 apiVersion: v1

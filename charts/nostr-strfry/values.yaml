@@ -116,6 +116,14 @@ nip05:
 
 # Global configuration
 config:
+  # -- Name of an existing Secret providing the COMPLETE strfry.conf instead
+  # of the chart-rendered one. The Secret must contain a `strfry.conf` key.
+  # When set, the chart renders no config ConfigMap and every other
+  # `config.*` value below is ignored — lets you keep PII (e.g. the NIP-11
+  # `self`/`pubkey` npubs) out of Helm values. Tip: generate a starting point
+  # with `helm template ... -s templates/configmap.yaml`. nip05.* is
+  # unaffected.
+  existingSecret: ""
   # -- Directory that contains the strfry LMDB database
   db: "/app/strfry-db"
 
