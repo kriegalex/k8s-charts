@@ -2,7 +2,7 @@ apiVersion: v2
 name: alertmanager-ntfy
 description: Bridge that receives Alertmanager webhooks and forwards them to a ntfy server.
 type: application
-version: 0.2.0
+version: 0.3.0
 # renovate: image=codeberg.org/xenrox/ntfy-alertmanager
 appVersion: "1.0.0"
 kubeVersion: ">=1.19.0-0"
