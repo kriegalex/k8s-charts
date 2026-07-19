@@ -10,6 +10,11 @@ enshrouded:
   serverName: "My Enshrouded Server"
   # -- Server password (leave blank for no password)
   serverPassword: "changeme"
+  # -- Name of an existing Secret providing the server password instead of
+  # `serverPassword`. The Secret must contain a `SERVER_PASSWORD` key. When
+  # set, the chart does not render its own Secret and `serverPassword` is
+  # ignored — keeps the password out of Helm values entirely.
+  existingSecret: ""
   # -- Maximum number of players
   maxPlayers: 16
   # -- If you would rather manually supply a config file, set this to true (1)

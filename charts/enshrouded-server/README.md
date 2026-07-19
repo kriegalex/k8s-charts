@@ -1,6 +1,6 @@
 # Enshrouded Server Helm Chart
 
-![Version: 1.0.7](https://img.shields.io/badge/Version-1.0.7-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: proton-v2.1.6](https://img.shields.io/badge/AppVersion-proton--v2.1.6-informational?style=flat-square)
+![Version: 1.1.0](https://img.shields.io/badge/Version-1.1.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: proton-v2.1.6](https://img.shields.io/badge/AppVersion-proton--v2.1.6-informational?style=flat-square)
 
 A Helm chart for Enshrouded Dedicated Game Server
 
@@ -183,6 +183,7 @@ Enshrouded savegame files are typically located at:
 | affinity | object | `{}` | Affinity for pod assignment @type -- object |
 | configMap.data | object | `{}` | Additional environment variables @type -- object |
 | configMap.enabled | bool | `true` | Enable additional configuration via ConfigMap |
+| enshrouded.existingSecret | string | `""` | Name of an existing Secret providing the server password instead of `serverPassword`. The Secret must contain a `SERVER_PASSWORD` key. When set, the chart does not render its own Secret and `serverPassword` is ignored — keeps the password out of Helm values entirely. |
 | enshrouded.externalConfig | int | `0` | If you would rather manually supply a config file, set this to true (1) |
 | enshrouded.gamePort | int | `15636` | Game server port (UDP) |
 | enshrouded.maxPlayers | int | `16` | Maximum number of players |
