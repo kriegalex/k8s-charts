@@ -2,9 +2,9 @@ apiVersion: v2
 name: clonarr
 description: A Helm chart for Clonarr, a visual TRaSH-Guides sync tool for Radarr and Sonarr (Custom Formats, Quality Profiles, Scores, Quality Sizes).
 home: https://github.com/prophetse7en/clonarr
-icon: https://raw.githubusercontent.com/prophetse7en/clonarr/main/static/logo.png
+icon: https://raw.githubusercontent.com/prophetse7en/clonarr/v3.4.0/ui/static/icons/clonarr.png
 type: application
-version: 0.10.0
+version: 0.10.1
 appVersion: "latest"
 kubeVersion: ">=1.19.0-0"
 keywords:
