@@ -42,9 +42,9 @@ spec:
           envFrom:
             - configMapRef:
                 name: {{ include "enshrouded-server.fullname" . }}
-            {{- if .Values.enshrouded.serverPassword }}
+            {{- if or .Values.enshrouded.existingSecret .Values.enshrouded.serverPassword }}
             - secretRef:
-                name: {{ include "enshrouded-server.fullname" . }}
+                name: {{ .Values.enshrouded.existingSecret | default (include "enshrouded-server.fullname" .) }}
             {{- end }}
           ports:
             - name: game

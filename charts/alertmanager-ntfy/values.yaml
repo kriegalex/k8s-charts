@@ -22,6 +22,15 @@ image:
 # noted; empty/unset fields are omitted from the rendered config so the
 # binary falls back to its own defaults.
 ntfyAlertmanager:
+  # -- Name of an existing Secret providing the COMPLETE rendered bridge
+  # configuration instead of the chart-rendered one. The Secret must contain
+  # a `config` key holding the full scfg config file (and a `template.tmpl`
+  # key if the config references a template). When set, the chart renders no
+  # Secret and every other `ntfyAlertmanager.*` value below is ignored —
+  # keeps ntfy/alertmanager credentials out of Helm values entirely. Tip:
+  # generate a starting point with
+  # `helm template ... -s templates/secret.yaml` and lift the `config` block.
+  existingSecret: ""
   # -- Listening port for the webhook receiver.
   port: 80
   # -- Log level (debug, info, warning, error).

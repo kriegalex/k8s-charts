@@ -54,7 +54,7 @@ spec:
             - name: PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "valheim-server.fullname" . }}
+                  name: {{ .Values.server.existingSecret | default (include "valheim-server.fullname" .) }}
                   key: server-password
             - name: TZ
               value: "{{ .Values.server.timezone }}"

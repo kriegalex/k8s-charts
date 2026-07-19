@@ -61,7 +61,7 @@ spec:
       volumes:
         - name: config
           secret:
-            secretName: {{ include "alertmanager-ntfy.fullname" . }}
+            secretName: {{ .Values.ntfyAlertmanager.existingSecret | default (include "alertmanager-ntfy.fullname" .) }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

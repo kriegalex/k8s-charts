@@ -1,6 +1,6 @@
 # alertmanager-ntfy
 
-![Version: 0.2.0](https://img.shields.io/badge/Version-0.2.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1.0.0](https://img.shields.io/badge/AppVersion-1.0.0-informational?style=flat-square)
+![Version: 0.3.0](https://img.shields.io/badge/Version-0.3.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1.0.0](https://img.shields.io/badge/AppVersion-1.0.0-informational?style=flat-square)
 
 Bridge that receives Alertmanager webhooks and forwards them to a ntfy server.
 
@@ -119,6 +119,7 @@ The Silence button on each ntfy message posts back to this Ingress, which the br
 | ntfyAlertmanager.cache.duration | string | `""` | How long entries stay in the cache. |
 | ntfyAlertmanager.cache.redisURL | string | `""` | Redis URL (only used when type is redis). |
 | ntfyAlertmanager.cache.type | string | `""` | Cache backend (disabled, memory, redis). |
+| ntfyAlertmanager.existingSecret | string | `""` | Name of an existing Secret providing the COMPLETE rendered bridge configuration instead of the chart-rendered one. The Secret must contain a `config` key holding the full scfg config file (and a `template.tmpl` key if the config references a template). When set, the chart renders no Secret and every other `ntfyAlertmanager.*` value below is ignored — keeps ntfy/alertmanager credentials out of Helm values entirely. Tip: generate a starting point with `helm template ... -s templates/secret.yaml` and lift the `config` block. |
 | ntfyAlertmanager.labels.entries | list | `[{"label":"severity","priority":5,"tags":["rotating_light"],"value":"critical"},{"label":"severity","priority":1,"value":"info"}]` | Per-label mapping entries. Each entry takes `label`, `value`, and any of: `priority`, `tags` (list), `icon`, `emailAddress`, `call`, `topic`. |
 | ntfyAlertmanager.labels.order | list | `["severity","instance"]` | Decreasing-priority list of label names to consult. |
 | ntfyAlertmanager.logFormat | string | `""` | Log format (text or json). |

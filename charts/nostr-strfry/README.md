@@ -1,6 +1,6 @@
 # nostr-strfry
 
-![Version: 1.2.0](https://img.shields.io/badge/Version-1.2.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1.1.0](https://img.shields.io/badge/AppVersion-1.1.0-informational?style=flat-square)
+![Version: 1.3.0](https://img.shields.io/badge/Version-1.3.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1.1.0](https://img.shields.io/badge/AppVersion-1.1.0-informational?style=flat-square)
 
 A Helm chart for deploying a Nostr strfry relay
 
@@ -49,6 +49,7 @@ The following table lists the configurable parameters for the nostr-strfry chart
 | config.events.rejectEphemeralEventsOlderThanSeconds | int | `60` | Ephemeral events older than this (in seconds) will be rejected |
 | config.events.rejectEventsNewerThanSeconds | int | `900` | Events newer than this (in seconds) will be rejected |
 | config.events.rejectEventsOlderThanSeconds | string | `"94608000"` | Events older than this (in seconds) will be rejected |
+| config.existingSecret | string | `""` | Name of an existing Secret providing the COMPLETE strfry.conf instead of the chart-rendered one. The Secret must contain a `strfry.conf` key. When set, the chart renders no config ConfigMap and every other `config.*` value below is ignored — lets you keep PII (e.g. the NIP-11 `self`/`pubkey` npubs) out of Helm values. Tip: generate a starting point with `helm template ... -s templates/configmap.yaml`. nip05.* is unaffected. |
 | config.relay.auth.enabled | bool | `false` | Enable NIP-42 authentication. When true, `serviceUrl` must be set. |
 | config.relay.auth.serviceUrl | string | `""` | External relay URL required for NIP-42 validation (e.g. wss://relay.example.com) |
 | config.relay.autoPingSeconds | int | `55` | Websocket-level PING message frequency (seconds) |
