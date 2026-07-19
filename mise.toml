@@ -1,0 +1,4 @@
+[tools]
+"aqua:helm/chart-testing" = "3.14.0"
+"pipx:yamale" = "6.1.0"
+"pipx:yamllint" = "latest"
