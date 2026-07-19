@@ -1,4 +1,5 @@
 [tools]
 "aqua:helm/chart-testing" = "3.14.0"
+"aqua:norwoodj/helm-docs" = "1.14.2"
 "pipx:yamale" = "6.1.0"
 "pipx:yamllint" = "latest"
