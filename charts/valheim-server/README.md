@@ -1,6 +1,6 @@
 # valheim-server
 
-![Version: 1.2.0](https://img.shields.io/badge/Version-1.2.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 3.1.0](https://img.shields.io/badge/AppVersion-3.1.0-informational?style=flat-square)
+![Version: 1.3.0](https://img.shields.io/badge/Version-1.3.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 3.1.0](https://img.shields.io/badge/AppVersion-3.1.0-informational?style=flat-square)
 
 A Helm chart for deploying a Valheim dedicated server on Kubernetes
 
@@ -196,6 +196,7 @@ will not load.
 | securityContext.runAsNonRoot | bool | `true` | Force the container to run as a non-root user |
 | securityContext.runAsUser | int | `111` | User ID to run the container processes. Should default to the steam user ID. |
 | server.crossplay | int | `0` | Enable crossplay/PlayFab networking (1=enabled, 0=disabled). NOTE: crossplay is mutually exclusive with BepInEx mods — with crossplay on, mods will not load. |
+| server.existingSecret | string | `""` | Name of an existing Secret providing the server password instead of `password`. The Secret must contain a `server-password` key. When set, the chart does not render its own Secret and `password` is ignored — keeps the password out of Helm values entirely. |
 | server.modifiers | string | `""` | World modifiers as space-separated "key value" pairs (e.g. "combat veryhard portals casual"). Leave empty to skip. |
 | server.name | string | `"Valheim Server with Helm"` | Server name as displayed in-game |
 | server.password | string | you MUST change this value | Server access password (minimum 5 characters) |

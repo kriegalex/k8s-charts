@@ -31,6 +31,11 @@ server:
   # -- Server access password (minimum 5 characters)
   # @default -- you MUST change this value
   password: "ChangeMe123!"
+  # -- Name of an existing Secret providing the server password instead of
+  # `password`. The Secret must contain a `server-password` key. When set,
+  # the chart does not render its own Secret and `password` is ignored —
+  # keeps the password out of Helm values entirely.
+  existingSecret: ""
   # -- Set to 1 to make server visible publicly, 0 for private
   public: 0
   # -- Timezone for the server
