@@ -12,8 +12,6 @@
 
 ## Quick Install (5 minutes)
 
-**For testing only** - uses development secrets:
-
 ```bash
 # 1. Setup dependencies (one-time)
 helm repo add bjw-s https://bjw-s-labs.github.io/helm-charts
@@ -32,7 +30,9 @@ kubectl port-forward svc/deltabadger-app 3737:3000
 # Open http://localhost:3737
 ```
 
-⚠️ **Warning**: This uses insecure default secrets. For production, see below.
+Secrets are auto-generated on first start (`SECRET_KEY_BASE` is persisted to
+`/app/storage/.secrets` on the PVC), so no secret setup is needed. To manage
+`SECRET_KEY_BASE` yourself, see the options below.
 
 ---
 
@@ -40,7 +40,7 @@ kubectl port-forward svc/deltabadger-app 3737:3000
 
 ### Option 1: Local Development / Testing
 
-Uses default configuration with development secrets.
+Uses default configuration with auto-generated secrets.
 
 ```bash
 # Install
@@ -54,20 +54,17 @@ kubectl port-forward -n deltabadger svc/deltabadger-app 3737:3000
 - ✓ 10Gi persistent storage
 - ✓ ClusterIP service (no ingress)
 - ✓ Default resources (250m CPU, 512Mi RAM)
-- ⚠️ Development secrets (insecure)
+- ✓ Auto-generated secrets (persisted on the PVC)
 
 ---
 
 ### Option 2: Production with Ingress & SSL
 
-For production deployments with proper secrets and SSL.
+For production deployments with SSL. Secrets are auto-generated; add
+`--set secrets.secrets.enabled=true --set secrets.secrets.stringData.SECRET_KEY_BASE=...`
+only if you want to manage `SECRET_KEY_BASE` yourself.
 
 ```bash
-# Generate production secrets first
-export SECRET_KEY_BASE=$(openssl rand -hex 64)
-export DEVISE_SECRET_KEY=$(openssl rand -hex 64)
-export APP_ENCRYPTION_KEY=$(openssl rand -hex 32)
-
 # Install with production values
 helm install deltabadger . \
   --create-namespace \
@@ -85,9 +82,6 @@ helm install deltabadger . \
   --set controllers.deltabadger.containers.app.env.APP_ROOT_URL="https://deltabadger.yourdomain.com" \
   --set controllers.deltabadger.containers.app.env.HOME_PAGE_URL="https://deltabadger.yourdomain.com" \
   --set controllers.deltabadger.containers.app.env.FORCE_SSL="true" \
-  --set secrets.secrets.stringData.SECRET_KEY_BASE="$SECRET_KEY_BASE" \
-  --set secrets.secrets.stringData.DEVISE_SECRET_KEY="$DEVISE_SECRET_KEY" \
-  --set secrets.secrets.stringData.APP_ENCRYPTION_KEY="$APP_ENCRYPTION_KEY" \
   --set persistence.storage.size=20Gi
 
 # Check status
@@ -108,7 +102,6 @@ helm install deltabadger . -f my-values.yaml -n deltabadger --create-namespace
 
 **What you get:**
 - ✓ HTTPS ingress with cert-manager
-- ✓ Production secrets
 - ✓ 20Gi storage
 - ✓ Ready for public access
 
@@ -116,16 +109,15 @@ helm install deltabadger . -f my-values.yaml -n deltabadger --create-namespace
 
 ### Option 3: Production with External Secrets
 
-Most secure - keeps secrets out of Helm values.
+Keeps secrets out of Helm values, for when you want to manage `SECRET_KEY_BASE`
+yourself instead of relying on the auto-generated one.
 
 ```bash
 # 1. Create Kubernetes secret first
 kubectl create namespace deltabadger
 kubectl create secret generic deltabadger-secrets \
   --namespace deltabadger \
-  --from-literal=SECRET_KEY_BASE=$(openssl rand -hex 64) \
-  --from-literal=DEVISE_SECRET_KEY=$(openssl rand -hex 64) \
-  --from-literal=APP_ENCRYPTION_KEY=$(openssl rand -hex 32)
+  --from-literal=SECRET_KEY_BASE=$(openssl rand -hex 64)
 
 # 2. Install referencing external secret
 helm install deltabadger . \
@@ -160,7 +152,7 @@ kubectl logs -n deltabadger -l app.kubernetes.io/instance=deltabadger --tail=50
 
 # Test health endpoint
 kubectl port-forward -n deltabadger svc/deltabadger-app 3737:3000 &
-curl http://localhost:3737/health-check
+curl http://localhost:3737/up
 # Should return: HTTP 200 OK
 
 # Check storage is bound
@@ -196,9 +188,46 @@ helm upgrade deltabadger . -n deltabadger -f my-values.yaml
 
 # Or upgrade just the image version
 helm upgrade deltabadger . -n deltabadger \
-  --set controllers.deltabadger.containers.app.image.tag=v1.0.27 \
+  --set controllers.deltabadger.containers.app.image.tag=2.23.3 \
   --reuse-values
 ```
+
+### Upgrading from chart 1.x (app 1.6.x) to chart 2.x (app 2.x)
+
+Chart 2.0.0 moves to the Deltabadger 2.x image. Two things changed:
+
+- **Health endpoint**: probes now use `/up` (the old `/health-check` route was
+  removed upstream). Handled automatically by the chart defaults — only relevant
+  if you overrode the probes.
+- **Secrets**: `SECRET_KEY_BASE` is auto-generated and persisted to
+  `/app/storage/.secrets`; `DEVISE_SECRET_KEY` and `APP_ENCRYPTION_KEY` are now
+  legacy keys, read only by the one-time `MigrateToRailsEncryption` migration.
+
+⚠️ **Before upgrading an existing 1.x install**, make sure the exact
+`SECRET_KEY_BASE`, `DEVISE_SECRET_KEY` and `APP_ENCRYPTION_KEY` values your 1.x
+release ran with are still provided (chart 2.x disables the chart-managed Secret
+by default — re-enable it with your old values):
+
+```yaml
+secrets:
+  secrets:
+    enabled: true
+    stringData:
+      SECRET_KEY_BASE: "<your existing value>"
+      DEVISE_SECRET_KEY: "<your existing value>"
+      APP_ENCRYPTION_KEY: "<your existing value>"
+```
+
+Note: chart 1.x shipped insecure development defaults for these — if you never
+overrode them, your existing data was encrypted with those defaults, so you must
+pass those same default strings during the upgrade (see the chart 1.x
+`values.yaml`). Without the original keys the migration cannot decrypt existing
+exchange API credentials.
+
+After the migration has run once, `DEVISE_SECRET_KEY` and `APP_ENCRYPTION_KEY`
+can be removed. **`SECRET_KEY_BASE` must be kept unchanged forever**: the app
+derives its database encryption keys from it, so changing it makes re-encrypted
+data (exchange API credentials) unreadable.
 
 ### Backup Data
 
@@ -300,7 +329,7 @@ ls -lh charts/
 kubectl exec -n deltabadger -it deployment/deltabadger -- netstat -tlnp | grep 3000
 
 # Check health endpoint manually
-kubectl exec -n deltabadger -it deployment/deltabadger -- curl -v http://localhost:3000/health-check
+kubectl exec -n deltabadger -it deployment/deltabadger -- curl -v http://localhost:3000/up
 
 # Check startup time (may need longer initialDelaySeconds)
 kubectl logs -n deltabadger -l app.kubernetes.io/instance=deltabadger | grep -i "listening\|started\|ready"

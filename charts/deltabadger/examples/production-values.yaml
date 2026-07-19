@@ -53,14 +53,19 @@ persistence:
     storageClass: "fast-ssd"
     size: 20Gi
 
-# IMPORTANT: Replace these with your own generated secrets!
-# Generate with:
-#   openssl rand -hex 64  # For SECRET_KEY_BASE and DEVISE_SECRET_KEY
-#   openssl rand -hex 32  # For APP_ENCRYPTION_KEY
+# Secrets are optional since app v2: SECRET_KEY_BASE is auto-generated on first
+# start and persisted to /app/storage/.secrets on the PVC. Provide your own only
+# if you want to manage it explicitly (generate with: openssl rand -hex 64).
+#
+# UPGRADING FROM A 1.x RELEASE? Keep the secret enabled with the exact
+# SECRET_KEY_BASE, DEVISE_SECRET_KEY and APP_ENCRYPTION_KEY values your 1.x
+# install used, so the MigrateToRailsEncryption migration can decrypt existing
+# data. They can be removed after the migration has run.
 secrets:
   secrets:
-    enabled: true
-    stringData:
-      SECRET_KEY_BASE: "REPLACE_WITH_YOUR_SECRET_KEY_BASE"
-      DEVISE_SECRET_KEY: "REPLACE_WITH_YOUR_DEVISE_SECRET_KEY"
-      APP_ENCRYPTION_KEY: "REPLACE_WITH_YOUR_APP_ENCRYPTION_KEY"
+    enabled: false
+    # stringData:
+    #   SECRET_KEY_BASE: "REPLACE_WITH_YOUR_SECRET_KEY_BASE"
+    #   # Legacy keys - only needed while upgrading from 1.x:
+    #   DEVISE_SECRET_KEY: "YOUR_EXISTING_DEVISE_SECRET_KEY"
+    #   APP_ENCRYPTION_KEY: "YOUR_EXISTING_APP_ENCRYPTION_KEY"
